@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Site Zone Configuration - PRO-SAFE</title>
+    <link href="https://fonts.googleapis.com/css?family=Inter:400,500,600,700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root { --primary-color: #2c5b89; --primary-dark: #1e4062; --secondary-color: #f0b178; --border-color: #e9ecef; --shadow-md: 0 4px 12px rgba(0,0,0,0.15); --border-radius: 8px; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); color: #333; line-height: 1.6; }
+        .dashboard-container { display: flex; flex-direction: column; min-height: 100vh; }
+        .header { background: linear-gradient(135deg, var(--primary-color), var(--primary-dark)); color: #fff; display: flex; align-items: center; padding: 0 32px; height: 72px; box-shadow: var(--shadow-md); }
+        .logo { display: flex; align-items: center; font-size: 2rem; font-weight: bold; }
+        .logo-img { width: 48px; height: 48px; margin-right: 12px; background: #2c5b89; border-radius: 50%; padding: 4px; }
+        .breadcrumb { display: flex; align-items: center; margin-left: 24px; font-size: 0.9rem; opacity: 0.9; }
+        .breadcrumb-separator { margin: 0 8px; opacity: 0.6; }
+        .breadcrumb-current { text-decoration: underline; font-weight: 600; }
+        .header .search { margin-left: 24px; flex: 1; max-width: 350px; background: #fff; border: none; border-radius: 4px; padding: 7px 12px; font-size: 1rem; }
+        .header-controls { display: flex; gap: 8px; margin-left: auto; margin-right: 24px; }
+        .nav-dropdown { background: transparent; border: none; color: #fff; font-size: 1rem; font-weight: 500; cursor: pointer; padding: 8px 16px; border-radius: 4px; }
+        .nav-dropdown:hover { background: #1e4062; }
+        .version { margin-left: auto; font-size: 1rem; opacity: 0.8; }
+        .main-content { flex: 1; padding: 32px; max-width: 1400px; margin: 0 auto; width: 100%; }
+        .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; }
+        .page-title { font-size: 2rem; font-weight: 700; color: #2c5b89; }
+        .header-actions { display: flex; align-items: center; gap: 16px; }
+        .btn { padding: 12px 24px; border: none; border-radius: 6px; font-size: 1rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
+        .btn-success { background: #28a745; color: #fff; }
+        .btn-success:hover { background: #218838; }
+        .search-box { position: relative; flex: 1; max-width: 400px; }
+        .search-input { width: 100%; padding: 12px 16px 12px 48px; border: 2px solid #e9ecef; border-radius: 6px; font-size: 1rem; }
+        .search-input:focus { outline: none; border-color: #2c5b89; }
+        .search-icon { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #6c757d; }
+        .table-container { background: #fff; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.1); overflow: hidden; }
+        .table { width: 100%; border-collapse: collapse; }
+        .table th { background: #2c5b89; color: #fff; font-weight: 600; text-align: left; padding: 16px 20px; font-size: 0.9rem; text-transform: uppercase; }
+        .table td { padding: 16px 20px; border-bottom: 1px solid #e9ecef; }
+        .table tbody tr:hover { background: #f8f9fa; }
+        .potential-id { font-weight: 600; color: #2c5b89; font-family: 'Courier New', monospace; }
+        .site-name { font-weight: 500; color: #495057; }
+        .industry { background: #e9ecef; color: #495057; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; }
+        .timezone { background: #d1ecf1; color: #0c5460; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: 600; }
+        .action-btn { background: #2c5b89; color: #fff; border: none; width: 36px; height: 36px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .action-btn:hover { background: #1e4062; }
+        .pagination { display: flex; justify-content: space-between; align-items: center; padding: 20px; background: #f8f9fa; border-top: 1px solid #e9ecef; }
+        .pagination-arrow { background: #fff; border: 1px solid #ced4da; color: #6c757d; width: 32px; height: 32px; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .pagination-arrow:hover:not(:disabled) { background: #2c5b89; color: #fff; border-color: #2c5b89; }
+        .pagination-arrow:disabled { opacity: 0.5; cursor: not-allowed; }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <header class="header">
+            <div class="logo"><img src="https://via.placeholder.com/48x48?text=PS" alt="PRO-SAFE" class="logo-img"><span>PRO-SAFE ADMIN</span></div>
+            <div class="breadcrumb"><span>ADMIN</span><span class="breadcrumb-separator">></span><span class="breadcrumb-current">Site Zone Configuration</span></div>
+            <input type="text" class="search" placeholder="Search By Site Details">
+            <div class="header-controls"><button class="nav-dropdown">View</button><button class="nav-dropdown">Forensic</button><button class="nav-dropdown">Configure</button><button class="nav-dropdown">Admin</button></div>
+            <div class="version">v6.3.8</div>
+        </header>
+        <main class="main-content">
+            <div class="page-header">
+                <h1 class="page-title">Site Zone Configuration</h1>
+                <div class="header-actions"><div class="search-box"><i class="fas fa-search search-icon"></i><input type="text" class="search-input" placeholder="Search by site name/Potential"></div><button class="btn btn-success" onclick="createNewZone()"><i class="fas fa-plus"></i>Create New Zone</button></div>
+            </div>
+            <div class="table-container">
+                <table class="table">
+                    <thead><tr><th>POTENTIAL ID</th><th>SITE NAME</th><th>INDUSTRY</th><th>TIME ZONE</th><th>ACTION</th></tr></thead>
+                    <tbody>
+                        <tr><td class="potential-id">270258</td><td class="site-name">Martin Marietta - Tanner 2012 F7-3</td><td><span class="industry">Commercial Property</span></td><td><span class="timezone">CT</span></td><td><button class="action-btn" onclick="configureZone(270258)" title="Configure Site"><i class="fas fa-cog"></i></button></td></tr>
+                        <tr><td class="potential-id">464927</td><td class="site-name">R & R Consultants - 1875 Marin Street F38</td><td><span class="industry">Consulting</span></td><td><span class="timezone">PT</span></td><td><button class="action-btn" onclick="configureZone(464927)" title="Configure Site"><i class="fas fa-cog"></i></button></td></tr>
+                        <tr><td class="potential-id">532403</td><td class="site-name">Martin Marietta - Genoa Red Bluff F7-4</td><td><span class="industry">Construction Commercial</span></td><td><span class="timezone">CT</span></td><td><button class="action-btn" onclick="configureZone(532403)" title="Configure Site"><i class="fas fa-cog"></i></button></td></tr>
+                        <tr><td class="potential-id">535269</td><td class="site-name">Martin Marietta - Cherry Yard F7-6</td><td><span class="industry">Construction Commercial</span></td><td><span class="timezone">CT</span></td><td><button class="action-btn" onclick="configureZone(535269)" title="Configure Site"><i class="fas fa-cog"></i></button></td></tr>
+                        <tr><td class="potential-id">577938</td><td class="site-name">Port San Antonio - CAM Zone Monitoring MD859</td><td><span class="industry">Commercial Property</span></td><td><span class="timezone">CT</span></td><td><button class="action-btn" onclick="configureZone(577938)" title="Configure Site"><i class="fas fa-cog"></i></button></td></tr>
+                        <tr><td class="potential-id">577943</td><td class="site-name">Port San Antonio - CAM Zone Monitoring MDX051</td><td><span class="industry">Commercial Property</span></td><td><span class="timezone">CT</span></td><td><button class="action-btn" onclick="configureZone(577943)" title="Configure Site"><i class="fas fa-cog"></i></button></td></tr>
+                        <tr><td class="potential-id">577946</td><td class="site-name">Port San Antonio - CAM Zone Monitoring MDX013</td><td><span class="industry">Commercial Property</span></td><td><span class="timezone">CT</span></td><td><button class="action-btn" onclick="configureZone(577946)" title="Configure Site"><i class="fas fa-cog"></i></button></td></tr>
+                        <tr><td class="potential-id">577951</td><td class="site-name">Port San Antonio - CAM Zone Monitoring MDX056</td><td><span class="industry">Commercial Property</span></td><td><span class="timezone">CT</span></td><td><button class="action-btn" onclick="configureZone(577951)" title="Configure Site"><i class="fas fa-cog"></i></button></td></tr>
+                    </tbody>
+                </table>
+                <div class="pagination">
+                    <div style="display: flex; align-items: center; gap: 8px;"><label>Items per page:</label><select style="padding: 4px 8px; border: 1px solid #ced4da; border-radius: 4px;"><option value="8" selected>8</option><option value="16">16</option><option value="32">32</option></select></div>
+                    <div style="display: flex; align-items: center; gap: 16px;"><span style="color: #6c757d; font-size: 0.9rem;">1 - 8 of 4447</span><div style="display: flex; gap: 8px;"><button class="pagination-arrow" disabled><i class="fas fa-chevron-left"></i></button><button class="pagination-arrow"><i class="fas fa-chevron-right"></i></button></div></div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script>
+        const sites = [
+            { id: 270258, name: "Martin Marietta - Tanner 2012 F7-3", industry: "Commercial Property", timezone: "CT" },
+            { id: 464927, name: "R & R Consultants - 1875 Marin Street F38", industry: "Consulting", timezone: "PT" },
+            { id: 532403, name: "Martin Marietta - Genoa Red Bluff F7-4", industry: "Construction Commercial", timezone: "CT" },
+            { id: 535269, name: "Martin Marietta - Cherry Yard F7-6", industry: "Construction Commercial", timezone: "CT" },
+            { id: 577938, name: "Port San Antonio - CAM Zone Monitoring MD859", industry: "Commercial Property", timezone: "CT" },
+            { id: 577943, name: "Port San Antonio - CAM Zone Monitoring MDX051", industry: "Commercial Property", timezone: "CT" },
+            { id: 577946, name: "Port San Antonio - CAM Zone Monitoring MDX013", industry: "Commercial Property", timezone: "CT" },
+            { id: 577951, name: "Port San Antonio - CAM Zone Monitoring MDX056", industry: "Commercial Property", timezone: "CT" }
+        ];
+        function configureZone(siteId) { const site = sites.find(s => s.id === siteId); if (site) { sessionStorage.setItem('selectedSite', JSON.stringify(site)); window.location.href = 'zone-management.html'; } }
+        function createNewZone() { alert('Create New Zone - This would open a site selection dialog'); }
+        document.querySelector('.search-input').addEventListener('input', function() { const searchTerm = this.value.toLowerCase(); document.querySelectorAll('tbody tr').forEach(row => { const siteName = row.querySelector('.site-name').textContent.toLowerCase(); const potentialId = row.querySelector('.potential-id').textContent.toLowerCase(); row.style.display = (siteName.includes(searchTerm) || potentialId.includes(searchTerm)) ? '' : 'none'; }); });
+    </script>
+</body>
+</html>
