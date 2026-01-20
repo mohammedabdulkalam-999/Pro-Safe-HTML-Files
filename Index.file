@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Pro-Safe Admin</title>
+</head>
+<body>
+  <h1>Pro-Safe Admin Portal</h1>
+
+  <ul>
+    <li>
+      <a href="admin-site-info-page.html">
+        Admin Site Info Page
+      </a>
+    </li>
+    <li>
+      <a href="site-config.html">
+        Site Config Page
+      </a>
+    </li>
+  </ul>
+</body>
+</html>
