@@ -1328,11 +1328,18 @@
                 </div>
             </div>
             <div class="zone-management-body">
-                <div id="zoneList" class="zone-list"></div>
+                <div id="zonesGrid" class="zones-grid" style="display: none;"></div>
                 <div id="zoneEmptyState" class="empty-state" style="display: none;">
                     <i class="fas fa-map-marked-alt"></i>
                     <h3>No Zones Created Yet</h3>
                     <p>Create your first zone for this site.</p>
+                    <button class="btn btn-primary" onclick="openCreateZoneModal()">
+                        <i class="fas fa-plus"></i>
+                        Create First Zone
+                    </button>
+                </div>
+                <div id="zoneLoadingState" class="loading" style="display: none;">
+                    <div class="spinner"></div>
                 </div>
             </div>
         </div>
@@ -1797,35 +1804,90 @@
         }
 
         function renderZoneList() {
-            const zoneList = document.getElementById("zoneList");
+            const zonesGrid = document.getElementById("zonesGrid");
             const emptyState = document.getElementById("zoneEmptyState");
-            zoneList.innerHTML = "";
+            const loadingState = document.getElementById("zoneLoadingState");
+
+            zonesGrid.innerHTML = "";
+            if (loadingState) {
+                loadingState.style.display = "none";
+            }
 
             if (zones.length === 0) {
+                zonesGrid.style.display = "none";
                 emptyState.style.display = "block";
                 return;
             }
 
             emptyState.style.display = "none";
-            zones.forEach(zone => {
-                const cameraCount = zone.cameras.length;
-                const deterrentCount = zone.deterrents.length;
-                const item = document.createElement("div");
-                item.className = "zone-list-item";
-                item.innerHTML = `
-                    <div class="zone-list-title">${zone.name}</div>
-                    <div class="zone-list-meta">${zone.id} • ${cameraCount} Cameras • ${deterrentCount} Deterrents</div>
-                    <div class="zone-list-actions">
-                        <button class="btn btn-primary" onclick="editZone('${zone.id}')">
-                            <i class="fas fa-edit"></i> Edit
+            zonesGrid.style.display = "grid";
+            zones.forEach(zone => zonesGrid.appendChild(createZoneCard(zone)));
+        }
+
+        function createZoneCard(zone) {
+            const card = document.createElement("div");
+            card.className = "zone-card";
+
+            const cameraTags = zone.cameras
+                .map(id => {
+                    const camera = devices.cameras.find(device => device.id === id);
+                    return camera ? `<span class="device-tag camera">${camera.name}</span>` : `<span class="device-tag camera">${id}</span>`;
+                })
+                .join("");
+
+            const deterrentTags = zone.deterrents
+                .map(id => {
+                    const deterrent = devices.deterrents.find(device => device.id === id);
+                    return deterrent ? `<span class="device-tag deterrent">${deterrent.name}</span>` : `<span class="device-tag deterrent">${id}</span>`;
+                })
+                .join("");
+
+            card.innerHTML = `
+                <div class="zone-header">
+                    <div class="zone-title">${zone.name}</div>
+                    <div class="zone-id">${zone.id}</div>
+                    <div class="zone-actions">
+                        <button class="zone-action-btn" onclick="editZone('${zone.id}')">
+                            <i class="fas fa-edit"></i>
                         </button>
-                        <button class="btn btn-secondary" onclick="deleteZone('${zone.id}')">
-                            <i class="fas fa-trash"></i> Delete
+                        <button class="zone-action-btn" onclick="deleteZone('${zone.id}')">
+                            <i class="fas fa-trash"></i>
                         </button>
                     </div>
-                `;
-                zoneList.appendChild(item);
-            });
+                </div>
+                <div class="zone-content">
+                    <div class="device-section">
+                        <div class="device-section-title">
+                            <i class="fas fa-video"></i>
+                            Cameras (${zone.cameras.length})
+                        </div>
+                        <div class="device-list">${cameraTags}</div>
+                    </div>
+                    <div class="device-section">
+                        <div class="device-section-title">
+                            <i class="fas fa-shield-alt"></i>
+                            Deterrents (${zone.deterrents.length})
+                        </div>
+                        <div class="device-list">${deterrentTags}</div>
+                    </div>
+                </div>
+                <div class="zone-stats">
+                    <div class="stat">
+                        <div class="stat-value">${zone.cameras.length}</div>
+                        <div class="stat-label">Cameras</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">${zone.deterrents.length}</div>
+                        <div class="stat-label">Deterrents</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">${new Date(zone.modifiedDate).toLocaleDateString()}</div>
+                        <div class="stat-label">Modified</div>
+                    </div>
+                </div>
+            `;
+
+            return card;
         }
 
         function openCreateZoneModal() {
