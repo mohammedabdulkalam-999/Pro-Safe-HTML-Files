@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Incident Radar Report – SLA Breach Identification</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 16px; background: #f5f5f5; color: #333; }
+    .report-page { max-width: 1400px; margin: 0 auto; background: #fff; padding: 24px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+
+    .header { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 2px solid #0c5b82; }
+    .back-btn { padding: 8px 16px; background: #206288; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; }
+    .back-btn:hover { background: #0c5b82; }
+    .title { font-size: 20px; font-weight: 600; color: #0c5b82; }
+
+    .filters { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; margin-bottom: 16px; padding: 16px; background: #fafafa; border-radius: 8px; border: 1px solid #e0e0e0; }
+    .filter-group { display: flex; flex-direction: column; gap: 4px; }
+    .filter-group label { font-size: 12px; color: #666; }
+    .filter-group input, .filter-group select { padding: 8px 12px; border: 1px solid #ccc; border-radius: 4px; min-width: 140px; font-size: 14px; }
+    .btn-search { padding: 8px 20px; background: #206288; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; }
+    .btn-search:hover { background: #0c5b82; }
+    .btn-download { padding: 8px 20px; background: #2e7d32; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; }
+    .btn-download:hover { background: #1b5e20; }
+
+    .legend { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; font-size: 12px; }
+    .legend span { padding: 6px 12px; border-radius: 4px; }
+    .legend .amber { background: #ffe0b2; color: #e65100; }
+    .legend .red { background: #ffcdd2; color: #b71c1c; }
+    .legend .gray { background: #f5f5f5; color: #616161; }
+
+    .table-wrap { overflow-x: auto; margin-top: 16px; border: 1px solid #e0e0e0; border-radius: 8px; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th, td { padding: 10px 12px; text-align: center; border-bottom: 1px solid #eee; }
+    th { background: #0c5b82; color: #fff; font-weight: 500; white-space: nowrap; }
+    /* Full-row color coding by SLA status */
+    tr.row-sla-amber { background: #ffe0b2 !important; color: #e65100; }
+    tr.row-sla-amber td { background: #ffe0b2 !important; }
+    tr.row-sla-amber:hover td { background: #f5d09a !important; }
+    tr.row-sla-miss { background: #ffcdd2 !important; color: #b71c1c; }
+    tr.row-sla-miss td { background: #ffcdd2 !important; }
+    tr.row-sla-miss:hover td { background: #f5bcc2 !important; }
+    tr.row-sla-no { background: #eeeeee !important; color: #616161; }
+    tr.row-sla-no td { background: #eeeeee !important; }
+    tr.row-sla-no:hover td { background: #e0e0e0 !important; }
+    .tech-delay { background-color: #fff8e1 !important; color: #f57f17; font-weight: 500; }
+
+    .empty-state { text-align: center; padding: 48px 16px; color: #666; font-size: 16px; }
+  </style>
+</head>
+<body>
+  <div class="report-page">
+    <div class="header">
+      <button class="back-btn" onclick="window.history.back()">← Reports Dashboard</button>
+      <h1 class="title">Incident Radar Report – SLA Breach Identification & Incident Analysis</h1>
+    </div>
+
+    <!-- Filters -->
+    <div class="filters">
+      <div class="filter-group">
+        <label>From Date & Time</label>
+        <input type="datetime-local" id="fromDate">
+      </div>
+      <div class="filter-group">
+        <label>To Date & Time</label>
+        <input type="datetime-local" id="toDate">
+      </div>
+      <div class="filter-group">
+        <label>Level</label>
+        <select id="levelFilter">
+          <option value="">All</option>
+          <option value="engineering">Engineering</option>
+          <option value="l1">L1</option>
+          <option value="l2">L2</option>
+          <option value="l3">L3</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>Tag Category</label>
+        <select id="tagCategory">
+          <option value="">All</option>
+          <option value="closing">Closing Tag</option>
+          <option value="escalation">Escalation Tag</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>Select Tag</label>
+        <select id="selectTag">
+          <option value="">All</option>
+          <option value="Police Notified">Police Notified</option>
+          <option value="PC/SC Called">PC/SC Called</option>
+          <option value="Guard Contacted">Guard Contacted</option>
+          <option value="Police Notified – PC/SC Not Available">Police Notified – PC/SC Not Available</option>
+        </select>
+      </div>
+      <button class="btn-search" onclick="applyFilters()">Search</button>
+      <button class="btn-download" onclick="downloadReport()">Download CSV</button>
+    </div>
+
+    <!-- Legend -->
+    <div class="legend">
+      <span class="amber">Approaching (9–10 min)</span>
+      <span class="red">SLA Breached (&gt;10 min)</span>
+      <span class="gray">No Intervention Taken</span>
+    </div>
+
+    <!-- Table -->
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Event ID</th>
+            <th>Site Name</th>
+            <th>Camera ID</th>
+            <th>Event Generated (T0)</th>
+            <th>Final Action (T4)</th>
+            <th>Final Action Tag</th>
+            <th>Engineering</th>
+            <th>L1 Time</th>
+            <th>L2 Time</th>
+            <th>L3 Time</th>
+            <th>Overall Time</th>
+            <th>Overall SLA</th>
+            <th>Eng SLA</th>
+            <th>L1 SLA</th>
+            <th>L2 SLA</th>
+            <th>L3 SLA</th>
+            <th>L1 Operator</th>
+            <th>L2 Operator</th>
+            <th>L3 Operator</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody">
+          <!-- Sample data loaded on page load -->
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <script>
+    var sampleData = [
+      { eventId: 'ESC-001', site: 'Warehouse North', camera: 'CAM-101', type: 'Alarm', t0: '2025-02-11 08:00:00', t4: '2025-02-11 08:07:15', tag: 'Police Notified', eng: '18s', l1: '42s', l2: '85s', l3: '110s', overall: '7m 15s', sla: 'met', engSla: 'ok', l1Sla: 'ok', l2Sla: 'ok', l3Sla: 'ok', l1op: 'J.Smith', l2op: 'M.Jones', l3op: 'R.Lee' },
+      { eventId: 'ESC-002', site: 'Retail Plaza East', camera: 'CAM-202', type: 'Motion', t0: '2025-02-11 08:15:00', t4: '2025-02-11 08:24:50', tag: 'Guard Contacted', eng: '22s', l1: '55s', l2: '120s', l3: '173s', overall: '9m 50s', sla: 'amber', engSla: 'ok', l1Sla: 'ok', l2Sla: 'ok', l3Sla: 'breach', l1op: 'A.Kumar', l2op: 'S.Patel', l3op: 'T.Chen' },
+      { eventId: 'ESC-003', site: 'Industrial Park 7', camera: 'CAM-305', type: 'Alarm', t0: '2025-02-11 09:00:00', t4: '2025-02-11 09:13:20', tag: 'PC/SC Called', eng: '45s', l1: '70s', l2: '150s', l3: '195s', overall: '13m 20s', sla: 'miss', engSla: 'breach', l1Sla: 'breach', l2Sla: 'breach', l3Sla: 'breach', l1op: 'K.Wilson', l2op: 'D.Brown', l3op: 'L.Garcia' },
+      { eventId: 'ESC-004', site: 'Office Complex B', camera: 'CAM-412', type: 'Tamper', t0: '2025-02-11 09:30:00', t4: '2025-02-11 09:36:40', tag: 'Police Notified', eng: '12s', l1: '38s', l2: '72s', l3: '98s', overall: '6m 40s', sla: 'met', engSla: 'ok', l1Sla: 'ok', l2Sla: 'ok', l3Sla: 'ok', l1op: 'J.Smith', l2op: 'M.Jones', l3op: 'R.Lee' },
+      { eventId: 'ESC-005', site: 'Warehouse North', camera: 'CAM-102', type: 'Motion', t0: '2025-02-11 10:00:00', t4: '—', tag: 'Pending Review', eng: '620s', l1: '—', l2: '—', l3: '—', overall: '—', sla: 'no', engSla: '—', l1Sla: '—', l2Sla: '—', l3Sla: '—', l1op: 'A.Kumar', l2op: '—', l3op: '—' },
+      { eventId: 'ESC-006', site: 'Retail Plaza East', camera: 'CAM-201', type: 'Alarm', t0: '2025-02-11 10:45:00', t4: '2025-02-11 10:52:00', tag: 'Police Notified – PC/SC Not Available', eng: '28s', l1: '48s', l2: '95s', l3: '129s', overall: '7m 0s', sla: 'met', engSla: 'ok', l1Sla: 'ok', l2Sla: 'ok', l3Sla: 'ok', l1op: 'S.Patel', l2op: 'T.Chen', l3op: 'D.Brown' },
+      { eventId: 'ESC-007', site: 'Industrial Park 7', camera: 'CAM-306', type: 'Alarm', t0: '2025-02-11 11:20:00', t4: '2025-02-11 11:35:45', tag: 'Guard Contacted', eng: '52s', l1: '88s', l2: '165s', l3: '220s', overall: '15m 45s', sla: 'miss', engSla: 'breach', l1Sla: 'breach', l2Sla: 'breach', l3Sla: 'breach', l1op: 'K.Wilson', l2op: 'L.Garcia', l3op: 'R.Lee' },
+      { eventId: 'ESC-008', site: 'Office Complex B', camera: 'CAM-411', type: 'Motion', t0: '2025-02-11 12:00:00', t4: '2025-02-11 12:08:50', tag: 'PC/SC Called', eng: '20s', l1: '50s', l2: '100s', l3: '140s', overall: '8m 50s', sla: 'met', engSla: 'ok', l1Sla: 'ok', l2Sla: 'ok', l3Sla: 'ok', l1op: 'J.Smith', l2op: 'M.Jones', l3op: 'T.Chen' },
+      { eventId: 'ESC-009', site: 'Warehouse North', camera: 'CAM-103', type: 'Alarm', t0: '2025-02-11 13:00:00', t4: '2025-02-11 13:09:55', tag: 'Police Notified', eng: '25s', l1: '58s', l2: '115s', l3: '157s', overall: '9m 55s', sla: 'amber', engSla: 'ok', l1Sla: 'ok', l2Sla: 'ok', l3Sla: 'ok', l1op: 'A.Kumar', l2op: 'S.Patel', l3op: 'D.Brown' },
+      { eventId: 'ESC-010', site: 'Retail Plaza East', camera: 'CAM-203', type: 'Tamper', t0: '2025-02-11 14:30:00', t4: '2025-02-11 14:44:10', tag: 'Guard Contacted', eng: '35s', l1: '62s', l2: '130s', l3: '203s', overall: '14m 10s', sla: 'miss', engSla: 'breach', l1Sla: 'breach', l2Sla: 'ok', l3Sla: 'breach', l1op: 'K.Wilson', l2op: 'L.Garcia', l3op: 'R.Lee' }
+    ];
+
+    function getRowClass(sla) {
+      if (sla === 'amber') return 'row-sla-amber';
+      if (sla === 'miss') return 'row-sla-miss';
+      return 'row-sla-no';
+    }
+    function techClass(eng) { return (eng && eng !== '—' && parseInt(eng, 10) > 30) ? ' tech-delay' : ''; }
+
+    function buildSampleRows() {
+      var html = '';
+      var displayed = sampleData.filter(function(r) { return r.sla !== 'met'; });
+      displayed.forEach(function(r) {
+        var rowClass = getRowClass(r.sla);
+        html += '<tr class="' + rowClass + '">' +
+          '<td>' + r.eventId + '</td><td>' + r.site + '</td><td>' + r.camera + '</td>' +
+          '<td>' + r.t0 + '</td><td>' + r.t4 + '</td><td>' + r.tag + '</td>' +
+          '<td class="' + techClass(r.eng) + '">' + r.eng + '</td><td>' + r.l1 + '</td><td>' + r.l2 + '</td><td>' + r.l3 + '</td><td>' + r.overall + '</td>' +
+          '<td>' + (r.sla === 'miss' ? 'Miss' : r.sla === 'amber' ? 'Approaching' : 'No Intervention') + '</td>' +
+          '<td>' + (r.engSla === 'ok' ? 'OK' : r.engSla === 'breach' ? 'Breach' : '—') + '</td>' +
+          '<td>' + (r.l1Sla === 'ok' ? 'OK' : r.l1Sla === 'breach' ? 'Breach' : '—') + '</td>' +
+          '<td>' + (r.l2Sla === 'ok' ? 'OK' : r.l2Sla === 'breach' ? 'Breach' : '—') + '</td>' +
+          '<td>' + (r.l3Sla === 'ok' ? 'OK' : r.l3Sla === 'breach' ? 'Breach' : '—') + '</td>' +
+          '<td>—</td><td>' + (r.l2op || '—') + '</td><td>' + (r.l3op || '—') + '</td>' +
+          '</tr>';
+      });
+      return html;
+    }
+
+    function renderSampleData() {
+      document.getElementById('tableBody').innerHTML = buildSampleRows();
+    }
+
+    function applyFilters() {
+      var from = document.getElementById('fromDate').value;
+      var to = document.getElementById('toDate').value;
+      if (!from || !to) {
+        alert('Please select From Date and To Date.');
+        return;
+      }
+      renderSampleData();
+    }
+
+    function downloadReport() {
+      alert('In the live app, this downloads CSV from the API. Open the report in Pro-Safe Admin at /reports-dashboard/incident-radar for full export.');
+    }
+
+    // Load sample data when page opens
+    document.addEventListener('DOMContentLoaded', renderSampleData);
+  </script>
+</body>
+</html>
