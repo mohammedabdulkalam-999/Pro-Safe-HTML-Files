@@ -292,6 +292,28 @@
       background: var(--white);
     }
 
+    .date-filter {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .date-filter label {
+      font-size: 12px;
+      color: #11496e;
+      font-weight: 500;
+    }
+
+    .date-filter input[type="date"] {
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 6px 8px;
+      font-size: 12px;
+      background: var(--white);
+      color: var(--text);
+      font-family: "Roboto", sans-serif;
+    }
+
     .action-btn {
       padding: 6px 12px;
       border-radius: 4px;
@@ -562,6 +584,14 @@
       <div class="recent-header">
         <span>LPR Detections</span>
         <div class="recent-actions">
+          <div class="date-filter">
+            <label for="lpr-from-date">From</label>
+            <input type="date" id="lpr-from-date" value="2026-01-20">
+          </div>
+          <div class="date-filter">
+            <label for="lpr-to-date">To</label>
+            <input type="date" id="lpr-to-date" value="2026-01-20">
+          </div>
           <select class="dropdown">
             <option>Date Range</option>
             <option>Today</option>
@@ -586,7 +616,6 @@
             <tr>
               <th>Date &amp; Time</th>
               <th>License Plate Number</th>
-              <th>Confidence Percentage</th>
               <th>Vehicle Type / Brand</th>
               <th>Color</th>
               <th>Direction</th>
@@ -598,7 +627,6 @@
             <tr>
               <td>2026-01-20 06:58:21</td>
               <td>8XKJ214</td>
-              <td>92%</td>
               <td>Sedan / Toyota</td>
               <td>White</td>
               <td>Entry</td>
@@ -610,7 +638,6 @@
             <tr style="background: var(--table-row);">
               <td>2026-01-20 06:41:03</td>
               <td>7LMR882</td>
-              <td>88%</td>
               <td>SUV / Honda</td>
               <td>Black</td>
               <td>Exit</td>
@@ -622,7 +649,6 @@
             <tr>
               <td>2026-01-20 06:15:47</td>
               <td>5TME112</td>
-              <td>95%</td>
               <td>Pickup / Ford</td>
               <td>Blue</td>
               <td>Entry</td>
