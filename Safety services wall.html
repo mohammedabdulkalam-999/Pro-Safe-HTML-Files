@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Safety services wall - PRO-SAFE</title>
+  <style>
+    body { margin: 0; font-family: 'Inter', Helvetica, Arial, sans-serif; background: #181f26; }
+    .basecamp-header { background: #2c5b89; color: #fff; display: flex; align-items: center; padding: 0 32px; height: 64px; font-size: 1.2rem; font-weight: 600; }
+    .basecamp-header .logo { display: flex; align-items: center; font-size: 2rem; font-weight: bold; margin-right: 16px; }
+    .basecamp-header .logo-img { width: 48px; height: 48px; margin-right: 12px; background: #2c5b89; border-radius: 50%; padding: 4px; }
+    .basecamp-header .user { margin-left: auto; font-size: 1.1rem; font-weight: 500; display: flex; align-items: center; gap: 16px; }
+    .basecamp-wall-container { display: flex; flex-direction: column; height: calc(100vh - 64px); background: rgb(30, 30, 30); min-height: 0; }
+    .basecamp-panels { flex: 1; min-height: 0; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 8px; padding: 8px; }
+    .basecamp-panel { border: 3px solid #ffffff; border-radius: 4px; position: relative; overflow: hidden; min-height: 0; display: flex; flex-direction: column; }
+    .basecamp-panel.border-redflag { border: 6px solid #f81919 !important; }
+    .basecamp-panel.border-orangeflag { border: 6px solid transparent; animation: blinkBorder 1s infinite; }
+    @keyframes blinkBorder { 0% { border: 6px solid #fba706; } 50% { border: 6px solid transparent; } 100% { border: 6px solid #fba706; } }
+    .basecamp-panel-content { padding: 0; color: #fff; flex: 1; min-height: 0; display: flex; flex-direction: column; position: relative; overflow-y: auto; }
+    .panel-media-row { display: flex; flex-direction: row; flex: 1 1 auto; min-height: 120px; }
+    .panel-media-row .media-card-slot { flex: 1; min-width: 0; }
+    .basecamp-panel-content > .thumbnails-accordion.card-accordion { flex-shrink: 0; }
+    .basecamp-panel-error { text-align: center; color: #ffffff; font-size: 16px; font-weight: 500; }
+    /* Video / media card slots - 16:9 aspect ratio */
+    .media-card-slot { flex: 1; min-width: 0; position: relative; background: #0d1117; display: flex; align-items: center; justify-content: center; aspect-ratio: 16/9; max-height: 100%; }
+    .media-card-slot .media-wrapper { width: 100%; height: 100%; position: relative; }
+    .media-card-slot video { width: 100%; height: 100%; object-fit: contain; display: block; }
+    .media-card-slot iframe { width: 100%; height: 100%; border: none; display: block; }
+    .media-card-slot .media-image { width: 100%; height: 100%; object-fit: contain; display: block; }
+    .media-card-slot .media-placeholder { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: rgba(255,255,255,0.6); font-size: 0.95rem; padding: 20px; text-align: center; }
+    .media-card-slot .media-placeholder .slot-label { font-weight: 600; color: #fff; font-size: 1.1rem; margin-bottom: 8px; }
+    .media-card-slot .media-placeholder .slot-hint { font-size: 0.8rem; opacity: 0.8; }
+    .media-card-slot .media-caption { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.85)); color: #fff; padding: 8px 12px; font-size: 0.8rem; font-weight: 500; }
+    /* Status/action icon strip (right of each video slot) */
+    .slot-status-icons { width: 44px; flex-shrink: 0; align-self: stretch; height: 100%; background: rgba(0,0,0,0.5); display: flex; flex-direction: column; align-items: center; justify-content: space-evenly; padding: 10px 0; border-left: 1px solid rgba(255,255,255,0.15); box-sizing: border-box; }
+    .slot-status-icons .status-icon { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; cursor: pointer; font-weight: 700; }
+    .slot-status-icons .status-icon:hover { opacity: 0.9; }
+    .slot-status-icons .status-icon:focus { outline: 2px solid #fff; outline-offset: 2px; }
+    .slot-status-icons .status-icon.info { background: #fff; color: #1a1a1a; font-size: 14px; font-weight: 700; font-style: italic; }
+    .slot-status-icons .status-icon.emergency-alarm { background: #c62828; color: #fff; }
+    .slot-status-icons .status-icon.check { background: #2e7d32; color: #fff; }
+    .slot-status-icons .status-icon.upload { background: #c62828; color: #fff; }
+    .slot-status-icons .status-icon.notify { background: #ef6c00; color: #fff; }
+    .slot-status-icons .status-icon.play { background: #1565c0; color: #fff; }
+    .slot-status-icons .status-icon svg { width: 14px; height: 14px; stroke: currentColor; stroke-width: 1.2; stroke-linejoin: round; fill: currentColor; }
+    .slot-status-icons .status-icon.outline { background: transparent; border: 2px solid currentColor; }
+    .slot-status-icons .status-icon.outline.emergency-alarm { color: #c62828; }
+    .slot-status-icons .status-icon.outline.upload { color: #c62828; }
+    .slot-status-icons .status-icon.outline.notify { color: #ef6c00; }
+    .slot-status-icons .status-icon.outline.play { color: #1565c0; }
+    @media (max-width: 768px) { .basecamp-panels { grid-template-columns: 1fr; grid-template-rows: repeat(4, 1fr); } }
+    /* Thumbnails accordion under each media card */
+    .thumbnails-accordion { flex-shrink: 0; background: #252d36; border-top: 1px solid rgba(255,255,255,0.12); min-height: 32px; }
+    .thumbnails-accordion.card-accordion { border-top: 1px solid rgba(255,255,255,0.1); margin-top: 0; border-radius: 0 0 6px 6px; }
+    .thumbnails-accordion-header { padding: 6px 10px; min-height: 32px; box-sizing: border-box; cursor: pointer; display: flex; align-items: center; justify-content: space-between; color: #fff; font-weight: 600; font-size: 0.8rem; user-select: none; }
+    .thumbnails-accordion-header:hover { background: rgba(255,255,255,0.06); }
+    .thumbnails-accordion-header .accordion-arrow { transition: transform 0.2s ease; }
+    .thumbnails-accordion-header.is-open .accordion-arrow { transform: rotate(180deg); }
+    .thumbnails-accordion-content { display: none; padding: 16px 20px; max-height: 220px; overflow: auto; }
+    .thumbnails-accordion-content.is-open { display: block; }
+    .card-accordion .thumbnails-accordion-content { max-height: 120px; padding: 8px 12px; overflow: auto; }
+    .card-accordion .thumbnail-item { max-height: 90px; max-width: 160px; width: 100%; }
+    .thumbnails-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+    .thumbnail-item { position: relative; background: #0d1117; border-radius: 4px; overflow: hidden; aspect-ratio: 16/9; border: 1px solid rgba(255,255,255,0.15); }
+    .thumbnail-item video { width: 100%; height: 100%; object-fit: cover; display: block; pointer-events: none; }
+    .thumbnail-item .thumbnail-label { position: absolute; bottom: 0; left: 0; right: 0; padding: 4px 8px; background: rgba(0,0,0,0.75); color: #fff; font-size: 0.75rem; font-weight: 500; }
+    @media (max-width: 768px) { .thumbnails-grid { grid-template-columns: repeat(2, 1fr); } }
+    /* Site info modal */
+    .site-info-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1000; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; }
+    .site-info-overlay.is-open { display: flex; }
+    .site-info-modal { background: #fff; color: #222; border-radius: 8px; max-width: 420px; width: 100%; box-shadow: 0 8px 32px rgba(0,0,0,0.3); overflow: hidden; }
+    .site-info-modal .site-info-header { background: #2c5b89; color: #fff; padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; }
+    .site-info-modal .site-info-header h3 { margin: 0; font-size: 1.1rem; font-weight: 600; }
+    .site-info-modal .site-info-close { background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer; padding: 0 4px; line-height: 1; opacity: 0.9; }
+    .site-info-modal .site-info-close:hover { opacity: 1; }
+    .site-info-modal .site-info-body { padding: 20px; font-size: 0.95rem; line-height: 1.6; }
+    .site-info-modal .site-info-row { margin-bottom: 12px; }
+    .site-info-modal .site-info-row:last-child { margin-bottom: 0; }
+    .site-info-modal .site-info-label { font-weight: 600; color: #2c5b89; display: block; margin-bottom: 2px; }
+    .site-info-modal .site-info-value { color: #333; }
+    /* Emergency alarm activated modal */
+    .emergency-alarm-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1001; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; }
+    .emergency-alarm-overlay.is-open { display: flex; }
+    .emergency-alarm-modal { background: #fff; color: #222; border-radius: 8px; max-width: 360px; width: 100%; box-shadow: 0 8px 32px rgba(0,0,0,0.3); overflow: hidden; border-left: 4px solid #c62828; }
+    .emergency-alarm-modal .emergency-alarm-header { background: #c62828; color: #fff; padding: 16px 20px; font-weight: 600; font-size: 1rem; }
+    .emergency-alarm-modal .emergency-alarm-body { padding: 20px; font-size: 1rem; }
+    .emergency-alarm-modal .emergency-alarm-body p { margin: 0 0 16px 0; }
+    .emergency-alarm-modal .emergency-alarm-close { display: block; width: 100%; padding: 10px; background: #2c5b89; color: #fff; border: none; border-radius: 4px; font-size: 0.95rem; font-weight: 600; cursor: pointer; }
+    .emergency-alarm-modal .emergency-alarm-close:hover { background: #1e4062; }
+    /* Compliance resolved modal */
+    .compliance-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1002; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; }
+    .compliance-overlay.is-open { display: flex; }
+    .compliance-modal { background: #fff; color: #222; border-radius: 8px; max-width: 360px; width: 100%; box-shadow: 0 8px 32px rgba(0,0,0,0.3); overflow: hidden; border-left: 4px solid #2e7d32; }
+    .compliance-modal .compliance-header { background: #2e7d32; color: #fff; padding: 16px 20px; font-weight: 600; font-size: 1rem; }
+    .compliance-modal .compliance-body { padding: 20px; font-size: 1rem; }
+    .compliance-modal .compliance-body p { margin: 0 0 16px 0; }
+    .compliance-modal .compliance-close { display: block; width: 100%; padding: 10px; background: #2c5b89; color: #fff; border: none; border-radius: 4px; font-size: 0.95rem; font-weight: 600; cursor: pointer; }
+    .compliance-modal .compliance-close:hover { background: #1e4062; }
+    /* Disposition modal - radio options */
+    .disposition-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1003; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; }
+    .disposition-overlay.is-open { display: flex; }
+    .disposition-modal { background: #fff; color: #222; border-radius: 8px; max-width: 420px; width: 100%; box-shadow: 0 8px 32px rgba(0,0,0,0.3); overflow: hidden; border-left: 4px solid #c62828; }
+    .disposition-modal .disposition-header { background: #c62828; color: #fff; padding: 16px 20px; font-weight: 600; font-size: 1rem; }
+    .disposition-modal .disposition-body { padding: 20px; font-size: 0.95rem; }
+    .disposition-modal .disposition-option { display: flex; align-items: flex-start; gap: 10px; padding: 12px 0; border-bottom: 1px solid #eee; cursor: pointer; }
+    .disposition-modal .disposition-option:last-of-type { border-bottom: none; }
+    .disposition-modal .disposition-option input[type="radio"] { margin-top: 3px; flex-shrink: 0; cursor: pointer; }
+    .disposition-modal .disposition-option label { cursor: pointer; flex: 1; margin: 0; line-height: 1.4; }
+    .disposition-modal .disposition-option.partial { color: #b45309; }
+    .disposition-modal .disposition-option.non { color: #c62828; }
+    .disposition-modal .disposition-close { display: block; width: 100%; margin-top: 16px; padding: 10px; background: #2c5b89; color: #fff; border: none; border-radius: 4px; font-size: 0.95rem; font-weight: 600; cursor: pointer; }
+    .disposition-modal .disposition-close:hover { background: #1e4062; }
+    /* Alarm triggered modal (5th icon) */
+    .alarm-trigger-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1004; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; }
+    .alarm-trigger-overlay.is-open { display: flex; }
+    .alarm-trigger-modal { background: #fff; color: #222; border-radius: 8px; max-width: 360px; width: 100%; box-shadow: 0 8px 32px rgba(0,0,0,0.3); overflow: hidden; border-left: 4px solid #ef6c00; }
+    .alarm-trigger-modal .alarm-trigger-header { background: #ef6c00; color: #fff; padding: 16px 20px; font-weight: 600; font-size: 1rem; }
+    .alarm-trigger-modal .alarm-trigger-body { padding: 20px; font-size: 1rem; }
+    .alarm-trigger-modal .alarm-trigger-body p { margin: 0 0 16px 0; }
+    .alarm-trigger-modal .alarm-trigger-close { display: block; width: 100%; padding: 10px; background: #2c5b89; color: #fff; border: none; border-radius: 4px; font-size: 0.95rem; font-weight: 600; cursor: pointer; }
+    .alarm-trigger-modal .alarm-trigger-close:hover { background: #1e4062; }
+  </style>
+</head>
+<body>
+  <div class="basecamp-header">
+    <span class="logo"><img src="https://via.placeholder.com/48x48?text=PS" class="logo-img" alt="Logo" />PRO-SAFE</span>
+    <span class="user">Safety services wall <span style="margin-left: 18px;">Abdul Kalam</span></span>
+  </div>
+  <div id="basecampWallContent" class="basecamp-wall-container">
+    <div class="basecamp-panels">
+      <div class="basecamp-panel" id="panel1_slot">
+        <div class="basecamp-panel-content" id="panel1Container">
+          <div class="panel-media-row">
+            <div class="media-card-slot" id="mediaSlot1">
+              <div class="media-placeholder">
+                <span class="slot-label">Video / media slot 1</span>
+                <span class="slot-hint">Assign a stream or media URL to display here</span>
+              </div>
+            </div>
+            <div class="slot-status-icons" aria-label="Status indicators" data-slot="1">
+            <span class="status-icon info" role="button" tabindex="0" data-icon="info" title="Site Safety info">i</span>
+            <span class="status-icon emergency-alarm" role="button" tabindex="0" data-icon="emergency-alarm" title="Emergency Alarm"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="0.5" y="7" width="1.5" height="10" rx="0.5" stroke="none"/><rect x="2.5" y="7" width="1.5" height="10" rx="0.5" stroke="none"/><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/><rect x="20" y="7" width="1.5" height="10" rx="0.5" stroke="none"/><rect x="22" y="7" width="1.5" height="10" rx="0.5" stroke="none"/></svg></span>
+            <span class="status-icon check" role="button" tabindex="0" data-icon="check" title="Mark As Compliance"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></span>
+            <span class="status-icon upload outline" role="button" tabindex="0" data-icon="upload" title="Disposition"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16h6v-6h4l-7-7-7 7h4v6zm-4 2h14v2H5v-2z"/></svg></span>
+            <span class="status-icon notify outline" role="button" tabindex="0" data-icon="notify" title="Alarm Trigger"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg></span>
+            <span class="status-icon play outline" role="button" tabindex="0" data-icon="play" title="Playback"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+            </div>
+          </div>
+          <div class="thumbnails-accordion card-accordion" data-slot="1">
+            <div class="thumbnails-accordion-header" role="button" tabindex="0" aria-expanded="false" aria-controls="thumbContent1"><span>Past and Future events</span><span class="accordion-arrow" aria-hidden="true">▼</span></div>
+            <div class="thumbnails-accordion-content" id="thumbContent1" role="region">
+              <div class="thumbnail-item"><video class="card-thumb-video" data-slot="1" preload="metadata" muted playsinline></video><span class="thumbnail-label">Slot 1</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="basecamp-panel" id="panel2_slot">
+        <div class="basecamp-panel-content" id="panel2Container">
+          <div class="panel-media-row">
+            <div class="media-card-slot" id="mediaSlot2">
+              <div class="media-placeholder">
+                <span class="slot-label">Video / media slot 2</span>
+                <span class="slot-hint">Assign a stream or media URL to display here</span>
+              </div>
+            </div>
+            <div class="slot-status-icons" aria-label="Status indicators" data-slot="2">
+            <span class="status-icon info" role="button" tabindex="0" data-icon="info" title="Site Safety info">i</span>
+            <span class="status-icon emergency-alarm" role="button" tabindex="0" data-icon="emergency-alarm" title="Emergency Alarm"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="0.5" y="7" width="1.5" height="10" rx="0.5" stroke="none"/><rect x="2.5" y="7" width="1.5" height="10" rx="0.5" stroke="none"/><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/><rect x="20" y="7" width="1.5" height="10" rx="0.5" stroke="none"/><rect x="22" y="7" width="1.5" height="10" rx="0.5" stroke="none"/></svg></span>
+            <span class="status-icon check" role="button" tabindex="0" data-icon="check" title="Mark As Compliance"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></span>
+            <span class="status-icon upload outline" role="button" tabindex="0" data-icon="upload" title="Disposition"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16h6v-6h4l-7-7-7 7h4v6zm-4 2h14v2H5v-2z"/></svg></span>
+            <span class="status-icon notify outline" role="button" tabindex="0" data-icon="notify" title="Alarm Trigger"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg></span>
+            <span class="status-icon play outline" role="button" tabindex="0" data-icon="play" title="Playback"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+            </div>
+          </div>
+          <div class="thumbnails-accordion card-accordion" data-slot="2">
+            <div class="thumbnails-accordion-header" role="button" tabindex="0" aria-expanded="false" aria-controls="thumbContent2"><span>Past and Future events</span><span class="accordion-arrow" aria-hidden="true">▼</span></div>
+            <div class="thumbnails-accordion-content" id="thumbContent2" role="region">
+              <div class="thumbnail-item"><video class="card-thumb-video" data-slot="2" preload="metadata" muted playsinline></video><span class="thumbnail-label">Slot 2</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="basecamp-panel" id="panel3_slot">
+        <div class="basecamp-panel-content" id="panel3Container">
+          <div class="panel-media-row">
+            <div class="media-card-slot" id="mediaSlot3">
+              <div class="media-placeholder">
+                <span class="slot-label">Video / media slot 3</span>
+                <span class="slot-hint">Assign a stream or media URL to display here</span>
+              </div>
+            </div>
+            <div class="slot-status-icons" aria-label="Status indicators" data-slot="3">
+            <span class="status-icon info" role="button" tabindex="0" data-icon="info" title="Site Safety info">i</span>
+            <span class="status-icon emergency-alarm" role="button" tabindex="0" data-icon="emergency-alarm" title="Emergency Alarm"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="0.5" y="7" width="1.5" height="10" rx="0.5" stroke="none"/><rect x="2.5" y="7" width="1.5" height="10" rx="0.5" stroke="none"/><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/><rect x="20" y="7" width="1.5" height="10" rx="0.5" stroke="none"/><rect x="22" y="7" width="1.5" height="10" rx="0.5" stroke="none"/></svg></span>
+            <span class="status-icon check" role="button" tabindex="0" data-icon="check" title="Mark As Compliance"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></span>
+            <span class="status-icon upload" role="button" tabindex="0" data-icon="upload" title="Disposition"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16h6v-6h4l-7-7-7 7h4v6zm-4 2h14v2H5v-2z"/></svg></span>
+            <span class="status-icon notify" role="button" tabindex="0" data-icon="notify" title="Alarm Trigger"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg></span>
+            <span class="status-icon play" role="button" tabindex="0" data-icon="play" title="Playback"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+            </div>
+          </div>
+          <div class="thumbnails-accordion card-accordion" data-slot="3">
+            <div class="thumbnails-accordion-header" role="button" tabindex="0" aria-expanded="false" aria-controls="thumbContent3"><span>Past and Future events</span><span class="accordion-arrow" aria-hidden="true">▼</span></div>
+            <div class="thumbnails-accordion-content" id="thumbContent3" role="region">
+              <div class="thumbnail-item"><video class="card-thumb-video" data-slot="3" preload="metadata" muted playsinline></video><span class="thumbnail-label">Slot 3</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="basecamp-panel" id="panel4_slot">
+        <div class="basecamp-panel-content" id="panel4Container">
+          <div class="panel-media-row">
+            <div class="media-card-slot" id="mediaSlot4">
+              <div class="media-placeholder">
+                <span class="slot-label">Video / media slot 4</span>
+                <span class="slot-hint">Assign a stream or media URL to display here</span>
+              </div>
+            </div>
+            <div class="slot-status-icons" aria-label="Status indicators" data-slot="4">
+            <span class="status-icon info" role="button" tabindex="0" data-icon="info" title="Site Safety info">i</span>
+            <span class="status-icon emergency-alarm" role="button" tabindex="0" data-icon="emergency-alarm" title="Emergency Alarm"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="0.5" y="7" width="1.5" height="10" rx="0.5" stroke="none"/><rect x="2.5" y="7" width="1.5" height="10" rx="0.5" stroke="none"/><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/><rect x="20" y="7" width="1.5" height="10" rx="0.5" stroke="none"/><rect x="22" y="7" width="1.5" height="10" rx="0.5" stroke="none"/></svg></span>
+            <span class="status-icon check" role="button" tabindex="0" data-icon="check" title="Mark As Compliance"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></span>
+            <span class="status-icon upload" role="button" tabindex="0" data-icon="upload" title="Disposition"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16h6v-6h4l-7-7-7 7h4v6zm-4 2h14v2H5v-2z"/></svg></span>
+            <span class="status-icon notify" role="button" tabindex="0" data-icon="notify" title="Alarm Trigger"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg></span>
+            <span class="status-icon play" role="button" tabindex="0" data-icon="play" title="Playback"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+            </div>
+          </div>
+          <div class="thumbnails-accordion card-accordion" data-slot="4">
+            <div class="thumbnails-accordion-header" role="button" tabindex="0" aria-expanded="false" aria-controls="thumbContent4"><span>Past and Future events</span><span class="accordion-arrow" aria-hidden="true">▼</span></div>
+            <div class="thumbnails-accordion-content" id="thumbContent4" role="region">
+              <div class="thumbnail-item"><video class="card-thumb-video" data-slot="4" preload="metadata" muted playsinline></video><span class="thumbnail-label">Slot 4</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="siteInfoModal" class="site-info-overlay" aria-hidden="true" role="dialog" aria-labelledby="siteInfoModalTitle">
+    <div class="site-info-modal" onclick="event.stopPropagation()">
+      <div class="site-info-header">
+        <h3 id="siteInfoModalTitle">Site Safety Info</h3>
+        <button type="button" class="site-info-close" onclick="document.getElementById('siteInfoModal').classList.remove('is-open')" aria-label="Close">&times;</button>
+      </div>
+      <div class="site-info-body">
+        <div class="site-info-row">
+          <span class="site-info-label">Site Name</span>
+          <span class="site-info-value">Newyork Metro Phase 2 – Package B</span>
+        </div>
+        <div class="site-info-row">
+          <span class="site-info-label">Site ID</span>
+          <span class="site-info-value">SITE-NWY-002</span>
+        </div>
+        <div class="site-info-row">
+          <span class="site-info-label">Location</span>
+          <span class="site-info-value">Newyork City</span>
+        </div>
+        <div class="site-info-row">
+          <span class="site-info-label">Industry Type</span>
+          <span class="site-info-value">Commercial Infrastructure</span>
+        </div>
+        <div class="site-info-row">
+          <span class="site-info-label">Safety protocols</span>
+          <span class="site-info-value">Workers should wear Helmet and Vest</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="emergencyAlarmModal" class="emergency-alarm-overlay" aria-hidden="true" role="alertdialog" aria-labelledby="emergencyAlarmModalTitle">
+    <div class="emergency-alarm-modal" onclick="event.stopPropagation()">
+      <div class="emergency-alarm-header" id="emergencyAlarmModalTitle">Emergency Alarm</div>
+      <div class="emergency-alarm-body">
+        <p>Emergency alarm activated.</p>
+        <button type="button" class="emergency-alarm-close" onclick="document.getElementById('emergencyAlarmModal').classList.remove('is-open')">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="complianceModal" class="compliance-overlay" aria-hidden="true" role="dialog" aria-labelledby="complianceModalTitle">
+    <div class="compliance-modal" onclick="event.stopPropagation()">
+      <div class="compliance-header" id="complianceModalTitle">Mark As Compliance</div>
+      <div class="compliance-body">
+        <p>Compliance Resolved.</p>
+        <button type="button" class="compliance-close" onclick="document.getElementById('complianceModal').classList.remove('is-open')">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="dispositionModal" class="disposition-overlay" aria-hidden="true" role="dialog" aria-labelledby="dispositionModalTitle">
+    <div class="disposition-modal" onclick="event.stopPropagation()">
+      <div class="disposition-header" id="dispositionModalTitle">Disposition</div>
+      <div class="disposition-body">
+        <div class="disposition-option partial">
+          <input type="radio" name="disposition" id="disposition-partial" value="partial">
+          <label for="disposition-partial">⚠️ Partial Compliance – Worker Wear Helmet but not Vest</label>
+        </div>
+        <div class="disposition-option non">
+          <input type="radio" name="disposition" id="disposition-non" value="non">
+          <label for="disposition-non">❌ Non-Compliance – No Helmet No Vest</label>
+        </div>
+        <button type="button" class="disposition-close" onclick="document.getElementById('dispositionModal').classList.remove('is-open')">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="alarmTriggerModal" class="alarm-trigger-overlay" aria-hidden="true" role="alertdialog" aria-labelledby="alarmTriggerModalTitle">
+    <div class="alarm-trigger-modal" onclick="event.stopPropagation()">
+      <div class="alarm-trigger-header" id="alarmTriggerModalTitle">Alarm Trigger</div>
+      <div class="alarm-trigger-body">
+        <p>Custom alarm triggered Successfully.</p>
+        <button type="button" class="alarm-trigger-close" onclick="document.getElementById('alarmTriggerModal').classList.remove('is-open')">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function initStatusIconClicks() {
+      function handleIconAction(iconEl) {
+        var strip = iconEl.closest('.slot-status-icons');
+        var slot = strip ? strip.getAttribute('data-slot') : '';
+        var iconType = iconEl.getAttribute('data-icon') || '';
+        var title = iconEl.getAttribute('title') || '';
+        if (iconType === 'info') {
+          var modal = document.getElementById('siteInfoModal');
+          if (modal) { modal.classList.add('is-open'); modal.setAttribute('aria-hidden', 'false'); }
+        }
+        if (iconType === 'emergency-alarm') {
+          var alarmModal = document.getElementById('emergencyAlarmModal');
+          if (alarmModal) { alarmModal.classList.add('is-open'); alarmModal.setAttribute('aria-hidden', 'false'); }
+        }
+        if (iconType === 'check') {
+          var complianceModal = document.getElementById('complianceModal');
+          if (complianceModal) { complianceModal.classList.add('is-open'); complianceModal.setAttribute('aria-hidden', 'false'); }
+        }
+        if (iconType === 'upload') {
+          var dispositionModal = document.getElementById('dispositionModal');
+          if (dispositionModal) { dispositionModal.classList.add('is-open'); dispositionModal.setAttribute('aria-hidden', 'false'); }
+        }
+        if (iconType === 'notify') {
+          var alarmTriggerModal = document.getElementById('alarmTriggerModal');
+          if (alarmTriggerModal) { alarmTriggerModal.classList.add('is-open'); alarmTriggerModal.setAttribute('aria-hidden', 'false'); }
+        }
+        if (typeof window.SafetyWallIconClick === 'function') {
+          window.SafetyWallIconClick(parseInt(slot, 10) || 0, iconType, title);
+        }
+        iconEl.dispatchEvent(new CustomEvent('safetywalliconclick', { bubbles: true, detail: { slot: slot, icon: iconType, title: title } }));
+      }
+      document.querySelectorAll('.slot-status-icons .status-icon').forEach(function(icon) {
+        icon.addEventListener('click', function() { handleIconAction(icon); });
+        icon.addEventListener('keydown', function(e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleIconAction(icon); } });
+      });
+      var overlay = document.getElementById('siteInfoModal');
+      if (overlay) {
+        overlay.addEventListener('click', function(e) { if (e.target === overlay) overlay.classList.remove('is-open'); });
+      }
+      var alarmOverlay = document.getElementById('emergencyAlarmModal');
+      if (alarmOverlay) {
+        alarmOverlay.addEventListener('click', function(e) { if (e.target === alarmOverlay) alarmOverlay.classList.remove('is-open'); });
+      }
+      var complianceOverlay = document.getElementById('complianceModal');
+      if (complianceOverlay) {
+        complianceOverlay.addEventListener('click', function(e) { if (e.target === complianceOverlay) complianceOverlay.classList.remove('is-open'); });
+      }
+      var dispositionOverlay = document.getElementById('dispositionModal');
+      if (dispositionOverlay) {
+        dispositionOverlay.addEventListener('click', function(e) { if (e.target === dispositionOverlay) dispositionOverlay.classList.remove('is-open'); });
+      }
+      var alarmTriggerOverlay = document.getElementById('alarmTriggerModal');
+      if (alarmTriggerOverlay) {
+        alarmTriggerOverlay.addEventListener('click', function(e) { if (e.target === alarmTriggerOverlay) alarmTriggerOverlay.classList.remove('is-open'); });
+      }
+      document.querySelectorAll('.disposition-option').forEach(function(div) {
+        div.addEventListener('click', function(e) { if (!e.target.matches('input')) this.querySelector('input[type="radio"]').checked = true; });
+      });
+      document.addEventListener('keydown', function(e) {
+        if (e.key !== 'Escape') return;
+        if (overlay && overlay.classList.contains('is-open')) overlay.classList.remove('is-open');
+        if (alarmOverlay && alarmOverlay.classList.contains('is-open')) alarmOverlay.classList.remove('is-open');
+        if (complianceOverlay && complianceOverlay.classList.contains('is-open')) complianceOverlay.classList.remove('is-open');
+        if (dispositionOverlay && dispositionOverlay.classList.contains('is-open')) dispositionOverlay.classList.remove('is-open');
+        if (alarmTriggerOverlay && alarmTriggerOverlay.classList.contains('is-open')) alarmTriggerOverlay.classList.remove('is-open');
+      });
+    })();
+  </script>
+  <script>
+    (function initThumbnailsAccordion() {
+      var urlParams = new URLSearchParams(typeof window !== 'undefined' && window.location ? window.location.search : '');
+      var mediaBasePath = (function() {
+        var base = urlParams.get('mediaBase') || '';
+        return base && !/\/$/.test(base) ? base + '/' : base;
+      })();
+      var defaultVideos = [
+        mediaBasePath + '20260318_0624_New Video_storyboard_01kkz702f5e0xtcr5n18seds54.mp4',
+        mediaBasePath + '20260318_0624_New Video_storyboard_01kkz702e9e3krx5n633arhwde.mp4',
+        mediaBasePath + '20260318_0643_New Video_simple_compose_01kkz82z88fxg9e4j8k8r6gr2j.mp4',
+        mediaBasePath + '20260318_0643_New Video_simple_compose_01kkz82z80f5r9542cw0z0mf7e.mp4'
+      ];
+      function syncThumbnail(slotNum) {
+        var slot = document.getElementById('mediaSlot' + slotNum);
+        var thumb = document.querySelector('.card-thumb-video[data-slot="' + slotNum + '"]');
+        if (!thumb) return;
+        var src = defaultVideos[slotNum - 1];
+        if (slot) {
+          var slotVideo = slot.querySelector('video[src]');
+          if (slotVideo && slotVideo.src) src = slotVideo.src;
+        }
+        if (src && thumb.getAttribute('src') !== src) { thumb.src = src; thumb.load(); }
+      }
+      document.querySelectorAll('.card-accordion').forEach(function(accordion) {
+        var slot = parseInt(accordion.getAttribute('data-slot'), 10);
+        var header = accordion.querySelector('.thumbnails-accordion-header');
+        var content = accordion.querySelector('.thumbnails-accordion-content');
+        if (!header || !content || !slot) return;
+        function toggle() {
+          var isOpen = content.classList.toggle('is-open');
+          header.classList.toggle('is-open', isOpen);
+          header.setAttribute('aria-expanded', isOpen);
+          if (isOpen) syncThumbnail(slot);
+        }
+        header.addEventListener('click', toggle);
+        header.addEventListener('keydown', function(e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); } });
+      });
+    })();
+  </script>
+  <script>
+    function renderBasecampWall() {
+      // Update borders based on flags
+      function updatePanelBorders(panelId, redFlag, orangeFlag) {
+        const panel = document.getElementById(panelId);
+        if (!panel) return;
+        panel.className = 'basecamp-panel';
+        if (redFlag) panel.classList.add('border-redflag');
+        else if (orangeFlag) panel.classList.add('border-orangeflag');
+      }
+      
+      // Video/media slot helpers
+      function escapeHtml(s) {
+        if (!s) return '';
+        var d = document.createElement('div');
+        d.textContent = s;
+        return d.innerHTML;
+      }
+      function getSlotData(key) {
+        try {
+          var raw = localStorage.getItem(key);
+          return raw ? JSON.parse(raw) : null;
+        } catch (e) { return null; }
+      }
+      function renderMediaSlot(slotId, data) {
+        var slot = document.getElementById(slotId);
+        if (!slot) return;
+        var html = '';
+        var url = (data && data.url) ? String(data.url).trim() : '';
+        var type = (data && data.type) ? String(data.type).toLowerCase() : 'video';
+        var title = (data && data.title) ? String(data.title).trim() : '';
+        if (url) {
+          if (type === 'iframe') {
+            html = '<div class="media-wrapper"><iframe src="' + escapeHtml(url) + '" title="' + escapeHtml(title || 'Stream') + '"></iframe>';
+          } else if (type === 'image') {
+            html = '<div class="media-wrapper"><img class="media-image" src="' + escapeHtml(url) + '" alt="' + escapeHtml(title || '') + '" />';
+          } else {
+            html = '<div class="media-wrapper"><video src="' + escapeHtml(url) + '" controls autoplay muted loop playsinline></video>';
+          }
+          if (title) html += '<span class="media-caption">' + escapeHtml(title) + '</span>';
+          html += '</div>';
+          slot.innerHTML = html;
+          var video = slot.querySelector('video');
+          if (video) video.play().catch(function() {});
+        } else {
+          var n = slotId.replace('mediaSlot', '');
+          slot.innerHTML = '<div class="media-placeholder"><span class="slot-label">Video / media slot ' + n + '</span><span class="slot-hint">Assign a stream or media URL to display here</span></div>';
+        }
+      }
+      var urlParams = new URLSearchParams(window.location.search);
+      var slotKeys = ['safetyWallSlot1', 'safetyWallSlot2', 'safetyWallSlot3', 'safetyWallSlot4'];
+      var slotIds = ['mediaSlot1', 'mediaSlot2', 'mediaSlot3', 'mediaSlot4'];
+      // Base path for videos when deployed (e.g. GitHub Pages). Use '' if HTML and videos are in the same folder. End with / if set.
+      var mediaBasePath = (function() {
+        var base = urlParams.get('mediaBase') || '';
+        return base ? (base.replace(/\/?$/, '/')) : '';
+      })();
+      var defaultSlot1Video = mediaBasePath + '20260318_0624_New Video_storyboard_01kkz702f5e0xtcr5n18seds54.mp4';
+      var defaultSlot2Video = mediaBasePath + '20260318_0624_New Video_storyboard_01kkz702e9e3krx5n633arhwde.mp4';
+      var defaultSlot3Video = mediaBasePath + '20260318_0643_New Video_simple_compose_01kkz82z88fxg9e4j8k8r6gr2j.mp4';
+      var defaultSlot4Video = mediaBasePath + '20260318_0643_New Video_simple_compose_01kkz82z80f5r9542cw0z0mf7e.mp4';
+      for (var i = 0; i < 4; i++) {
+        var idx = i + 1;
+        var url = urlParams.get('slot' + idx + 'url') || urlParams.get('slot' + idx);
+        var type = (urlParams.get('slot' + idx + 'type') || 'video').toLowerCase();
+        var data = getSlotData(slotKeys[i]);
+        if (url && !data) data = { type: type, url: url, title: '' };
+        if (i === 0 && !data) data = { type: 'video', url: defaultSlot1Video, title: '' };
+        if (i === 1 && !data) data = { type: 'video', url: defaultSlot2Video, title: '' };
+        if (i === 2 && !data) data = { type: 'video', url: defaultSlot3Video, title: '' };
+        if (i === 3 && !data) data = { type: 'video', url: defaultSlot4Video, title: '' };
+        renderMediaSlot(slotIds[i], data);
+      }
+      var p1 = getSlotData('panel1Data'), p2 = getSlotData('panel2Data');
+      var p3 = getSlotData('panel3Data'), p4 = getSlotData('panel4Data');
+      if (p1) updatePanelBorders('panel1_slot', !!p1.redFlag, !!p1.orangeFlag);
+      if (p2) updatePanelBorders('panel2_slot', !!p2.redFlag, !!p2.orangeFlag);
+      if (p3) updatePanelBorders('panel3_slot', !!p3.redFlag, !!p3.orangeFlag);
+      if (p4) updatePanelBorders('panel4_slot', !!p4.redFlag, !!p4.orangeFlag);
+      window.BasecampWallCommunication = {
+        loadPanelData: function() {
+          for (var i = 0; i < 4; i++) renderMediaSlot(slotIds[i], getSlotData(slotKeys[i]));
+        },
+        setSlot: function(slotIndex, data) {
+          if (slotIndex < 1 || slotIndex > 4) return;
+          var key = 'safetyWallSlot' + slotIndex;
+          try { localStorage.setItem(key, JSON.stringify(data)); } catch (e) {}
+          renderMediaSlot('mediaSlot' + slotIndex, data);
+        },
+        updatePanelBorders: updatePanelBorders
+      };
+    }
+
+    renderBasecampWall();
+  </script>
+</body>
+</html>
