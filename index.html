@@ -1,7 +1,126 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pro-Safe HTML Files</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: #e2e8f0;
+    }
+    header {
+      background: #1e293b;
+      padding: 24px;
+      text-align: center;
+      border-bottom: 1px solid #334155;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 32px;
+    }
+    header p {
+      margin: 8px 0 0;
+      color: #94a3b8;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+    }
+    .card {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 14px;
+      padding: 20px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+    }
+    .card h2 {
+      margin-top: 0;
+      margin-bottom: 10px;
+      font-size: 22px;
+      color: #f8fafc;
+    }
+    .card p {
+      color: #94a3b8;
+      min-height: 48px;
+    }
+    .btn {
+      display: inline-block;
+      margin-top: 12px;
+      padding: 10px 16px;
+      background: #22c55e;
+      color: #052e16;
+      text-decoration: none;
+      font-weight: bold;
+      border-radius: 8px;
+    }
+    .btn:hover {
+      background: #16a34a;
+    }
+    footer {
+      text-align: center;
+      color: #64748b;
+      padding: 24px;
+    }
+  </style>
+</head>
 <body>
-<h1>Pro-Safe HTML Files</h1>
-<a href="Safety%20services%20wall.html">Open Safety Wall</a>
+  <header>
+    <h1>Pro-Safe Monitoring Portal</h1>
+    <p>Central access page for all Pro-Safe HTML dashboards and reports</p>
+  </header>
+
+  <div class="container">
+    <div class="grid">
+      <div class="card">
+        <h2>Safety Services Wall</h2>
+        <p>Open the main safety monitoring wall and service overview page.</p>
+        <a class="btn" href="safety-services-wall.html">Open Page</a>
+      </div>
+
+      <div class="card">
+        <h2>LPR Admin Info</h2>
+        <p>Access the LPR admin information dashboard and controls.</p>
+        <a class="btn" href="lpr-admin-info-page.html">Open Page</a>
+      </div>
+
+      <div class="card">
+        <h2>LPR Info Wall</h2>
+        <p>Open the L2 and L3 LPR information wall.</p>
+        <a class="btn" href="lpr-info-on-l2-l3-wall.html">Open Page</a>
+      </div>
+
+      <div class="card">
+        <h2>Zone Configuration</h2>
+        <p>View and manage zone configuration details.</p>
+        <a class="btn" href="zone-configuration.html">Open Page</a>
+      </div>
+
+      <div class="card">
+        <h2>Admin Site Info</h2>
+        <p>Open the admin site information page.</p>
+        <a class="btn" href="admin-site-info-page.html">Open Page</a>
+      </div>
+
+      <div class="card">
+        <h2>Incident Radar Report</h2>
+        <p>Access the incident radar report and summaries.</p>
+        <a class="btn" href="incident-radar-report.html">Open Page</a>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    Pro-Safe HTML Files • GitHub Pages
+  </footer>
 </body>
 </html>
