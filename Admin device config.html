@@ -1,0 +1,2210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin device config - UI Reference</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <style>
+    :root {
+      --primary-dark: #0e5a86;
+      --primary: #1f6fa1;
+      --primary-light: #e6f1f8;
+      --accent: #2f6fb2;
+      --border: #d4dde6;
+      --text: #2b2f33;
+      --muted: #6b7785;
+      --bg: #f5f7fb;
+      --white: #ffffff;
+      --table-header: #0f5a86;
+      --table-row: #eef4f9;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Roboto", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .topbar {
+      background: var(--primary-dark);
+      color: var(--white);
+      padding: 10px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .brand .material-icons {
+      font-size: 26px;
+    }
+
+    .breadcrumb {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.8);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .search-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--white);
+      border-radius: 22px;
+      padding: 4px 12px;
+      width: 380px;
+      border: 2px solid #cfe3f2;
+    }
+
+    .search-bar input {
+      border: none;
+      outline: none;
+      flex: 1;
+      font-size: 13px;
+      color: var(--text);
+    }
+
+    .search-bar .material-icons {
+      color: var(--primary-dark);
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 13px;
+    }
+
+    .top-actions span {
+      cursor: pointer;
+      opacity: 0.9;
+    }
+
+    .container {
+      padding: 12px 16px 24px;
+      max-width: 100%;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .page-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .page-title h2 {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--primary-dark);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      margin: 12px 0 18px;
+      color: var(--accent);
+      font-size: 13px;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: var(--accent);
+      font-weight: 500;
+    }
+
+    .tab-row {
+      display: flex;
+      justify-content: center;
+      gap: 80px;
+      margin-bottom: 18px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .tab-row .tab-item {
+      cursor: pointer;
+      padding-bottom: 8px;
+      border-bottom: 2px solid transparent;
+      user-select: none;
+    }
+
+    .tab-row .tab-item.active {
+      color: var(--primary-dark);
+      font-weight: 600;
+      border-bottom-color: var(--primary-dark);
+    }
+
+    .tab-panel {
+      display: none;
+    }
+
+    .tab-panel.active {
+      display: block;
+    }
+
+    .tab-placeholder {
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
+    .tab-placeholder .card-body {
+      color: var(--muted);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1.3fr 1fr;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .column-stack {
+      display: grid;
+      gap: 16px;
+    }
+
+    .card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .card-header {
+      background: var(--table-header);
+      color: var(--white);
+      padding: 8px 12px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .card-body {
+      padding: 12px;
+      font-size: 13px;
+    }
+
+    .monitoring-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 8px 0;
+    }
+
+    .btn {
+      border: none;
+      padding: 6px 16px;
+      border-radius: 4px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background: #3b64c4;
+      color: var(--white);
+    }
+
+    .btn-muted {
+      background: #e0e0e0;
+      color: #666;
+    }
+
+    .info-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 10px;
+    }
+
+    .info-list u {
+      font-weight: 600;
+    }
+
+    .device-list {
+      list-style: none;
+      padding-left: 0;
+      margin-top: 6px;
+      display: grid;
+      gap: 4px;
+    }
+
+    .device-list span {
+      color: var(--primary-dark);
+      font-weight: 600;
+    }
+
+    .zone-section {
+      display: grid;
+      gap: 8px;
+    }
+
+    .zone-accordion {
+      display: grid;
+      gap: 8px;
+      padding-right: 4px;
+    }
+
+    .zone-item {
+      border: 1px solid #c8d8e6;
+      border-radius: 6px;
+      overflow: hidden;
+      background: #f9fcff;
+    }
+
+    .zone-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 10px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--primary-dark);
+      background: #eef4f9;
+      border-bottom: 1px solid #c8d8e6;
+    }
+
+    .zone-item summary {
+      list-style: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 10px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--primary-dark);
+      background: #eef4f9;
+      border-bottom: 1px solid #c8d8e6;
+    }
+
+    .zone-item summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .zone-item summary::after {
+      content: "expand_more";
+      font-family: "Material Icons";
+      font-size: 18px;
+      color: var(--primary-dark);
+      transition: transform 0.2s ease;
+    }
+
+    .zone-item[open] summary::after {
+      transform: rotate(180deg);
+    }
+
+    .zone-body {
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--muted);
+      background: var(--white);
+    }
+
+    .zone-item:not([open]) .zone-body {
+      display: none;
+    }
+
+    .zone-body button {
+      border: 1px solid #c8d8e6;
+      background: #eef4f9;
+      color: var(--primary-dark);
+      padding: 6px 10px;
+      border-radius: 14px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .zone-body button:hover {
+      background: #dfeaf4;
+    }
+
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+
+    .table th {
+      text-align: center;
+      padding: 8px;
+      background: var(--table-header);
+      color: var(--white);
+      font-weight: 600;
+    }
+
+    .table td {
+      padding: 8px;
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .split-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .site-details p {
+      margin-bottom: 6px;
+      line-height: 1.5;
+    }
+
+    .pill {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 4px;
+      background: #e1ecf7;
+      color: #1f6fa1;
+      font-weight: 600;
+      font-size: 12px;
+    }
+
+    .recent-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 12px;
+      background: #a9d7f5;
+      color: #11496e;
+      font-weight: 600;
+      font-size: 13px;
+    }
+
+    .recent-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .dropdown {
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 6px 8px;
+      font-size: 12px;
+      background: var(--white);
+    }
+
+    .action-btn {
+      padding: 6px 12px;
+      border-radius: 4px;
+      border: none;
+      font-size: 12px;
+      background: #0f5a86;
+      color: var(--white);
+      cursor: pointer;
+    }
+
+    .recent-table th {
+      background: #0e5a86;
+      color: var(--white);
+      text-transform: none;
+    }
+
+    .recent-table tbody tr:nth-child(odd) {
+      background: #f7fbff;
+    }
+
+    .icon-group {
+      display: flex;
+      gap: 6px;
+      justify-content: center;
+    }
+
+    .mini-icon {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      border: none;
+      background: #0f5a86;
+      color: var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .floating-refresh {
+      position: fixed;
+      right: 18px;
+      top: 120px;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: none;
+      background: var(--primary-dark);
+      color: var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+      cursor: pointer;
+    }
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.45);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 16px;
+    }
+
+    .modal-overlay.show {
+      display: flex;
+    }
+
+    .modal-card {
+      background: var(--white);
+      border-radius: 8px;
+      width: 100%;
+      max-width: 720px;
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.25);
+      overflow: hidden;
+    }
+
+    .alarm-static-panel {
+      width: 100%;
+      max-width: 720px;
+      margin: 0 auto 16px;
+      box-sizing: border-box;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+    }
+
+    #tab-panel-device-info.tab-panel.active {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    #tab-panel-device-info.tab-panel.active .alarm-static-panel {
+      flex-shrink: 0;
+    }
+
+    .alarm-static-panel > .modal-header {
+      padding: 8px 12px;
+    }
+
+    .alarm-static-panel > .modal-header h3 {
+      font-size: 14px;
+    }
+
+    .alarm-static-panel .alarm-header-icon-btn {
+      width: 32px;
+      height: 32px;
+    }
+
+    .alarm-static-panel .alarm-header-icon-btn .material-icons {
+      font-size: 18px;
+    }
+
+    .alarm-static-panel .modal-body {
+      display: grid;
+      gap: 8px;
+      padding: 10px 12px;
+    }
+
+    .alarm-static-panel .alarm-config-meta {
+      gap: 3px;
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .alarm-static-panel .alarm-config-meta strong {
+      margin-right: 4px;
+    }
+
+    .alarm-static-panel .alarm-level-table {
+      width: 100%;
+      max-width: 100%;
+      table-layout: auto;
+      font-size: 12px;
+    }
+
+    .alarm-static-panel .alarm-level-table th {
+      padding: 6px 10px;
+      font-size: 12px;
+    }
+
+    .alarm-static-panel .alarm-level-table td {
+      padding: 5px 10px;
+      font-size: 12px;
+    }
+
+    .alarm-static-panel .alarm-switch {
+      width: 40px;
+      height: 22px;
+    }
+
+    .alarm-static-panel .alarm-switch-slider::before {
+      height: 16px;
+      width: 16px;
+      bottom: 3px;
+      left: 3px;
+    }
+
+    .alarm-static-panel .alarm-switch input:checked + .alarm-switch-slider::before {
+      transform: translateX(18px);
+    }
+
+    .alarm-static-panel .alarm-modal-zones {
+      border: none;
+      border-radius: 0;
+      overflow: visible;
+      box-shadow: none;
+    }
+
+    .alarm-static-panel .alarm-modal-zones-header {
+      padding: 6px 10px;
+      font-size: 12px;
+    }
+
+    .alarm-static-panel .alarm-modal-zones-list {
+      gap: 10px;
+      padding: 10px 12px;
+    }
+
+    .alarm-static-panel .alarm-modal-zone-row {
+      border: none;
+      border-radius: 0;
+      background: transparent;
+      overflow: visible;
+    }
+
+    .alarm-static-panel .alarm-modal-zone-row summary {
+      padding: 6px 10px;
+      font-size: 12px;
+      background: #eef4f9;
+      border: none;
+      border-radius: 4px;
+    }
+
+    .alarm-static-panel .alarm-modal-zone-row summary::after {
+      font-size: 18px;
+    }
+
+    .alarm-static-panel .alarm-modal-zone-body {
+      padding: 8px 10px;
+      font-size: 12px;
+      border-top: none;
+      background: transparent;
+    }
+
+    .alarm-static-panel .alarm-modal-zone-body .info-list {
+      gap: 6px;
+    }
+
+    .alarm-static-panel .alarm-modal-zone-body .device-list {
+      gap: 2px;
+      margin-top: 4px;
+    }
+
+    .alarm-static-panel .speaker-config-block {
+      border: none;
+      border-radius: 0;
+      overflow: visible;
+      margin-top: 8px;
+    }
+
+    .speaker-config-block {
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+      margin-top: 6px;
+    }
+
+    .alarm-modal-zone-body .speaker-config-block {
+      margin-top: 10px;
+    }
+
+    .speaker-config-heading {
+      background: var(--table-header);
+      color: var(--white);
+      padding: 6px 10px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .speaker-config-toolbar {
+      display: flex;
+      gap: 8px;
+      padding: 8px 10px;
+      background: var(--white);
+      flex-wrap: wrap;
+    }
+
+    .speaker-config-select {
+      flex: 1;
+      min-width: 160px;
+      padding: 6px 8px;
+      font-size: 12px;
+      font-family: inherit;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      background: var(--white);
+      color: var(--text);
+    }
+
+    .speaker-config-table {
+      width: max-content;
+      max-width: 100%;
+      border-collapse: collapse;
+      font-size: 11px;
+      background: var(--white);
+    }
+
+    .speaker-config-table th {
+      background: var(--table-header);
+      color: var(--white);
+      padding: 5px 6px;
+      font-weight: 600;
+      font-size: 11px;
+      text-align: center;
+      border: none;
+    }
+
+    .speaker-config-table th:first-child {
+      text-align: left;
+    }
+
+    .speaker-config-table th:nth-child(3) {
+      text-align: left;
+    }
+
+    .speaker-config-table td {
+      padding: 4px 6px;
+      border-bottom: none;
+      vertical-align: middle;
+      text-align: center;
+    }
+
+    .speaker-config-table td:first-child {
+      text-align: left;
+      font-weight: 600;
+      color: var(--primary-dark);
+    }
+
+    .speaker-config-table td:nth-child(3) {
+      text-align: left;
+    }
+
+    .speaker-profile-select {
+      width: 100%;
+      max-width: 118px;
+      padding: 3px 6px;
+      font-size: 11px;
+      font-family: inherit;
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      background: var(--white);
+      color: var(--text);
+    }
+
+    .speaker-strobe-cell,
+    .speaker-siren-cell {
+      vertical-align: middle;
+      padding-inline: 4px;
+    }
+
+    .speaker-strobe-input,
+    .speaker-siren-input {
+      width: 100%;
+      max-width: 92px;
+      padding: 3px 6px;
+      font-size: 11px;
+      font-family: inherit;
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      box-sizing: border-box;
+      background: var(--white);
+      color: var(--text);
+    }
+
+    .speaker-strobe-input:focus,
+    .speaker-siren-input:focus {
+      outline: 1px solid var(--primary-light);
+      outline-offset: 0;
+      border-color: var(--primary);
+    }
+
+    .modal-header {
+      background: var(--table-header);
+      color: var(--white);
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .modal-header h3 {
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .modal-close {
+      background: transparent;
+      border: none;
+      color: var(--white);
+      font-size: 18px;
+      cursor: pointer;
+    }
+
+    .modal-body {
+      padding: 16px;
+      font-size: 13px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .modal-message {
+      padding: 8px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      display: none;
+    }
+
+    .modal-message.show {
+      display: block;
+    }
+
+    .modal-message.error {
+      background: #fde8e8;
+      color: #8a1f1f;
+      border: 1px solid #f5b5b5;
+    }
+
+    .modal-message.success {
+      background: #e6f6ea;
+      color: #1f6b36;
+      border: 1px solid #b7e2c1;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn-secondary {
+      background: #d9d9d9;
+      color: #4a4a4a;
+    }
+
+    .modal-subtitle {
+      color: var(--primary-dark);
+      font-weight: 600;
+    }
+
+    .zone-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+
+    .zone-table th,
+    .zone-table td {
+      border: 1px solid var(--border);
+      padding: 8px;
+      text-align: center;
+    }
+
+    .zone-table th {
+      background: #f1f6fb;
+      color: var(--primary-dark);
+    }
+
+    .modal-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .alarm-header-icon-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--white);
+      flex-shrink: 0;
+    }
+
+    .alarm-header-icon-btn .material-icons {
+      font-size: 20px;
+    }
+
+    .alarm-header-refresh {
+      background: #8d9aa6;
+    }
+
+    .alarm-config-meta {
+      display: grid;
+      gap: 8px;
+      font-size: 13px;
+      line-height: 1.45;
+      color: var(--text);
+    }
+
+    .alarm-config-meta strong {
+      font-weight: 600;
+      margin-right: 6px;
+    }
+
+    .alarm-level-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .alarm-level-table th {
+      background: var(--table-header);
+      color: var(--white);
+      padding: 10px 14px;
+      font-weight: 600;
+      border: 1px solid var(--table-header);
+    }
+
+    .alarm-level-table th:first-child {
+      text-align: left;
+    }
+
+    .alarm-level-table th:last-child {
+      text-align: right;
+    }
+
+    .alarm-level-table td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+
+    .alarm-level-table td:first-child {
+      text-align: left;
+      font-weight: 600;
+    }
+
+    .alarm-level-table td:last-child {
+      text-align: right;
+    }
+
+    .alarm-level-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .alarm-switch {
+      position: relative;
+      display: inline-block;
+      width: 44px;
+      height: 24px;
+      vertical-align: middle;
+    }
+
+    .alarm-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+      position: absolute;
+    }
+
+    .alarm-switch-slider {
+      position: absolute;
+      cursor: pointer;
+      inset: 0;
+      background: #c5ccd4;
+      border-radius: 24px;
+      transition: background 0.2s;
+    }
+
+    .alarm-switch-slider::before {
+      content: "";
+      position: absolute;
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background: var(--white);
+      border-radius: 50%;
+      transition: transform 0.2s;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    }
+
+    .alarm-switch input:checked + .alarm-switch-slider {
+      background: var(--primary);
+    }
+
+    .alarm-switch input:checked + .alarm-switch-slider::before {
+      transform: translateX(20px);
+    }
+
+    .alarm-switch input:focus-visible + .alarm-switch-slider {
+      outline: 2px solid var(--primary-light);
+      outline-offset: 2px;
+    }
+
+    .alarm-modal-zones {
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .alarm-modal-zones-header {
+      background: var(--table-header);
+      color: var(--white);
+      padding: 8px 12px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .alarm-modal-zones-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding: 10px;
+      background: var(--white);
+    }
+
+    .alarm-modal-zone-row {
+      border: 1px solid #c8d8e6;
+      border-radius: 6px;
+      overflow: hidden;
+      background: #eef4f9;
+    }
+
+    .alarm-modal-zone-row summary {
+      list-style: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 12px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--primary-dark);
+    }
+
+    .alarm-modal-zone-row summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .alarm-modal-zone-row summary::after {
+      content: "expand_more";
+      font-family: "Material Icons";
+      font-size: 20px;
+      color: var(--primary-dark);
+      transition: transform 0.2s ease;
+    }
+
+    .alarm-modal-zone-row[open] summary::after {
+      transform: rotate(180deg);
+    }
+
+    .alarm-modal-zone-body {
+      padding: 10px 12px;
+      font-size: 12px;
+      color: var(--muted);
+      background: var(--white);
+      border-top: 1px solid #c8d8e6;
+    }
+
+    .alarm-modal-zone-body .info-list {
+      margin-top: 0;
+      gap: 10px;
+    }
+
+    .alarm-modal-zone-body .device-list li {
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="material-icons">security</span>
+      PRO-SAFE
+      <span style="font-weight: 500; font-size: 12px;">ADMIN</span>
+      <div class="breadcrumb">
+        <span class="material-icons" style="font-size: 16px;">more_vert</span>
+        <span class="material-icons" style="font-size: 16px;">home</span>
+        <span class="material-icons" style="font-size: 16px;">chevron_right</span>
+        <span>Site Information</span>
+      </div>
+    </div>
+    <div class="search-bar">
+      <input type="text" placeholder="Search By Site Details">
+      <span class="material-icons">search</span>
+    </div>
+    <div class="top-actions">
+      <span>View</span>
+      <span>Forensic</span>
+      <span>Configure</span>
+      <span>Admin</span>
+      <span class="material-icons">person</span>
+      <span>v6.5.3</span>
+    </div>
+  </header>
+
+  <button class="floating-refresh" title="Refresh">
+    <span class="material-icons">cached</span>
+  </button>
+
+  <main class="container">
+    <div class="page-title">
+      <h2>Site Name: <span style="font-weight: 400;">Westland Real Estate Group - Daisy F4334</span></h2>
+    </div>
+
+    <div class="nav-links">
+      <a href="#">Motion Clips</a>
+      <a href="#">Customer Portal</a>
+      <a href="#">Pro-Fit</a>
+      <a href="#">Config Client</a>
+      <a href="#">Salesforce</a>
+      <a href="#">Zendesk</a>
+      <a href="#">Google Map</a>
+      <a href="#">Live views</a>
+    </div>
+
+    <div class="tab-row">
+      <div class="tab-item active" data-tab="site-info" role="tab" aria-selected="true">Site Info</div>
+      <div class="tab-item" data-tab="site-map" role="tab" aria-selected="false">Site Map</div>
+      <div class="tab-item" data-tab="camera-views" role="tab" aria-selected="false">Camera View(S)</div>
+      <div class="tab-item" data-tab="device-info" role="tab" aria-selected="false">Device Info</div>
+    </div>
+
+    <section id="tab-panel-site-info" class="tab-panel active" aria-hidden="false">
+    <section class="grid">
+      <div class="column-stack">
+        <div class="card">
+          <div class="card-header">Monitoring Details</div>
+          <div class="card-body">
+            <p>This site is currently <strong>DISARMED</strong> and <strong>OUTSIDE</strong> monitoring hours</p>
+            <div class="monitoring-row">
+              <button class="btn btn-primary">Arm</button>
+              <button class="btn btn-muted">Disarm</button>
+            </div>
+            <p style="margin-top: 6px; color: var(--muted);">
+              Note: Arm/Disarm happens at the account level. For zone-level arm/disarm, go to Zone Names.
+            </p>
+            <div class="info-list">
+              <div>
+                <u>Monitoring Hours:</u><br>
+                00:00 AM - 07:00 AM and 19:00 PM - 23:59 PM Mon through Sun (PT)
+              </div>
+              <div>
+                <u>Additional Monitoring Hours:</u><br>
+                --
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header">Zone Names</div>
+          <div class="card-body">
+            <div class="zone-section">
+              <div class="zone-accordion">
+                <details class="zone-item">
+                  <summary>Zone 1 - North Side</summary>
+                  <div class="zone-body">
+                    <div>
+                      This site is currently <strong>DISARMED</strong> and <strong>OUTSIDE</strong> monitoring hours
+                    </div>
+                    <div class="zone-actions">
+                      <button class="btn btn-primary" type="button">Arm</button>
+                      <button class="btn btn-muted" type="button">Disarm</button>
+                    </div>
+                    <div class="info-list">
+                      <div>
+                        <u>Monitoring Hours:</u><br>
+                        00:00 AM - 07:00 AM and 19:00 PM - 23:59 PM Mon through Sun (PT)
+                      </div>
+                      <div>
+                        <u>Additional Monitoring Hours:</u><br>
+                        --
+                      </div>
+                      <div>
+                        <u>Cameras:</u>
+                        <ul class="device-list">
+                          <li><span>Cam 01:</span> North Side Entrance</li>
+                          <li><span>Cam 02:</span> Loading Bay Overview</li>
+                        </ul>
+                      </div>
+                      <div>
+                        <u>Deter Devices:</u>
+                        <ul class="device-list">
+                          <li><span>Strobe:</span> Floodlight 01</li>
+                          <li><span>Speaker:</span> Siren 01</li>
+                        </ul>
+                      </div>
+                    </div>
+                    <button type="button" onclick="openZoneHours('Zone 1 - North Side')">View Hours</button>
+                  </div>
+                </details>
+                <details class="zone-item">
+                  <summary>Zone 2 - Loading Dock</summary>
+                  <div class="zone-body">
+                    <div>
+                      This site is currently <strong>DISARMED</strong> and <strong>OUTSIDE</strong> monitoring hours
+                    </div>
+                    <div class="zone-actions">
+                      <button class="btn btn-primary" type="button">Arm</button>
+                      <button class="btn btn-muted" type="button">Disarm</button>
+                    </div>
+                    <div class="info-list">
+                      <div>
+                        <u>Monitoring Hours:</u><br>
+                        00:00 AM - 07:00 AM and 19:00 PM - 23:59 PM Mon through Sun (PT)
+                      </div>
+                      <div>
+                        <u>Additional Monitoring Hours:</u><br>
+                        --
+                      </div>
+                      <div>
+                        <u>Cameras:</u>
+                        <ul class="device-list">
+                          <li><span>Cam 03:</span> Dock Door East</li>
+                          <li><span>Cam 04:</span> Dock Door West</li>
+                        </ul>
+                      </div>
+                      <div>
+                        <u>Deter Devices:</u>
+                        <ul class="device-list">
+                          <li><span>Strobe:</span> Dock Beacon 01</li>
+                          <li><span>Speaker:</span> Dock PA 01</li>
+                        </ul>
+                      </div>
+                    </div>
+                    <button type="button" onclick="openZoneHours('Zone 2 - Loading Dock')">View Hours</button>
+                  </div>
+                </details>
+                <details class="zone-item">
+                  <summary>Zone 3 - Parking Lot</summary>
+                  <div class="zone-body">
+                    <div>
+                      This site is currently <strong>DISARMED</strong> and <strong>OUTSIDE</strong> monitoring hours
+                    </div>
+                    <div class="zone-actions">
+                      <button class="btn btn-primary" type="button">Arm</button>
+                      <button class="btn btn-muted" type="button">Disarm</button>
+                    </div>
+                    <div class="info-list">
+                      <div>
+                        <u>Monitoring Hours:</u><br>
+                        00:00 AM - 07:00 AM and 19:00 PM - 23:59 PM Mon through Sun (PT)
+                      </div>
+                      <div>
+                        <u>Additional Monitoring Hours:</u><br>
+                        --
+                      </div>
+                      <div>
+                        <u>Cameras:</u>
+                        <ul class="device-list">
+                          <li><span>Cam 05:</span> Lot North</li>
+                          <li><span>Cam 06:</span> Lot South</li>
+                        </ul>
+                      </div>
+                      <div>
+                        <u>Deter Devices:</u>
+                        <ul class="device-list">
+                          <li><span>Strobe:</span> Lot Light 01</li>
+                          <li><span>Speaker:</span> Lot Speaker 01</li>
+                        </ul>
+                      </div>
+                    </div>
+                    <button type="button" onclick="openZoneHours('Zone 3 - Parking Lot')">View Hours</button>
+                  </div>
+                </details>
+                <details class="zone-item">
+                  <summary>Zone 4 - East Gate</summary>
+                  <div class="zone-body">
+                    <div>
+                      This site is currently <strong>DISARMED</strong> and <strong>OUTSIDE</strong> monitoring hours
+                    </div>
+                    <div class="zone-actions">
+                      <button class="btn btn-primary" type="button">Arm</button>
+                      <button class="btn btn-muted" type="button">Disarm</button>
+                    </div>
+                    <div class="info-list">
+                      <div>
+                        <u>Monitoring Hours:</u><br>
+                        00:00 AM - 07:00 AM and 19:00 PM - 23:59 PM Mon through Sun (PT)
+                      </div>
+                      <div>
+                        <u>Additional Monitoring Hours:</u><br>
+                        --
+                      </div>
+                      <div>
+                        <u>Cameras:</u>
+                        <ul class="device-list">
+                          <li><span>Cam 07:</span> East Gate Inbound</li>
+                          <li><span>Cam 08:</span> East Gate Outbound</li>
+                        </ul>
+                      </div>
+                      <div>
+                        <u>Deter Devices:</u>
+                        <ul class="device-list">
+                          <li><span>Strobe:</span> Gate Beacon 01</li>
+                          <li><span>Speaker:</span> Gate PA 01</li>
+                        </ul>
+                      </div>
+                    </div>
+                    <button type="button" onclick="openZoneHours('Zone 4 - East Gate')">View Hours</button>
+                  </div>
+                </details>
+                <details class="zone-item">
+                  <summary>Zone 5 - West Gate</summary>
+                  <div class="zone-body">
+                    <div>
+                      This site is currently <strong>DISARMED</strong> and <strong>OUTSIDE</strong> monitoring hours
+                    </div>
+                    <div class="zone-actions">
+                      <button class="btn btn-primary" type="button">Arm</button>
+                      <button class="btn btn-muted" type="button">Disarm</button>
+                    </div>
+                    <div class="info-list">
+                      <div>
+                        <u>Monitoring Hours:</u><br>
+                        00:00 AM - 07:00 AM and 19:00 PM - 23:59 PM Mon through Sun (PT)
+                      </div>
+                      <div>
+                        <u>Additional Monitoring Hours:</u><br>
+                        --
+                      </div>
+                      <div>
+                        <u>Cameras:</u>
+                        <ul class="device-list">
+                          <li><span>Cam 09:</span> West Gate Inbound</li>
+                          <li><span>Cam 10:</span> West Gate Outbound</li>
+                        </ul>
+                      </div>
+                      <div>
+                        <u>Deter Devices:</u>
+                        <ul class="device-list">
+                          <li><span>Strobe:</span> Gate Beacon 02</li>
+                          <li><span>Speaker:</span> Gate PA 02</li>
+                        </ul>
+                      </div>
+                    </div>
+                    <button type="button" onclick="openZoneHours('Zone 5 - West Gate')">View Hours</button>
+                  </div>
+                </details>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">Site Time</div>
+        <div class="card-body" style="padding: 0;">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Site Time</th>
+                <th>CT Time</th>
+                <th>IST Time</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>2026-01-20 07:18:21</td>
+                <td>2026-01-20 09:18:21</td>
+                <td>2026-01-20 20:48:21</td>
+              </tr>
+            </tbody>
+          </table>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Site Status</th>
+                <th>Installation Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>2-Installed</td>
+                <td>2025-12-18 00:00:00</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="split-grid">
+      <div class="card">
+        <div class="card-header">Site Name</div>
+        <div class="card-body site-details">
+          <p><strong>Site:</strong> Westland Real Estate Group - Daisy F4334</p>
+          <p><strong>Account:</strong> Westland Real Estate Group - Daisy (Potential# 775250, Account# 727046)</p>
+          <p><strong>Account Sites:</strong> <span class="pill">F4334</span></p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">Address Details</div>
+        <div class="card-body">
+          <div class="info-list">
+            <div><strong>Address:</strong> 913 Daisy Avenue</div>
+            <div><strong>City:</strong> Long Beach</div>
+            <div><strong>State/Zip:</strong> California / 90813</div>
+            <div><strong>Local Police:</strong> 562-435-6711</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="recent-header">
+        <span>Recent History</span>
+        <div class="recent-actions">
+          <button class="action-btn">Last 4 hours</button>
+          <select class="dropdown">
+            <option>Timezone - Customer Timezone (PT)</option>
+          </select>
+          <button class="action-btn">Last 24 hours</button>
+          <button class="action-btn">View All</button>
+          <button class="action-btn">View In Console</button>
+        </div>
+      </div>
+      <div class="card-body" style="padding: 0;">
+        <table class="table recent-table">
+          <thead>
+            <tr>
+              <th>Escalation ID</th>
+              <th>Unit Id</th>
+              <th>Camera Name</th>
+              <th>Event Time (PT)</th>
+              <th>User</th>
+              <th>Notes</th>
+              <th>Tag</th>
+              <th>Follow Up Tags</th>
+              <th>More</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>G775250G1768919759917</td>
+              <td>F4334</td>
+              <td>F4334 Camera 02 Rear Trash/Garage Doors</td>
+              <td>2026-01-20 06:35:30</td>
+              <td>PRO3517</td>
+              <td>Resident person seen enter inside building with kid</td>
+              <td>Resident / Occupied House</td>
+              <td>-</td>
+              <td>
+                <div class="icon-group">
+                  <button class="mini-icon"><span class="material-icons">play_arrow</span></button>
+                  <button class="mini-icon"><span class="material-icons">videocam</span></button>
+                  <button class="mini-icon"><span class="material-icons">content_copy</span></button>
+                  <button class="mini-icon"><span class="material-icons">info</span></button>
+                  <button class="mini-icon"><span class="material-icons">supervised_user_circle</span></button>
+                </div>
+              </td>
+            </tr>
+            <tr style="background: var(--table-row);">
+              <td>P775250Z1768916815216</td>
+              <td>F4334</td>
+              <td>F4334 Camera 02 Rear Trash/Garage Doors</td>
+              <td>2026-01-20 05:46:24</td>
+              <td>PRO1213</td>
+              <td>Non-Conventional Site: Do Not Call PC/SC unless we have dispatched police for fire or shooting or if you observe someone in the Maintenance shop.</td>
+              <td>Cleared by Protocols</td>
+              <td>-</td>
+              <td>
+                <div class="icon-group">
+                  <button class="mini-icon"><span class="material-icons">play_arrow</span></button>
+                  <button class="mini-icon"><span class="material-icons">videocam</span></button>
+                  <button class="mini-icon"><span class="material-icons">content_copy</span></button>
+                  <button class="mini-icon"><span class="material-icons">info</span></button>
+                  <button class="mini-icon"><span class="material-icons">supervised_user_circle</span></button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+    </section>
+
+    <section id="tab-panel-site-map" class="tab-panel" aria-hidden="true">
+      <div class="card tab-placeholder">
+        <div class="card-header">Site Map</div>
+        <div class="card-body">
+          <p>Site map preview will appear here.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="tab-panel-camera-views" class="tab-panel" aria-hidden="true">
+      <div class="card tab-placeholder">
+        <div class="card-header">Camera View(S)</div>
+        <div class="card-body">
+          <p>Camera views will appear here.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="tab-panel-device-info" class="tab-panel" aria-hidden="true">
+      <div id="alarm-config-static" class="alarm-static-panel">
+      <div class="modal-header">
+        <h3>Level Wise Alarm Configuration</h3>
+        <div class="modal-header-actions">
+          <button type="button" class="alarm-header-icon-btn alarm-header-refresh" onclick="refreshAlarmConfiguration()" aria-label="Refresh">
+            <span class="material-icons">refresh</span>
+          </button>
+        </div>
+      </div>
+      <div class="modal-body">
+        <div class="alarm-config-meta">
+          <div><strong>Potential ID:</strong> 775250</div>
+          <div><strong>Site Name:</strong> Westland Real Estate Group - Daisy F4334</div>
+          <div><strong>Industry:</strong> Apartment / Multifamily</div>
+          <div><strong>UpdatedBy:</strong> -</div>
+        </div>
+        <table class="alarm-level-table">
+          <thead>
+            <tr>
+              <th scope="col">LEVEL</th>
+              <th scope="col">ALARM</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>AI</td>
+              <td>
+                <label class="alarm-switch"><input type="checkbox" name="alarm-ai" /><span class="alarm-switch-slider"></span></label>
+              </td>
+            </tr>
+            <tr>
+              <td>L1</td>
+              <td>
+                <label class="alarm-switch"><input type="checkbox" name="alarm-l1" /><span class="alarm-switch-slider"></span></label>
+              </td>
+            </tr>
+            <tr>
+              <td>L2</td>
+              <td>
+                <label class="alarm-switch"><input type="checkbox" name="alarm-l2" /><span class="alarm-switch-slider"></span></label>
+              </td>
+            </tr>
+            <tr>
+              <td>L3</td>
+              <td>
+                <label class="alarm-switch"><input type="checkbox" name="alarm-l3" /><span class="alarm-switch-slider"></span></label>
+              </td>
+            </tr>
+            <tr>
+              <td>CTM</td>
+              <td>
+                <label class="alarm-switch"><input type="checkbox" name="alarm-ctm" /><span class="alarm-switch-slider"></span></label>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="alarm-modal-zones">
+          <div class="alarm-modal-zones-header">Zone Names</div>
+          <div class="alarm-modal-zones-list">
+            <details class="alarm-modal-zone-row" open>
+              <summary>Zone 1 - North Side</summary>
+              <div class="alarm-modal-zone-body">
+                <div class="info-list">
+                  <div>
+                    <u>Cameras:</u>
+                    <ul class="device-list">
+                      <li><span>Cam 01:</span> North Side Entrance</li>
+                      <li><span>Cam 02:</span> Loading Bay Overview</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <u>Deter Devices:</u>
+                    <ul class="device-list">
+                      <li><span>Strobe:</span> Floodlight 01</li>
+                      <li><span>Speaker:</span> Siren 01</li>
+                    </ul>
+                  </div>
+                </div>
+                <div class="speaker-config-block">
+                  <div class="speaker-config-heading">Speaker configure</div>
+                  <div class="speaker-config-toolbar">
+                    <select class="speaker-config-select" aria-label="Zone 1 speaker device">
+                      <option>F4334 SPEAKER 01 (Siren 01)</option>
+                      <option>F4334 SPEAKER 02</option>
+                    </select>
+                    <select class="speaker-config-select" aria-label="Zone 1 speaker model">
+                      <option>AXIS_D4100_VE_Mk_II</option>
+                      <option>AXIS_C1610_MKII_NetworkSpeaker</option>
+                    </select>
+                  </div>
+                  <table class="speaker-config-table">
+                    <thead>
+                      <tr>
+                        <th scope="col">LEVEL</th>
+                        <th scope="col">ALARM</th>
+                        <th scope="col">PROFILES</th>
+                        <th scope="col">STROBE</th>
+                        <th scope="col">SIREN</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>AI</td>
+                        <td><label class="alarm-switch"><input type="checkbox" name="z1-sp-ai" /><span class="alarm-switch-slider"></span></label></td>
+                        <td><select class="speaker-profile-select" aria-label="Zone 1 AI profile"><option>pro-vigil</option><option>standard</option></select></td>
+                        <td class="speaker-strobe-cell"><input type="text" class="speaker-strobe-input" aria-label="Zone 1 Strobe info AI" /></td>
+                        <td class="speaker-siren-cell"><input type="text" class="speaker-siren-input" aria-label="Zone 1 Siren info AI" /></td>
+                      </tr>
+                      <tr>
+                        <td>L1</td>
+                        <td><label class="alarm-switch"><input type="checkbox" name="z1-sp-l1" /><span class="alarm-switch-slider"></span></label></td>
+                        <td><select class="speaker-profile-select" aria-label="Zone 1 L1 profile"><option>pro-vigil</option><option>standard</option></select></td>
+                        <td class="speaker-strobe-cell"><input type="text" class="speaker-strobe-input" aria-label="Zone 1 Strobe info L1" /></td>
+                        <td class="speaker-siren-cell"><input type="text" class="speaker-siren-input" aria-label="Zone 1 Siren info L1" /></td>
+                      </tr>
+                      <tr>
+                        <td>L2</td>
+                        <td><label class="alarm-switch"><input type="checkbox" name="z1-sp-l2" /><span class="alarm-switch-slider"></span></label></td>
+                        <td><select class="speaker-profile-select" aria-label="Zone 1 L2 profile"><option>pro-vigil</option><option>standard</option></select></td>
+                        <td class="speaker-strobe-cell"><input type="text" class="speaker-strobe-input" aria-label="Zone 1 Strobe info L2" /></td>
+                        <td class="speaker-siren-cell"><input type="text" class="speaker-siren-input" aria-label="Zone 1 Siren info L2" /></td>
+                      </tr>
+                      <tr>
+                        <td>L3</td>
+                        <td><label class="alarm-switch"><input type="checkbox" name="z1-sp-l3" /><span class="alarm-switch-slider"></span></label></td>
+                        <td><select class="speaker-profile-select" aria-label="Zone 1 L3 profile"><option>pro-vigil</option><option>standard</option></select></td>
+                        <td class="speaker-strobe-cell"><input type="text" class="speaker-strobe-input" aria-label="Zone 1 Strobe info L3" /></td>
+                        <td class="speaker-siren-cell"><input type="text" class="speaker-siren-input" aria-label="Zone 1 Siren info L3" /></td>
+                      </tr>
+                      <tr>
+                        <td>CTM</td>
+                        <td><label class="alarm-switch"><input type="checkbox" name="z1-sp-ctm" /><span class="alarm-switch-slider"></span></label></td>
+                        <td><select class="speaker-profile-select" aria-label="Zone 1 CTM profile"><option>pro-vigil</option><option>standard</option></select></td>
+                        <td class="speaker-strobe-cell"><input type="text" class="speaker-strobe-input" aria-label="Zone 1 Strobe info CTM" /></td>
+                        <td class="speaker-siren-cell"><input type="text" class="speaker-siren-input" aria-label="Zone 1 Siren info CTM" /></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </details>
+            <details class="alarm-modal-zone-row">
+              <summary>Zone 2 - Loading Dock</summary>
+              <div class="alarm-modal-zone-body">
+                <div class="info-list">
+                  <div>
+                    <u>Cameras:</u>
+                    <ul class="device-list">
+                      <li><span>Cam 03:</span> Dock Door East</li>
+                      <li><span>Cam 04:</span> Dock Door West</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <u>Deter Devices:</u>
+                    <ul class="device-list">
+                      <li><span>Strobe:</span> Dock Beacon 01</li>
+                      <li><span>Speaker:</span> Dock PA 01</li>
+                    </ul>
+                  </div>
+                </div>
+                <div class="speaker-config-block">
+                  <div class="speaker-config-heading">Speaker configure</div>
+                  <div class="speaker-config-toolbar">
+                    <select class="speaker-config-select" aria-label="Zone 2 speaker device">
+                      <option>Dock PA 01</option>
+                      <option>Dock PA 02 (Reserve)</option>
+                    </select>
+                    <select class="speaker-config-select" aria-label="Zone 2 speaker model">
+                      <option>AXIS_D4100_VE_Mk_II</option>
+                      <option>AXIS_C1610_MKII_NetworkSpeaker</option>
+                    </select>
+                  </div>
+                  <table class="speaker-config-table">
+                    <thead>
+                      <tr>
+                        <th scope="col">LEVEL</th>
+                        <th scope="col">ALARM</th>
+                        <th scope="col">PROFILES</th>
+                        <th scope="col">STROBE</th>
+                        <th scope="col">SIREN</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>AI</td>
+                        <td><label class="alarm-switch"><input type="checkbox" name="z2-sp-ai" /><span class="alarm-switch-slider"></span></label></td>
+                        <td><select class="speaker-profile-select" aria-label="Zone 2 AI profile"><option>pro-vigil</option><option>dock-quiet</option></select></td>
+                        <td class="speaker-strobe-cell"><input type="text" class="speaker-strobe-input" aria-label="Zone 2 Strobe AI" /></td>
+                        <td class="speaker-siren-cell"><input type="text" class="speaker-siren-input" aria-label="Zone 2 Siren AI" /></td>
+                      </tr>
+                      <tr>
+                        <td>L1</td>
+                        <td><label class="alarm-switch"><input type="checkbox" name="z2-sp-l1" /><span class="alarm-switch-slider"></span></label></td>
+                        <td><select class="speaker-profile-select" aria-label="Zone 2 L1 profile"><option>pro-vigil</option><option>dock-quiet</option></select></td>
+                        <td class="speaker-strobe-cell"><input type="text" class="speaker-strobe-input" aria-label="Zone 2 Strobe L1" /></td>
+                        <td class="speaker-siren-cell"><input type="text" class="speaker-siren-input" aria-label="Zone 2 Siren L1" /></td>
+                      </tr>
+                      <tr>
+                        <td>L2</td>
+                        <td><label class="alarm-switch"><input type="checkbox" name="z2-sp-l2" /><span class="alarm-switch-slider"></span></label></td>
+                        <td><select class="speaker-profile-select" aria-label="Zone 2 L2 profile"><option>pro-vigil</option><option>dock-quiet</option></select></td>
+                        <td class="speaker-strobe-cell"><input type="text" class="speaker-strobe-input" aria-label="Zone 2 Strobe L2" /></td>
+                        <td class="speaker-siren-cell"><input type="text" class="speaker-siren-input" aria-label="Zone 2 Siren L2" /></td>
+                      </tr>
+                      <tr>
+                        <td>L3</td>
+                        <td><label class="alarm-switch"><input type="checkbox" name="z2-sp-l3" /><span class="alarm-switch-slider"></span></label></td>
+                        <td><select class="speaker-profile-select" aria-label="Zone 2 L3 profile"><option>pro-vigil</option><option>dock-quiet</option></select></td>
+                        <td class="speaker-strobe-cell"><input type="text" class="speaker-strobe-input" aria-label="Zone 2 Strobe L3" /></td>
+                        <td class="speaker-siren-cell"><input type="text" class="speaker-siren-input" aria-label="Zone 2 Siren L3" /></td>
+                      </tr>
+                      <tr>
+                        <td>CTM</td>
+                        <td><label class="alarm-switch"><input type="checkbox" name="z2-sp-ctm" /><span class="alarm-switch-slider"></span></label></td>
+                        <td><select class="speaker-profile-select" aria-label="Zone 2 CTM profile"><option>pro-vigil</option><option>dock-quiet</option></select></td>
+                        <td class="speaker-strobe-cell"><input type="text" class="speaker-strobe-input" aria-label="Zone 2 Strobe CTM" /></td>
+                        <td class="speaker-siren-cell"><input type="text" class="speaker-siren-input" aria-label="Zone 2 Siren CTM" /></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </details>
+            <details class="alarm-modal-zone-row">
+              <summary>Zone 3 - Parking Lot</summary>
+              <div class="alarm-modal-zone-body">
+                <div class="info-list">
+                  <div>
+                    <u>Cameras:</u>
+                    <ul class="device-list">
+                      <li><span>Cam 05:</span> Lot North</li>
+                      <li><span>Cam 06:</span> Lot South</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <u>Deter Devices:</u>
+                    <ul class="device-list">
+                      <li><span>Strobe:</span> Lot Light 01</li>
+                      <li><span>Speaker:</span> Lot Speaker 01</li>
+                    </ul>
+                  </div>
+                </div>
+                <div class="speaker-config-block">
+                  <div class="speaker-config-heading">Speaker configure</div>
+                  <div class="speaker-config-toolbar">
+                    <select class="speaker-config-select" aria-label="Zone 3 speaker device">
+                      <option>Lot Speaker 01</option>
+                      <option>Lot Speaker 02 (South)</option>
+                    </select>
+                    <select class="speaker-config-select" aria-label="Zone 3 speaker model">
+                      <option>AXIS_D4100_VE_Mk_II</option>
+                      <option>AXIS_C1610_MKII_NetworkSpeaker</option>
+                    </select>
+                  </div>
+                  <table class="speaker-config-table">
+                    <thead>
+                      <tr>
+                        <th scope="col">LEVEL</th>
+                        <th scope="col">ALARM</th>
+                        <th scope="col">PROFILES</th>
+                        <th scope="col">STROBE</th>
+                        <th scope="col">SIREN</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>AI</td>
+                        <td><label class="alarm-switch"><input type="checkbox" name="z3-sp-ai" /><span class="alarm-switch-slider"></span></label></td>
+                        <td><select class="speaker-profile-select" aria-label="Zone 3 AI profile"><option>pro-vigil</option><option>lot-perimeter</option></select></td>
+                        <td class="speaker-strobe-cell"><input type="text" class="speaker-strobe-input" aria-label="Zone 3 Strobe AI" /></td>
+                        <td class="speaker-siren-cell"><input type="text" class="speaker-siren-input" aria-label="Zone 3 Siren AI" /></td>
+                      </tr>
+                      <tr>
+                        <td>L1</td>
+                        <td><label class="alarm-switch"><input type="checkbox" name="z3-sp-l1" /><span class="alarm-switch-slider"></span></label></td>
+                        <td><select class="speaker-profile-select" aria-label="Zone 3 L1 profile"><option>pro-vigil</option><option>lot-perimeter</option></select></td>
+                        <td class="speaker-strobe-cell"><input type="text" class="speaker-strobe-input" aria-label="Zone 3 Strobe L1" /></td>
+                        <td class="speaker-siren-cell"><input type="text" class="speaker-siren-input" aria-label="Zone 3 Siren L1" /></td>
+                      </tr>
+                      <tr>
+                        <td>L2</td>
+                        <td><label class="alarm-switch"><input type="checkbox" name="z3-sp-l2" /><span class="alarm-switch-slider"></span></label></td>
+                        <td><select class="speaker-profile-select" aria-label="Zone 3 L2 profile"><option>pro-vigil</option><option>lot-perimeter</option></select></td>
+                        <td class="speaker-strobe-cell"><input type="text" class="speaker-strobe-input" aria-label="Zone 3 Strobe L2" /></td>
+                        <td class="speaker-siren-cell"><input type="text" class="speaker-siren-input" aria-label="Zone 3 Siren L2" /></td>
+                      </tr>
+                      <tr>
+                        <td>L3</td>
+                        <td><label class="alarm-switch"><input type="checkbox" name="z3-sp-l3" /><span class="alarm-switch-slider"></span></label></td>
+                        <td><select class="speaker-profile-select" aria-label="Zone 3 L3 profile"><option>pro-vigil</option><option>lot-perimeter</option></select></td>
+                        <td class="speaker-strobe-cell"><input type="text" class="speaker-strobe-input" aria-label="Zone 3 Strobe L3" /></td>
+                        <td class="speaker-siren-cell"><input type="text" class="speaker-siren-input" aria-label="Zone 3 Siren L3" /></td>
+                      </tr>
+                      <tr>
+                        <td>CTM</td>
+                        <td><label class="alarm-switch"><input type="checkbox" name="z3-sp-ctm" /><span class="alarm-switch-slider"></span></label></td>
+                        <td><select class="speaker-profile-select" aria-label="Zone 3 CTM profile"><option>pro-vigil</option><option>lot-perimeter</option></select></td>
+                        <td class="speaker-strobe-cell"><input type="text" class="speaker-strobe-input" aria-label="Zone 3 Strobe CTM" /></td>
+                        <td class="speaker-siren-cell"><input type="text" class="speaker-siren-input" aria-label="Zone 3 Siren CTM" /></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </details>
+            <details class="alarm-modal-zone-row">
+              <summary>Zone 4 - East Gate</summary>
+              <div class="alarm-modal-zone-body">
+                <div class="info-list">
+                  <div>
+                    <u>Cameras:</u>
+                    <ul class="device-list">
+                      <li><span>Cam 07:</span> East Gate Inbound</li>
+                      <li><span>Cam 08:</span> East Gate Outbound</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <u>Deter Devices:</u>
+                    <ul class="device-list">
+                      <li><span>Strobe:</span> Gate Beacon 01</li>
+                      <li><span>Speaker:</span> Gate PA 01</li>
+                    </ul>
+                  </div>
+                </div>
+                <div class="speaker-config-block">
+                  <div class="speaker-config-heading">Speaker configure</div>
+                  <div class="speaker-config-toolbar">
+                    <select class="speaker-config-select" aria-label="Zone 4 speaker device">
+                      <option>Gate PA 01 (East)</option>
+                      <option>Gate PA East Reserve</option>
+                    </select>
+                    <select class="speaker-config-select" aria-label="Zone 4 speaker model">
+                      <option>AXIS_D4100_VE_Mk_II</option>
+                      <option>AXIS_C1610_MKII_NetworkSpeaker</option>
+                    </select>
+                  </div>
+                  <table class="speaker-config-table">
+                    <thead>
+                      <tr>
+                        <th scope="col">LEVEL</th>
+                        <th scope="col">ALARM</th>
+                        <th scope="col">PROFILES</th>
+                        <th scope="col">STROBE</th>
+                        <th scope="col">SIREN</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>AI</td>
+                        <td><label class="alarm-switch"><input type="checkbox" name="z4-sp-ai" /><span class="alarm-switch-slider"></span></label></td>
+                        <td><select class="speaker-profile-select" aria-label="Zone 4 AI profile"><option>pro-vigil</option><option>gate-east</option></select></td>
+                        <td class="speaker-strobe-cell"><input type="text" class="speaker-strobe-input" aria-label="Zone 4 Strobe AI" /></td>
+                        <td class="speaker-siren-cell"><input type="text" class="speaker-siren-input" aria-label="Zone 4 Siren AI" /></td>
+                      </tr>
+                      <tr>
+                        <td>L1</td>
+                        <td><label class="alarm-switch"><input type="checkbox" name="z4-sp-l1" /><span class="alarm-switch-slider"></span></label></td>
+                        <td><select class="speaker-profile-select" aria-label="Zone 4 L1 profile"><option>pro-vigil</option><option>gate-east</option></select></td>
+                        <td class="speaker-strobe-cell"><input type="text" class="speaker-strobe-input" aria-label="Zone 4 Strobe L1" /></td>
+                        <td class="speaker-siren-cell"><input type="text" class="speaker-siren-input" aria-label="Zone 4 Siren L1" /></td>
+                      </tr>
+                      <tr>
+                        <td>L2</td>
+                        <td><label class="alarm-switch"><input type="checkbox" name="z4-sp-l2" /><span class="alarm-switch-slider"></span></label></td>
+                        <td><select class="speaker-profile-select" aria-label="Zone 4 L2 profile"><option>pro-vigil</option><option>gate-east</option></select></td>
+                        <td class="speaker-strobe-cell"><input type="text" class="speaker-strobe-input" aria-label="Zone 4 Strobe L2" /></td>
+                        <td class="speaker-siren-cell"><input type="text" class="speaker-siren-input" aria-label="Zone 4 Siren L2" /></td>
+                      </tr>
+                      <tr>
+                        <td>L3</td>
+                        <td><label class="alarm-switch"><input type="checkbox" name="z4-sp-l3" /><span class="alarm-switch-slider"></span></label></td>
+                        <td><select class="speaker-profile-select" aria-label="Zone 4 L3 profile"><option>pro-vigil</option><option>gate-east</option></select></td>
+                        <td class="speaker-strobe-cell"><input type="text" class="speaker-strobe-input" aria-label="Zone 4 Strobe L3" /></td>
+                        <td class="speaker-siren-cell"><input type="text" class="speaker-siren-input" aria-label="Zone 4 Siren L3" /></td>
+                      </tr>
+                      <tr>
+                        <td>CTM</td>
+                        <td><label class="alarm-switch"><input type="checkbox" name="z4-sp-ctm" /><span class="alarm-switch-slider"></span></label></td>
+                        <td><select class="speaker-profile-select" aria-label="Zone 4 CTM profile"><option>pro-vigil</option><option>gate-east</option></select></td>
+                        <td class="speaker-strobe-cell"><input type="text" class="speaker-strobe-input" aria-label="Zone 4 Strobe CTM" /></td>
+                        <td class="speaker-siren-cell"><input type="text" class="speaker-siren-input" aria-label="Zone 4 Siren CTM" /></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </details>
+            <details class="alarm-modal-zone-row">
+              <summary>Zone 5 - West Gate</summary>
+              <div class="alarm-modal-zone-body">
+                <div class="info-list">
+                  <div>
+                    <u>Cameras:</u>
+                    <ul class="device-list">
+                      <li><span>Cam 09:</span> West Gate Inbound</li>
+                      <li><span>Cam 10:</span> West Gate Outbound</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <u>Deter Devices:</u>
+                    <ul class="device-list">
+                      <li><span>Strobe:</span> Gate Beacon 02</li>
+                      <li><span>Speaker:</span> Gate PA 02</li>
+                    </ul>
+                  </div>
+                </div>
+                <div class="speaker-config-block">
+                  <div class="speaker-config-heading">Speaker configure</div>
+                  <div class="speaker-config-toolbar">
+                    <select class="speaker-config-select" aria-label="Zone 5 speaker device">
+                      <option>Gate PA 02 (West)</option>
+                      <option>Gate PA West Reserve</option>
+                    </select>
+                    <select class="speaker-config-select" aria-label="Zone 5 speaker model">
+                      <option>AXIS_D4100_VE_Mk_II</option>
+                      <option>AXIS_C1610_MKII_NetworkSpeaker</option>
+                    </select>
+                  </div>
+                  <table class="speaker-config-table">
+                    <thead>
+                      <tr>
+                        <th scope="col">LEVEL</th>
+                        <th scope="col">ALARM</th>
+                        <th scope="col">PROFILES</th>
+                        <th scope="col">STROBE</th>
+                        <th scope="col">SIREN</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>AI</td>
+                        <td><label class="alarm-switch"><input type="checkbox" name="z5-sp-ai" /><span class="alarm-switch-slider"></span></label></td>
+                        <td><select class="speaker-profile-select" aria-label="Zone 5 AI profile"><option>pro-vigil</option><option>gate-west</option></select></td>
+                        <td class="speaker-strobe-cell"><input type="text" class="speaker-strobe-input" aria-label="Zone 5 Strobe AI" /></td>
+                        <td class="speaker-siren-cell"><input type="text" class="speaker-siren-input" aria-label="Zone 5 Siren AI" /></td>
+                      </tr>
+                      <tr>
+                        <td>L1</td>
+                        <td><label class="alarm-switch"><input type="checkbox" name="z5-sp-l1" /><span class="alarm-switch-slider"></span></label></td>
+                        <td><select class="speaker-profile-select" aria-label="Zone 5 L1 profile"><option>pro-vigil</option><option>gate-west</option></select></td>
+                        <td class="speaker-strobe-cell"><input type="text" class="speaker-strobe-input" aria-label="Zone 5 Strobe L1" /></td>
+                        <td class="speaker-siren-cell"><input type="text" class="speaker-siren-input" aria-label="Zone 5 Siren L1" /></td>
+                      </tr>
+                      <tr>
+                        <td>L2</td>
+                        <td><label class="alarm-switch"><input type="checkbox" name="z5-sp-l2" /><span class="alarm-switch-slider"></span></label></td>
+                        <td><select class="speaker-profile-select" aria-label="Zone 5 L2 profile"><option>pro-vigil</option><option>gate-west</option></select></td>
+                        <td class="speaker-strobe-cell"><input type="text" class="speaker-strobe-input" aria-label="Zone 5 Strobe L2" /></td>
+                        <td class="speaker-siren-cell"><input type="text" class="speaker-siren-input" aria-label="Zone 5 Siren L2" /></td>
+                      </tr>
+                      <tr>
+                        <td>L3</td>
+                        <td><label class="alarm-switch"><input type="checkbox" name="z5-sp-l3" /><span class="alarm-switch-slider"></span></label></td>
+                        <td><select class="speaker-profile-select" aria-label="Zone 5 L3 profile"><option>pro-vigil</option><option>gate-west</option></select></td>
+                        <td class="speaker-strobe-cell"><input type="text" class="speaker-strobe-input" aria-label="Zone 5 Strobe L3" /></td>
+                        <td class="speaker-siren-cell"><input type="text" class="speaker-siren-input" aria-label="Zone 5 Siren L3" /></td>
+                      </tr>
+                      <tr>
+                        <td>CTM</td>
+                        <td><label class="alarm-switch"><input type="checkbox" name="z5-sp-ctm" /><span class="alarm-switch-slider"></span></label></td>
+                        <td><select class="speaker-profile-select" aria-label="Zone 5 CTM profile"><option>pro-vigil</option><option>gate-west</option></select></td>
+                        <td class="speaker-strobe-cell"><input type="text" class="speaker-strobe-input" aria-label="Zone 5 Strobe CTM" /></td>
+                        <td class="speaker-siren-cell"><input type="text" class="speaker-siren-input" aria-label="Zone 5 Siren CTM" /></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </details>
+          </div>
+        </div>
+      </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="modal-overlay" id="zoneHoursModal" aria-hidden="true">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Zonebase Monitoring Hours</h3>
+        <button class="modal-close" onclick="closeZoneHours()" aria-label="Close">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-subtitle" id="zoneHoursTitle">Zone</div>
+        <div class="modal-message" id="zoneHoursMessage"></div>
+        <table class="zone-table">
+          <thead>
+            <tr>
+              <th>Day</th>
+              <th>Window 1</th>
+              <th>Window 2</th>
+            </tr>
+          </thead>
+          <tbody id="zoneHoursBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const dayOrder = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+    const dayNames = {
+      Mon: "Monday",
+      Tue: "Tuesday",
+      Wed: "Wednesday",
+      Thu: "Thursday",
+      Fri: "Friday",
+      Sat: "Saturday",
+      Sun: "Sunday"
+    };
+
+    function normalizeDayLabel(label) {
+      if (!label) {
+        return "";
+      }
+      const trimmed = label.trim();
+      return trimmed.length > 3 ? trimmed.slice(0, 3) : trimmed;
+    }
+
+    function expandDayLabel(label) {
+      if (!label) {
+        return [];
+      }
+      if (label.includes(",")) {
+        return label
+          .split(",")
+          .map((part) => part.trim())
+          .filter(Boolean);
+      }
+      if (label.includes("-")) {
+        const parts = label.split("-").map((part) => part.trim());
+        const start = normalizeDayLabel(parts[0]);
+        const end = normalizeDayLabel(parts[1]);
+        const startIdx = dayOrder.indexOf(start);
+        const endIdx = dayOrder.indexOf(end);
+        if (startIdx === -1 || endIdx === -1) {
+          return [label];
+        }
+        return dayOrder.slice(startIdx, endIdx + 1);
+      }
+      return [label];
+    }
+
+    function expandZoneRows(rows) {
+      const expanded = [];
+      rows.forEach((row) => {
+        const labels = expandDayLabel(row.day);
+        if (labels.length === 0) {
+          expanded.push({ ...row, order: 99 });
+          return;
+        }
+        labels.forEach((label) => {
+          const key = normalizeDayLabel(label);
+          expanded.push({
+            day: dayNames[key] || label,
+            w1: row.w1,
+            w2: row.w2,
+            order: dayOrder.indexOf(key)
+          });
+        });
+      });
+      expanded.sort((a, b) => {
+        const aOrder = a.order === -1 ? 99 : a.order;
+        const bOrder = b.order === -1 ? 99 : b.order;
+        return aOrder - bOrder;
+      });
+      return expanded;
+    }
+
+    const zoneHours = {
+      "Zone 1 - North Side": [
+        { day: "Mon-Sun", w1: "00:00 AM - 07:00 AM", w2: "19:00 PM - 23:59 PM" }
+      ],
+      "Zone 2 - Loading Dock": [
+        { day: "Mon-Fri", w1: "05:00 AM - 08:00 AM", w2: "18:00 PM - 22:00 PM" },
+        { day: "Sat-Sun", w1: "06:00 AM - 09:00 AM", w2: "18:00 PM - 23:00 PM" }
+      ],
+      "Zone 3 - Parking Lot": [
+        { day: "Mon-Sun", w1: "00:00 AM - 06:00 AM", w2: "20:00 PM - 23:59 PM" }
+      ],
+      "Zone 4 - East Gate": [
+        { day: "Mon-Fri", w1: "04:30 AM - 07:30 AM", w2: "19:00 PM - 22:30 PM" },
+        { day: "Sat-Sun", w1: "05:30 AM - 08:30 AM", w2: "19:00 PM - 23:00 PM" }
+      ],
+      "Zone 5 - West Gate": [
+        { day: "Mon-Fri", w1: "05:00 AM - 08:00 AM", w2: "18:30 PM - 22:00 PM" },
+        { day: "Sat-Sun", w1: "06:00 AM - 09:00 AM", w2: "18:30 PM - 23:00 PM" }
+      ],
+      "Zone 6 - Warehouse": [
+        { day: "Mon-Sun", w1: "00:00 AM - 05:30 AM", w2: "20:30 PM - 23:59 PM" }
+      ],
+      "Zone 7 - Main Entrance": [
+        { day: "Mon-Sun", w1: "00:00 AM - 06:30 AM", w2: "19:30 PM - 23:59 PM" }
+      ],
+      "Zone 8 - Perimeter": [
+        { day: "Mon-Sun", w1: "00:00 AM - 07:00 AM", w2: "18:00 PM - 23:59 PM" }
+      ]
+    };
+
+    let activeZoneName = "";
+
+    function openZoneHours(zoneName) {
+      const modal = document.getElementById("zoneHoursModal");
+      const title = document.getElementById("zoneHoursTitle");
+      const body = document.getElementById("zoneHoursBody");
+      const message = document.getElementById("zoneHoursMessage");
+      const rows = expandZoneRows(zoneHours[zoneName] || []);
+
+      activeZoneName = zoneName;
+      title.textContent = zoneName;
+      body.innerHTML = rows
+        .map(
+          (row) =>
+            `<tr><td>${row.day}</td><td>${row.w1}</td><td>${row.w2}</td></tr>`
+        )
+        .join("");
+      message.textContent = "";
+      message.className = "modal-message";
+
+      modal.classList.add("show");
+      modal.setAttribute("aria-hidden", "false");
+    }
+
+    function closeZoneHours() {
+      const modal = document.getElementById("zoneHoursModal");
+      const message = document.getElementById("zoneHoursMessage");
+      modal.classList.remove("show");
+      modal.setAttribute("aria-hidden", "true");
+      activeZoneName = "";
+      message.textContent = "";
+      message.className = "modal-message";
+    }
+
+    function validateZoneAction(action) {
+      const message = document.getElementById("zoneHoursMessage");
+      if (!activeZoneName) {
+        message.textContent = "Please select a zone first.";
+        message.className = "modal-message error show";
+        return;
+      }
+
+      if (!zoneHours[activeZoneName] || zoneHours[activeZoneName].length === 0) {
+        message.textContent = "No monitoring hours found for this zone.";
+        message.className = "modal-message error show";
+        return;
+      }
+
+      message.textContent = `${action} requested for ${activeZoneName}.`;
+      message.className = "modal-message success show";
+    }
+
+    document
+      .getElementById("zoneHoursModal")
+      .addEventListener("click", (event) => {
+        if (event.target.id === "zoneHoursModal") {
+          closeZoneHours();
+        }
+      });
+
+    function refreshAlarmConfiguration() {
+      const root = document.getElementById("alarm-config-static");
+      if (!root) {
+        return;
+      }
+      root.querySelectorAll(".alarm-switch input").forEach((input) => {
+        input.checked = false;
+      });
+      root.querySelectorAll(".alarm-modal-zone-row[open]").forEach((row) => {
+        row.removeAttribute("open");
+      });
+      const firstZone = root.querySelector(".alarm-modal-zone-row");
+      if (firstZone) {
+        firstZone.setAttribute("open", "");
+      }
+      root.querySelectorAll(".speaker-config-select").forEach((sel) => {
+        sel.selectedIndex = 0;
+      });
+      root.querySelectorAll(".speaker-profile-select").forEach((sel) => {
+        sel.selectedIndex = 0;
+      });
+      root
+        .querySelectorAll(".speaker-strobe-input, .speaker-siren-input")
+        .forEach((input) => {
+          input.value = "";
+        });
+    }
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") {
+        closeZoneHours();
+      }
+    });
+
+    (function initMainTabs() {
+      const tabs = document.querySelectorAll(".tab-row .tab-item");
+      const panels = {
+        "site-info": document.getElementById("tab-panel-site-info"),
+        "site-map": document.getElementById("tab-panel-site-map"),
+        "camera-views": document.getElementById("tab-panel-camera-views"),
+        "device-info": document.getElementById("tab-panel-device-info")
+      };
+
+      tabs.forEach((tab) => {
+        tab.addEventListener("click", () => {
+          const key = tab.dataset.tab;
+          if (!key || !panels[key]) {
+            return;
+          }
+
+          tabs.forEach((t) => {
+            const on = t === tab;
+            t.classList.toggle("active", on);
+            t.setAttribute("aria-selected", on ? "true" : "false");
+          });
+
+          Object.entries(panels).forEach(([id, panel]) => {
+            if (!panel) {
+              return;
+            }
+            const on = id === key;
+            panel.classList.toggle("active", on);
+            panel.setAttribute("aria-hidden", on ? "false" : "true");
+          });
+        });
+      });
+    })();
+
+  </script>
+</body>
+</html>
