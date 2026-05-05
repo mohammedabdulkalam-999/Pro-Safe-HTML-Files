@@ -552,6 +552,60 @@
       padding: 8px 10px;
       background: var(--white);
       flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .speaker-config-table-wrap {
+      display: flex;
+      flex-direction: row;
+      align-items: stretch;
+      gap: 12px;
+      padding: 4px 10px 10px;
+      background: var(--white);
+    }
+
+    .speaker-config-table-wrap .speaker-config-table {
+      flex: 0 1 auto;
+    }
+
+    .speaker-config-table-actions {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      justify-content: flex-start;
+      align-self: center;
+      flex-shrink: 0;
+    }
+
+    .speaker-toolbar-btn {
+      padding: 6px 16px;
+      border: none;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      white-space: nowrap;
+    }
+
+    .speaker-toolbar-btn-cancel {
+      background: #f58220;
+      color: var(--white);
+    }
+
+    .speaker-toolbar-btn-cancel:hover {
+      filter: brightness(0.96);
+    }
+
+    .speaker-toolbar-btn-save {
+      background: #0f6b76;
+      color: var(--white);
+    }
+
+    .speaker-toolbar-btn-save:hover {
+      filter: brightness(1.06);
     }
 
     .speaker-config-select {
@@ -1197,6 +1251,7 @@
                       <option>AXIS_C1610_MKII_NetworkSpeaker</option>
                     </select>
                   </div>
+                  <div class="speaker-config-table-wrap">
                   <table class="speaker-config-table">
                     <thead>
                       <tr>
@@ -1212,39 +1267,44 @@
                         <td>AI</td>
                         <td><label class="alarm-switch"><input type="checkbox" name="z1-sp-ai" /><span class="alarm-switch-slider"></span></label></td>
                         <td><select class="speaker-profile-select" aria-label="Zone 1 AI profile"><option>pro-vigil</option><option>standard</option></select></td>
-                        <td><button type="button" class="speaker-info-btn" aria-label="Zone 1 Strobe info AI"><span class="material-icons">info</span></button></td>
-                        <td><button type="button" class="speaker-info-btn" aria-label="Zone 1 Siren info AI"><span class="material-icons">info</span></button></td>
+                        <td class="speaker-strobe-cell"><input type="text" class="speaker-strobe-input" aria-label="Zone 1 Strobe info AI" /></td>
+                        <td class="speaker-siren-cell"><input type="text" class="speaker-siren-input" aria-label="Zone 1 Siren info AI" /></td>
                       </tr>
                       <tr>
                         <td>L1</td>
                         <td><label class="alarm-switch"><input type="checkbox" name="z1-sp-l1" /><span class="alarm-switch-slider"></span></label></td>
                         <td><select class="speaker-profile-select" aria-label="Zone 1 L1 profile"><option>pro-vigil</option><option>standard</option></select></td>
-                        <td><button type="button" class="speaker-info-btn" aria-label="Zone 1 Strobe info L1"><span class="material-icons">info</span></button></td>
-                        <td><button type="button" class="speaker-info-btn" aria-label="Zone 1 Siren info L1"><span class="material-icons">info</span></button></td>
+                        <td class="speaker-strobe-cell"><input type="text" class="speaker-strobe-input" aria-label="Zone 1 Strobe info L1" /></td>
+                        <td class="speaker-siren-cell"><input type="text" class="speaker-siren-input" aria-label="Zone 1 Siren info L1" /></td>
                       </tr>
                       <tr>
                         <td>L2</td>
                         <td><label class="alarm-switch"><input type="checkbox" name="z1-sp-l2" /><span class="alarm-switch-slider"></span></label></td>
                         <td><select class="speaker-profile-select" aria-label="Zone 1 L2 profile"><option>pro-vigil</option><option>standard</option></select></td>
-                        <td><button type="button" class="speaker-info-btn" aria-label="Zone 1 Strobe info L2"><span class="material-icons">info</span></button></td>
-                        <td><button type="button" class="speaker-info-btn" aria-label="Zone 1 Siren info L2"><span class="material-icons">info</span></button></td>
+                        <td class="speaker-strobe-cell"><input type="text" class="speaker-strobe-input" aria-label="Zone 1 Strobe info L2" /></td>
+                        <td class="speaker-siren-cell"><input type="text" class="speaker-siren-input" aria-label="Zone 1 Siren info L2" /></td>
                       </tr>
                       <tr>
                         <td>L3</td>
                         <td><label class="alarm-switch"><input type="checkbox" name="z1-sp-l3" /><span class="alarm-switch-slider"></span></label></td>
                         <td><select class="speaker-profile-select" aria-label="Zone 1 L3 profile"><option>pro-vigil</option><option>standard</option></select></td>
-                        <td><button type="button" class="speaker-info-btn" aria-label="Zone 1 Strobe info L3"><span class="material-icons">info</span></button></td>
-                        <td><button type="button" class="speaker-info-btn" aria-label="Zone 1 Siren info L3"><span class="material-icons">info</span></button></td>
+                        <td class="speaker-strobe-cell"><input type="text" class="speaker-strobe-input" aria-label="Zone 1 Strobe info L3" /></td>
+                        <td class="speaker-siren-cell"><input type="text" class="speaker-siren-input" aria-label="Zone 1 Siren info L3" /></td>
                       </tr>
                       <tr>
                         <td>CTM</td>
                         <td><label class="alarm-switch"><input type="checkbox" name="z1-sp-ctm" /><span class="alarm-switch-slider"></span></label></td>
                         <td><select class="speaker-profile-select" aria-label="Zone 1 CTM profile"><option>pro-vigil</option><option>standard</option></select></td>
-                        <td><button type="button" class="speaker-info-btn" aria-label="Zone 1 Strobe info CTM"><span class="material-icons">info</span></button></td>
-                        <td><button type="button" class="speaker-info-btn" aria-label="Zone 1 Siren info CTM"><span class="material-icons">info</span></button></td>
+                        <td class="speaker-strobe-cell"><input type="text" class="speaker-strobe-input" aria-label="Zone 1 Strobe info CTM" /></td>
+                        <td class="speaker-siren-cell"><input type="text" class="speaker-siren-input" aria-label="Zone 1 Siren info CTM" /></td>
                       </tr>
                     </tbody>
                   </table>
+                    <div class="speaker-config-table-actions">
+                      <button type="button" class="speaker-toolbar-btn speaker-toolbar-btn-cancel">Cancel</button>
+                      <button type="button" class="speaker-toolbar-btn speaker-toolbar-btn-save">Save</button>
+                    </div>
+                  </div>
                 </div>
               </div>
             </details>
@@ -1279,6 +1339,7 @@
                       <option>AXIS_C1610_MKII_NetworkSpeaker</option>
                     </select>
                   </div>
+                  <div class="speaker-config-table-wrap">
                   <table class="speaker-config-table">
                     <thead>
                       <tr>
@@ -1294,39 +1355,44 @@
                         <td>AI</td>
                         <td><label class="alarm-switch"><input type="checkbox" name="z2-sp-ai" /><span class="alarm-switch-slider"></span></label></td>
                         <td><select class="speaker-profile-select" aria-label="Zone 2 AI profile"><option>pro-vigil</option><option>dock-quiet</option></select></td>
-                        <td><button type="button" class="speaker-info-btn" aria-label="Zone 2 Strobe AI"><span class="material-icons">info</span></button></td>
-                        <td><button type="button" class="speaker-info-btn" aria-label="Zone 2 Siren AI"><span class="material-icons">info</span></button></td>
+                        <td class="speaker-strobe-cell"><input type="text" class="speaker-strobe-input" aria-label="Zone 2 Strobe AI" /></td>
+                        <td class="speaker-siren-cell"><input type="text" class="speaker-siren-input" aria-label="Zone 2 Siren AI" /></td>
                       </tr>
                       <tr>
                         <td>L1</td>
                         <td><label class="alarm-switch"><input type="checkbox" name="z2-sp-l1" /><span class="alarm-switch-slider"></span></label></td>
                         <td><select class="speaker-profile-select" aria-label="Zone 2 L1 profile"><option>pro-vigil</option><option>dock-quiet</option></select></td>
-                        <td><button type="button" class="speaker-info-btn" aria-label="Zone 2 Strobe L1"><span class="material-icons">info</span></button></td>
-                        <td><button type="button" class="speaker-info-btn" aria-label="Zone 2 Siren L1"><span class="material-icons">info</span></button></td>
+                        <td class="speaker-strobe-cell"><input type="text" class="speaker-strobe-input" aria-label="Zone 2 Strobe L1" /></td>
+                        <td class="speaker-siren-cell"><input type="text" class="speaker-siren-input" aria-label="Zone 2 Siren L1" /></td>
                       </tr>
                       <tr>
                         <td>L2</td>
                         <td><label class="alarm-switch"><input type="checkbox" name="z2-sp-l2" /><span class="alarm-switch-slider"></span></label></td>
                         <td><select class="speaker-profile-select" aria-label="Zone 2 L2 profile"><option>pro-vigil</option><option>dock-quiet</option></select></td>
-                        <td><button type="button" class="speaker-info-btn" aria-label="Zone 2 Strobe L2"><span class="material-icons">info</span></button></td>
-                        <td><button type="button" class="speaker-info-btn" aria-label="Zone 2 Siren L2"><span class="material-icons">info</span></button></td>
+                        <td class="speaker-strobe-cell"><input type="text" class="speaker-strobe-input" aria-label="Zone 2 Strobe L2" /></td>
+                        <td class="speaker-siren-cell"><input type="text" class="speaker-siren-input" aria-label="Zone 2 Siren L2" /></td>
                       </tr>
                       <tr>
                         <td>L3</td>
                         <td><label class="alarm-switch"><input type="checkbox" name="z2-sp-l3" /><span class="alarm-switch-slider"></span></label></td>
                         <td><select class="speaker-profile-select" aria-label="Zone 2 L3 profile"><option>pro-vigil</option><option>dock-quiet</option></select></td>
-                        <td><button type="button" class="speaker-info-btn" aria-label="Zone 2 Strobe L3"><span class="material-icons">info</span></button></td>
-                        <td><button type="button" class="speaker-info-btn" aria-label="Zone 2 Siren L3"><span class="material-icons">info</span></button></td>
+                        <td class="speaker-strobe-cell"><input type="text" class="speaker-strobe-input" aria-label="Zone 2 Strobe L3" /></td>
+                        <td class="speaker-siren-cell"><input type="text" class="speaker-siren-input" aria-label="Zone 2 Siren L3" /></td>
                       </tr>
                       <tr>
                         <td>CTM</td>
                         <td><label class="alarm-switch"><input type="checkbox" name="z2-sp-ctm" /><span class="alarm-switch-slider"></span></label></td>
                         <td><select class="speaker-profile-select" aria-label="Zone 2 CTM profile"><option>pro-vigil</option><option>dock-quiet</option></select></td>
-                        <td><button type="button" class="speaker-info-btn" aria-label="Zone 2 Strobe CTM"><span class="material-icons">info</span></button></td>
-                        <td><button type="button" class="speaker-info-btn" aria-label="Zone 2 Siren CTM"><span class="material-icons">info</span></button></td>
+                        <td class="speaker-strobe-cell"><input type="text" class="speaker-strobe-input" aria-label="Zone 2 Strobe CTM" /></td>
+                        <td class="speaker-siren-cell"><input type="text" class="speaker-siren-input" aria-label="Zone 2 Siren CTM" /></td>
                       </tr>
                     </tbody>
                   </table>
+                    <div class="speaker-config-table-actions">
+                      <button type="button" class="speaker-toolbar-btn speaker-toolbar-btn-cancel">Cancel</button>
+                      <button type="button" class="speaker-toolbar-btn speaker-toolbar-btn-save">Save</button>
+                    </div>
+                  </div>
                 </div>
               </div>
             </details>
@@ -1361,6 +1427,7 @@
                       <option>AXIS_C1610_MKII_NetworkSpeaker</option>
                     </select>
                   </div>
+                  <div class="speaker-config-table-wrap">
                   <table class="speaker-config-table">
                     <thead>
                       <tr>
@@ -1376,39 +1443,44 @@
                         <td>AI</td>
                         <td><label class="alarm-switch"><input type="checkbox" name="z3-sp-ai" /><span class="alarm-switch-slider"></span></label></td>
                         <td><select class="speaker-profile-select" aria-label="Zone 3 AI profile"><option>pro-vigil</option><option>lot-perimeter</option></select></td>
-                        <td><button type="button" class="speaker-info-btn" aria-label="Zone 3 Strobe AI"><span class="material-icons">info</span></button></td>
-                        <td><button type="button" class="speaker-info-btn" aria-label="Zone 3 Siren AI"><span class="material-icons">info</span></button></td>
+                        <td class="speaker-strobe-cell"><input type="text" class="speaker-strobe-input" aria-label="Zone 3 Strobe AI" /></td>
+                        <td class="speaker-siren-cell"><input type="text" class="speaker-siren-input" aria-label="Zone 3 Siren AI" /></td>
                       </tr>
                       <tr>
                         <td>L1</td>
                         <td><label class="alarm-switch"><input type="checkbox" name="z3-sp-l1" /><span class="alarm-switch-slider"></span></label></td>
                         <td><select class="speaker-profile-select" aria-label="Zone 3 L1 profile"><option>pro-vigil</option><option>lot-perimeter</option></select></td>
-                        <td><button type="button" class="speaker-info-btn" aria-label="Zone 3 Strobe L1"><span class="material-icons">info</span></button></td>
-                        <td><button type="button" class="speaker-info-btn" aria-label="Zone 3 Siren L1"><span class="material-icons">info</span></button></td>
+                        <td class="speaker-strobe-cell"><input type="text" class="speaker-strobe-input" aria-label="Zone 3 Strobe L1" /></td>
+                        <td class="speaker-siren-cell"><input type="text" class="speaker-siren-input" aria-label="Zone 3 Siren L1" /></td>
                       </tr>
                       <tr>
                         <td>L2</td>
                         <td><label class="alarm-switch"><input type="checkbox" name="z3-sp-l2" /><span class="alarm-switch-slider"></span></label></td>
                         <td><select class="speaker-profile-select" aria-label="Zone 3 L2 profile"><option>pro-vigil</option><option>lot-perimeter</option></select></td>
-                        <td><button type="button" class="speaker-info-btn" aria-label="Zone 3 Strobe L2"><span class="material-icons">info</span></button></td>
-                        <td><button type="button" class="speaker-info-btn" aria-label="Zone 3 Siren L2"><span class="material-icons">info</span></button></td>
+                        <td class="speaker-strobe-cell"><input type="text" class="speaker-strobe-input" aria-label="Zone 3 Strobe L2" /></td>
+                        <td class="speaker-siren-cell"><input type="text" class="speaker-siren-input" aria-label="Zone 3 Siren L2" /></td>
                       </tr>
                       <tr>
                         <td>L3</td>
                         <td><label class="alarm-switch"><input type="checkbox" name="z3-sp-l3" /><span class="alarm-switch-slider"></span></label></td>
                         <td><select class="speaker-profile-select" aria-label="Zone 3 L3 profile"><option>pro-vigil</option><option>lot-perimeter</option></select></td>
-                        <td><button type="button" class="speaker-info-btn" aria-label="Zone 3 Strobe L3"><span class="material-icons">info</span></button></td>
-                        <td><button type="button" class="speaker-info-btn" aria-label="Zone 3 Siren L3"><span class="material-icons">info</span></button></td>
+                        <td class="speaker-strobe-cell"><input type="text" class="speaker-strobe-input" aria-label="Zone 3 Strobe L3" /></td>
+                        <td class="speaker-siren-cell"><input type="text" class="speaker-siren-input" aria-label="Zone 3 Siren L3" /></td>
                       </tr>
                       <tr>
                         <td>CTM</td>
                         <td><label class="alarm-switch"><input type="checkbox" name="z3-sp-ctm" /><span class="alarm-switch-slider"></span></label></td>
                         <td><select class="speaker-profile-select" aria-label="Zone 3 CTM profile"><option>pro-vigil</option><option>lot-perimeter</option></select></td>
-                        <td><button type="button" class="speaker-info-btn" aria-label="Zone 3 Strobe CTM"><span class="material-icons">info</span></button></td>
-                        <td><button type="button" class="speaker-info-btn" aria-label="Zone 3 Siren CTM"><span class="material-icons">info</span></button></td>
+                        <td class="speaker-strobe-cell"><input type="text" class="speaker-strobe-input" aria-label="Zone 3 Strobe CTM" /></td>
+                        <td class="speaker-siren-cell"><input type="text" class="speaker-siren-input" aria-label="Zone 3 Siren CTM" /></td>
                       </tr>
                     </tbody>
                   </table>
+                    <div class="speaker-config-table-actions">
+                      <button type="button" class="speaker-toolbar-btn speaker-toolbar-btn-cancel">Cancel</button>
+                      <button type="button" class="speaker-toolbar-btn speaker-toolbar-btn-save">Save</button>
+                    </div>
+                  </div>
                 </div>
               </div>
             </details>
@@ -1443,6 +1515,7 @@
                       <option>AXIS_C1610_MKII_NetworkSpeaker</option>
                     </select>
                   </div>
+                  <div class="speaker-config-table-wrap">
                   <table class="speaker-config-table">
                     <thead>
                       <tr>
@@ -1458,39 +1531,44 @@
                         <td>AI</td>
                         <td><label class="alarm-switch"><input type="checkbox" name="z4-sp-ai" /><span class="alarm-switch-slider"></span></label></td>
                         <td><select class="speaker-profile-select" aria-label="Zone 4 AI profile"><option>pro-vigil</option><option>gate-east</option></select></td>
-                        <td><button type="button" class="speaker-info-btn" aria-label="Zone 4 Strobe AI"><span class="material-icons">info</span></button></td>
-                        <td><button type="button" class="speaker-info-btn" aria-label="Zone 4 Siren AI"><span class="material-icons">info</span></button></td>
+                        <td class="speaker-strobe-cell"><input type="text" class="speaker-strobe-input" aria-label="Zone 4 Strobe AI" /></td>
+                        <td class="speaker-siren-cell"><input type="text" class="speaker-siren-input" aria-label="Zone 4 Siren AI" /></td>
                       </tr>
                       <tr>
                         <td>L1</td>
                         <td><label class="alarm-switch"><input type="checkbox" name="z4-sp-l1" /><span class="alarm-switch-slider"></span></label></td>
                         <td><select class="speaker-profile-select" aria-label="Zone 4 L1 profile"><option>pro-vigil</option><option>gate-east</option></select></td>
-                        <td><button type="button" class="speaker-info-btn" aria-label="Zone 4 Strobe L1"><span class="material-icons">info</span></button></td>
-                        <td><button type="button" class="speaker-info-btn" aria-label="Zone 4 Siren L1"><span class="material-icons">info</span></button></td>
+                        <td class="speaker-strobe-cell"><input type="text" class="speaker-strobe-input" aria-label="Zone 4 Strobe L1" /></td>
+                        <td class="speaker-siren-cell"><input type="text" class="speaker-siren-input" aria-label="Zone 4 Siren L1" /></td>
                       </tr>
                       <tr>
                         <td>L2</td>
                         <td><label class="alarm-switch"><input type="checkbox" name="z4-sp-l2" /><span class="alarm-switch-slider"></span></label></td>
                         <td><select class="speaker-profile-select" aria-label="Zone 4 L2 profile"><option>pro-vigil</option><option>gate-east</option></select></td>
-                        <td><button type="button" class="speaker-info-btn" aria-label="Zone 4 Strobe L2"><span class="material-icons">info</span></button></td>
-                        <td><button type="button" class="speaker-info-btn" aria-label="Zone 4 Siren L2"><span class="material-icons">info</span></button></td>
+                        <td class="speaker-strobe-cell"><input type="text" class="speaker-strobe-input" aria-label="Zone 4 Strobe L2" /></td>
+                        <td class="speaker-siren-cell"><input type="text" class="speaker-siren-input" aria-label="Zone 4 Siren L2" /></td>
                       </tr>
                       <tr>
                         <td>L3</td>
                         <td><label class="alarm-switch"><input type="checkbox" name="z4-sp-l3" /><span class="alarm-switch-slider"></span></label></td>
                         <td><select class="speaker-profile-select" aria-label="Zone 4 L3 profile"><option>pro-vigil</option><option>gate-east</option></select></td>
-                        <td><button type="button" class="speaker-info-btn" aria-label="Zone 4 Strobe L3"><span class="material-icons">info</span></button></td>
-                        <td><button type="button" class="speaker-info-btn" aria-label="Zone 4 Siren L3"><span class="material-icons">info</span></button></td>
+                        <td class="speaker-strobe-cell"><input type="text" class="speaker-strobe-input" aria-label="Zone 4 Strobe L3" /></td>
+                        <td class="speaker-siren-cell"><input type="text" class="speaker-siren-input" aria-label="Zone 4 Siren L3" /></td>
                       </tr>
                       <tr>
                         <td>CTM</td>
                         <td><label class="alarm-switch"><input type="checkbox" name="z4-sp-ctm" /><span class="alarm-switch-slider"></span></label></td>
                         <td><select class="speaker-profile-select" aria-label="Zone 4 CTM profile"><option>pro-vigil</option><option>gate-east</option></select></td>
-                        <td><button type="button" class="speaker-info-btn" aria-label="Zone 4 Strobe CTM"><span class="material-icons">info</span></button></td>
-                        <td><button type="button" class="speaker-info-btn" aria-label="Zone 4 Siren CTM"><span class="material-icons">info</span></button></td>
+                        <td class="speaker-strobe-cell"><input type="text" class="speaker-strobe-input" aria-label="Zone 4 Strobe CTM" /></td>
+                        <td class="speaker-siren-cell"><input type="text" class="speaker-siren-input" aria-label="Zone 4 Siren CTM" /></td>
                       </tr>
                     </tbody>
                   </table>
+                    <div class="speaker-config-table-actions">
+                      <button type="button" class="speaker-toolbar-btn speaker-toolbar-btn-cancel">Cancel</button>
+                      <button type="button" class="speaker-toolbar-btn speaker-toolbar-btn-save">Save</button>
+                    </div>
+                  </div>
                 </div>
               </div>
             </details>
@@ -1525,6 +1603,7 @@
                       <option>AXIS_C1610_MKII_NetworkSpeaker</option>
                     </select>
                   </div>
+                  <div class="speaker-config-table-wrap">
                   <table class="speaker-config-table">
                     <thead>
                       <tr>
@@ -1540,39 +1619,44 @@
                         <td>AI</td>
                         <td><label class="alarm-switch"><input type="checkbox" name="z5-sp-ai" /><span class="alarm-switch-slider"></span></label></td>
                         <td><select class="speaker-profile-select" aria-label="Zone 5 AI profile"><option>pro-vigil</option><option>gate-west</option></select></td>
-                        <td><button type="button" class="speaker-info-btn" aria-label="Zone 5 Strobe AI"><span class="material-icons">info</span></button></td>
-                        <td><button type="button" class="speaker-info-btn" aria-label="Zone 5 Siren AI"><span class="material-icons">info</span></button></td>
+                        <td class="speaker-strobe-cell"><input type="text" class="speaker-strobe-input" aria-label="Zone 5 Strobe AI" /></td>
+                        <td class="speaker-siren-cell"><input type="text" class="speaker-siren-input" aria-label="Zone 5 Siren AI" /></td>
                       </tr>
                       <tr>
                         <td>L1</td>
                         <td><label class="alarm-switch"><input type="checkbox" name="z5-sp-l1" /><span class="alarm-switch-slider"></span></label></td>
                         <td><select class="speaker-profile-select" aria-label="Zone 5 L1 profile"><option>pro-vigil</option><option>gate-west</option></select></td>
-                        <td><button type="button" class="speaker-info-btn" aria-label="Zone 5 Strobe L1"><span class="material-icons">info</span></button></td>
-                        <td><button type="button" class="speaker-info-btn" aria-label="Zone 5 Siren L1"><span class="material-icons">info</span></button></td>
+                        <td class="speaker-strobe-cell"><input type="text" class="speaker-strobe-input" aria-label="Zone 5 Strobe L1" /></td>
+                        <td class="speaker-siren-cell"><input type="text" class="speaker-siren-input" aria-label="Zone 5 Siren L1" /></td>
                       </tr>
                       <tr>
                         <td>L2</td>
                         <td><label class="alarm-switch"><input type="checkbox" name="z5-sp-l2" /><span class="alarm-switch-slider"></span></label></td>
                         <td><select class="speaker-profile-select" aria-label="Zone 5 L2 profile"><option>pro-vigil</option><option>gate-west</option></select></td>
-                        <td><button type="button" class="speaker-info-btn" aria-label="Zone 5 Strobe L2"><span class="material-icons">info</span></button></td>
-                        <td><button type="button" class="speaker-info-btn" aria-label="Zone 5 Siren L2"><span class="material-icons">info</span></button></td>
+                        <td class="speaker-strobe-cell"><input type="text" class="speaker-strobe-input" aria-label="Zone 5 Strobe L2" /></td>
+                        <td class="speaker-siren-cell"><input type="text" class="speaker-siren-input" aria-label="Zone 5 Siren L2" /></td>
                       </tr>
                       <tr>
                         <td>L3</td>
                         <td><label class="alarm-switch"><input type="checkbox" name="z5-sp-l3" /><span class="alarm-switch-slider"></span></label></td>
                         <td><select class="speaker-profile-select" aria-label="Zone 5 L3 profile"><option>pro-vigil</option><option>gate-west</option></select></td>
-                        <td><button type="button" class="speaker-info-btn" aria-label="Zone 5 Strobe L3"><span class="material-icons">info</span></button></td>
-                        <td><button type="button" class="speaker-info-btn" aria-label="Zone 5 Siren L3"><span class="material-icons">info</span></button></td>
+                        <td class="speaker-strobe-cell"><input type="text" class="speaker-strobe-input" aria-label="Zone 5 Strobe L3" /></td>
+                        <td class="speaker-siren-cell"><input type="text" class="speaker-siren-input" aria-label="Zone 5 Siren L3" /></td>
                       </tr>
                       <tr>
                         <td>CTM</td>
                         <td><label class="alarm-switch"><input type="checkbox" name="z5-sp-ctm" /><span class="alarm-switch-slider"></span></label></td>
                         <td><select class="speaker-profile-select" aria-label="Zone 5 CTM profile"><option>pro-vigil</option><option>gate-west</option></select></td>
-                        <td><button type="button" class="speaker-info-btn" aria-label="Zone 5 Strobe CTM"><span class="material-icons">info</span></button></td>
-                        <td><button type="button" class="speaker-info-btn" aria-label="Zone 5 Siren CTM"><span class="material-icons">info</span></button></td>
+                        <td class="speaker-strobe-cell"><input type="text" class="speaker-strobe-input" aria-label="Zone 5 Strobe CTM" /></td>
+                        <td class="speaker-siren-cell"><input type="text" class="speaker-siren-input" aria-label="Zone 5 Siren CTM" /></td>
                       </tr>
                     </tbody>
                   </table>
+                    <div class="speaker-config-table-actions">
+                      <button type="button" class="speaker-toolbar-btn speaker-toolbar-btn-cancel">Cancel</button>
+                      <button type="button" class="speaker-toolbar-btn speaker-toolbar-btn-save">Save</button>
+                    </div>
+                  </div>
                 </div>
               </div>
             </details>
