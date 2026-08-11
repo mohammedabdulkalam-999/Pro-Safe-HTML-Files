@@ -585,9 +585,9 @@
       background: #fff;
       border-radius: 2px;
       width: min(920px, 96vw);
-      max-height: min(78vh, 640px);
+      max-height: min(90vh, 760px);
       box-shadow: 0 8px 28px rgba(0, 0, 0, 0.35);
-      overflow: hidden;
+      overflow: visible;
       display: flex;
       flex-direction: column;
     }
@@ -600,6 +600,7 @@
       justify-content: space-between;
       gap: 12px;
       flex-shrink: 0;
+      border-radius: 2px 2px 0 0;
     }
     .modal-card .modal-hd-text {
       font-size: 14px;
@@ -627,10 +628,214 @@
       padding: 14px 16px 20px;
       font-size: 14px;
       line-height: 1.5;
-      overflow: auto;
+      overflow: visible;
       flex: 1;
       background: #fff;
       min-height: 280px;
+      border-radius: 0 0 2px 2px;
+    }
+    .timer-panel {
+      margin-bottom: 14px;
+    }
+    .dt-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      align-items: flex-start;
+    }
+    .dt-field {
+      position: relative;
+      flex: 1 1 280px;
+      min-width: 240px;
+      max-width: 360px;
+    }
+    .dt-field input {
+      width: 100%;
+      height: 48px;
+      border: 1px solid #9aa5ad;
+      border-radius: 4px;
+      padding: 12px 40px 8px 12px;
+      font-size: 14px;
+      color: #2b2f33;
+      background: #fff;
+    }
+    .dt-field input:focus {
+      outline: none;
+      border-color: #1976d2;
+      box-shadow: 0 0 0 1px #1976d2;
+    }
+    .dt-field input.invalid {
+      border-color: #c0392b;
+      box-shadow: 0 0 0 1px #c0392b;
+    }
+    .dt-field label {
+      position: absolute;
+      left: 10px;
+      top: -8px;
+      background: #fff;
+      padding: 0 4px;
+      font-size: 12px;
+      color: #5c6a72;
+      pointer-events: none;
+    }
+    .dt-field .dt-cal-ico {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #5c6a72;
+      font-size: 20px;
+      pointer-events: none;
+    }
+    .dt-hint {
+      font-size: 12px;
+      color: #6b7785;
+      margin-top: 8px;
+    }
+    .timer-error {
+      display: none;
+      margin-top: 8px;
+      padding: 8px 10px;
+      border-radius: 4px;
+      background: #fdecea;
+      color: #922b21;
+      border: 1px solid #f5c6cb;
+      font-size: 13px;
+      font-weight: 500;
+    }
+    .timer-error.show { display: flex; align-items: center; gap: 6px; }
+
+    .dt-popover {
+      display: none;
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 0;
+      z-index: 50;
+      background: #fff;
+      border: 1px solid #cfd8dc;
+      border-radius: 4px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+      width: min(520px, 92vw);
+      overflow: hidden;
+    }
+    .dt-popover.open { display: block; }
+    .dt-popover-inner {
+      display: grid;
+      grid-template-columns: 1.15fr 0.95fr;
+      min-height: 280px;
+    }
+    .dt-cal {
+      padding: 10px 12px 8px;
+      border-right: 1px solid #e0e0e0;
+    }
+    .dt-cal-hd {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-weight: 600;
+      font-size: 14px;
+      color: #333;
+    }
+    .dt-cal-hd button {
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      color: #555;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .dt-cal-hd button:hover { background: #f0f0f0; }
+    .dt-weekdays,
+    .dt-days {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 2px;
+      text-align: center;
+    }
+    .dt-weekdays span {
+      font-size: 11px;
+      color: #888;
+      padding: 4px 0;
+      font-weight: 600;
+    }
+    .dt-days button {
+      border: none;
+      background: transparent;
+      height: 32px;
+      border-radius: 4px;
+      font-size: 13px;
+      cursor: pointer;
+      color: #333;
+    }
+    .dt-days button:hover:not(:disabled) { background: #e3f2fd; }
+    .dt-days button:disabled {
+      color: #ccc;
+      cursor: not-allowed;
+    }
+    .dt-days button.selected {
+      background: #1976d2;
+      color: #fff;
+      font-weight: 600;
+    }
+    .dt-days button.today:not(.selected) {
+      box-shadow: inset 0 0 0 1px #333;
+    }
+    .dt-cal-ft {
+      display: flex;
+      justify-content: space-between;
+      padding-top: 8px;
+      margin-top: 4px;
+    }
+    .dt-cal-ft button {
+      border: none;
+      background: transparent;
+      color: #1976d2;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      padding: 4px 6px;
+    }
+    .dt-cal-ft button:hover { text-decoration: underline; }
+    .dt-time {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      max-height: 300px;
+      overflow: hidden;
+    }
+    .dt-time-col {
+      overflow-y: auto;
+      border-left: 1px solid #eee;
+      max-height: 300px;
+    }
+    .dt-time-col:first-child { border-left: none; }
+    .dt-time-col button {
+      display: block;
+      width: 100%;
+      border: none;
+      background: transparent;
+      padding: 8px 0;
+      font-size: 13px;
+      cursor: pointer;
+      color: #333;
+      text-align: center;
+    }
+    .dt-time-col button:hover { background: #f5f5f5; }
+    .dt-time-col button.selected {
+      background: #1976d2;
+      color: #fff;
+      font-weight: 600;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+    @media (max-width: 640px) {
+      .dt-popover-inner { grid-template-columns: 1fr; }
+      .dt-cal { border-right: none; border-bottom: 1px solid #e0e0e0; }
     }
     .pf-accordion {
       border: 1px solid #d8dee4;
@@ -917,6 +1122,27 @@
         </button>
       </div>
       <div class="modal-body" id="modalBody">
+        <div class="timer-panel" id="timerPanel">
+          <div class="dt-row">
+            <div class="dt-field" data-dt="from">
+              <label for="fromDateTime">Choose From Date&amp;Time</label>
+              <input type="text" id="fromDateTime" placeholder="DD-MM-YYYY HH:mm:ss" autocomplete="off" readonly>
+              <span class="material-icons dt-cal-ico">calendar_today</span>
+              <div class="dt-popover" id="fromPopover"></div>
+            </div>
+            <div class="dt-field" data-dt="to">
+              <label for="toDateTime">Choose To Date&amp;Time</label>
+              <input type="text" id="toDateTime" placeholder="DD-MM-YYYY HH:mm:ss" autocomplete="off" readonly>
+              <span class="material-icons dt-cal-ico">calendar_today</span>
+              <div class="dt-popover" id="toPopover"></div>
+            </div>
+          </div>
+          <div class="dt-hint">From and To must stay within ±5 minutes of the event time.</div>
+          <div class="timer-error" id="timerError" role="alert">
+            <span class="material-icons" style="font-size:18px;">error</span>
+            <span id="timerErrorText"></span>
+          </div>
+        </div>
         <div class="pf-accordion" data-level="L2">
           <button type="button" class="pf-accordion-btn" aria-expanded="false">
             <span>L2 - Past &amp; Future Events</span>
@@ -972,9 +1198,29 @@
         modalTitle: document.getElementById("modalTitle"),
         panelL2: document.getElementById("panelL2"),
         panelL3: document.getElementById("panelL3"),
+        fromDateTime: document.getElementById("fromDateTime"),
+        toDateTime: document.getElementById("toDateTime"),
+        fromPopover: document.getElementById("fromPopover"),
+        toPopover: document.getElementById("toPopover"),
+        timerError: document.getElementById("timerError"),
+        timerErrorText: document.getElementById("timerErrorText"),
         drawer: document.getElementById("sideDrawer"),
         drawerBackdrop: document.getElementById("drawerBackdrop"),
         favBtn: document.getElementById("favBtn")
+      };
+
+      const TIMER_LIMIT_MS = 5 * 60 * 1000;
+      const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+
+      const timerState = {
+        from: null,
+        to: null,
+        active: null,
+        viewYear: null,
+        viewMonth: null,
+        minDate: null,
+        maxDate: null,
+        eventDate: null
       };
 
       function seedEvents(queueName, count) {
@@ -1134,12 +1380,305 @@
         showToast._t = setTimeout(() => els.toast.classList.remove("show"), 2600);
       }
 
+      function parseEventDate(eventTimeStr) {
+        const normalized = String(eventTimeStr || "").replace(" ", "T");
+        const d = new Date(normalized);
+        return Number.isNaN(d.getTime()) ? null : d;
+      }
+
+      function pad2(n) { return String(n).padStart(2, "0"); }
+
+      function formatDisplayDT(date) {
+        if (!date) return "";
+        return (
+          pad2(date.getDate()) + "-" +
+          pad2(date.getMonth() + 1) + "-" +
+          date.getFullYear() + " " +
+          pad2(date.getHours()) + ":" +
+          pad2(date.getMinutes()) + ":" +
+          pad2(date.getSeconds())
+        );
+      }
+
+      function cloneDate(d) { return new Date(d.getTime()); }
+
+      function withinLimit(date) {
+        if (!date || !timerState.eventDate) return false;
+        return Math.abs(date.getTime() - timerState.eventDate.getTime()) <= TIMER_LIMIT_MS;
+      }
+
+      function clampToLimit(date) {
+        if (!timerState.eventDate) return date;
+        if (date.getTime() < timerState.minDate.getTime()) return cloneDate(timerState.minDate);
+        if (date.getTime() > timerState.maxDate.getTime()) return cloneDate(timerState.maxDate);
+        return date;
+      }
+
+      function clearTimerError() {
+        els.timerError.classList.remove("show");
+        els.timerErrorText.textContent = "";
+        els.fromDateTime.classList.remove("invalid");
+        els.toDateTime.classList.remove("invalid");
+      }
+
+      function showTimerError(msg, which) {
+        els.timerErrorText.textContent = msg;
+        els.timerError.classList.add("show");
+        if (which === "from" || which === "both") els.fromDateTime.classList.add("invalid");
+        if (which === "to" || which === "both") els.toDateTime.classList.add("invalid");
+      }
+
+      function syncInputs() {
+        els.fromDateTime.value = formatDisplayDT(timerState.from);
+        els.toDateTime.value = formatDisplayDT(timerState.to);
+      }
+
+      function validateTimerSelection(showMessage) {
+        clearTimerError();
+        if (!timerState.from || !timerState.to || !timerState.eventDate) {
+          if (showMessage) showTimerError("Please choose From and To Date&Time.", "both");
+          return false;
+        }
+        if (!withinLimit(timerState.from)) {
+          if (showMessage) {
+            showTimerError(
+              "From Date&Time must be within ±5 minutes of the event time. More than 5 minutes is not allowed.",
+              "from"
+            );
+          }
+          return false;
+        }
+        if (!withinLimit(timerState.to)) {
+          if (showMessage) {
+            showTimerError(
+              "To Date&Time must be within ±5 minutes of the event time. More than 5 minutes is not allowed.",
+              "to"
+            );
+          }
+          return false;
+        }
+        if (timerState.to.getTime() < timerState.from.getTime()) {
+          if (showMessage) showTimerError("To Date&Time cannot be earlier than From Date&Time.", "to");
+          return false;
+        }
+        return true;
+      }
+
+      function closeAllPopovers() {
+        els.fromPopover.classList.remove("open");
+        els.toPopover.classList.remove("open");
+        timerState.active = null;
+      }
+
+      function renderPopover(which) {
+        const pop = which === "from" ? els.fromPopover : els.toPopover;
+        const selected = which === "from" ? timerState.from : timerState.to;
+        if (!selected) return;
+
+        const y = timerState.viewYear;
+        const m = timerState.viewMonth;
+        const first = new Date(y, m, 1);
+        const startPad = first.getDay();
+        const daysInMonth = new Date(y, m + 1, 0).getDate();
+        const today = new Date();
+
+        let daysHtml = "";
+        for (let i = 0; i < startPad; i++) daysHtml += "<span></span>";
+        for (let day = 1; day <= daysInMonth; day++) {
+          const candidate = new Date(y, m, day, selected.getHours(), selected.getMinutes(), selected.getSeconds());
+          const dayStart = new Date(y, m, day, 0, 0, 0);
+          const dayEnd = new Date(y, m, day, 23, 59, 59);
+          const inRange =
+            dayEnd.getTime() >= timerState.minDate.getTime() &&
+            dayStart.getTime() <= timerState.maxDate.getTime();
+          const isSelected =
+            selected.getFullYear() === y &&
+            selected.getMonth() === m &&
+            selected.getDate() === day;
+          const isToday =
+            today.getFullYear() === y &&
+            today.getMonth() === m &&
+            today.getDate() === day;
+          const cls = [
+            isSelected ? "selected" : "",
+            isToday ? "today" : ""
+          ].filter(Boolean).join(" ");
+          daysHtml += `<button type="button" data-day="${day}" class="${cls}" ${inRange ? "" : "disabled"}>${day}</button>`;
+        }
+
+        const hourBtns = Array.from({ length: 24 }, (_, h) => {
+          const test = new Date(selected.getFullYear(), selected.getMonth(), selected.getDate(), h, selected.getMinutes(), selected.getSeconds());
+          const ok = withinLimit(test);
+          return `<button type="button" data-h="${h}" class="${selected.getHours() === h ? "selected" : ""}" ${ok ? "" : "disabled"}>${pad2(h)}</button>`;
+        }).join("");
+        const minBtns = Array.from({ length: 60 }, (_, mi) => {
+          const test = new Date(selected.getFullYear(), selected.getMonth(), selected.getDate(), selected.getHours(), mi, selected.getSeconds());
+          const ok = withinLimit(test);
+          return `<button type="button" data-mi="${mi}" class="${selected.getMinutes() === mi ? "selected" : ""}" ${ok ? "" : "disabled"}>${pad2(mi)}</button>`;
+        }).join("");
+        const secBtns = Array.from({ length: 60 }, (_, s) => {
+          const test = new Date(selected.getFullYear(), selected.getMonth(), selected.getDate(), selected.getHours(), selected.getMinutes(), s);
+          const ok = withinLimit(test);
+          return `<button type="button" data-s="${s}" class="${selected.getSeconds() === s ? "selected" : ""}" ${ok ? "" : "disabled"}>${pad2(s)}</button>`;
+        }).join("");
+
+        pop.innerHTML = `
+          <div class="dt-popover-inner">
+            <div class="dt-cal">
+              <div class="dt-cal-hd">
+                <button type="button" data-nav="-1" aria-label="Previous month"><span class="material-icons" style="font-size:18px;">chevron_left</span></button>
+                <span>${MONTHS[m]}, ${y}</span>
+                <button type="button" data-nav="1" aria-label="Next month"><span class="material-icons" style="font-size:18px;">chevron_right</span></button>
+              </div>
+              <div class="dt-weekdays">
+                <span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span>
+              </div>
+              <div class="dt-days">${daysHtml}</div>
+              <div class="dt-cal-ft">
+                <button type="button" data-act="clear">Clear</button>
+                <button type="button" data-act="today">Today</button>
+              </div>
+            </div>
+            <div class="dt-time">
+              <div class="dt-time-col" data-col="h">${hourBtns}</div>
+              <div class="dt-time-col" data-col="mi">${minBtns}</div>
+              <div class="dt-time-col" data-col="s">${secBtns}</div>
+            </div>
+          </div>`;
+
+        // scroll selected time into view
+        requestAnimationFrame(() => {
+          pop.querySelectorAll(".dt-time-col").forEach((col) => {
+            const sel = col.querySelector("button.selected");
+            if (sel) sel.scrollIntoView({ block: "nearest" });
+          });
+        });
+      }
+
+      function setSelectedDatePart(which, year, month, day) {
+        const cur = which === "from" ? timerState.from : timerState.to;
+        let next = new Date(year, month, day, cur.getHours(), cur.getMinutes(), cur.getSeconds());
+        if (!withinLimit(next)) next = clampToLimit(next);
+        if (which === "from") timerState.from = next;
+        else timerState.to = next;
+        syncInputs();
+        validateTimerSelection(true);
+        renderPopover(which);
+      }
+
+      function setSelectedTimePart(which, part, value) {
+        const cur = cloneDate(which === "from" ? timerState.from : timerState.to);
+        if (part === "h") cur.setHours(value);
+        if (part === "mi") cur.setMinutes(value);
+        if (part === "s") cur.setSeconds(value);
+        if (!withinLimit(cur)) {
+          showTimerError(
+            (which === "from" ? "From" : "To") +
+              " Date&Time must be within ±5 minutes of the event time. More than 5 minutes is not allowed.",
+            which
+          );
+          renderPopover(which);
+          return;
+        }
+        if (which === "from") timerState.from = cur;
+        else timerState.to = cur;
+        syncInputs();
+        validateTimerSelection(true);
+        renderPopover(which);
+      }
+
+      function openPopover(which) {
+        closeAllPopovers();
+        const selected = which === "from" ? timerState.from : timerState.to;
+        timerState.active = which;
+        timerState.viewYear = selected.getFullYear();
+        timerState.viewMonth = selected.getMonth();
+        const pop = which === "from" ? els.fromPopover : els.toPopover;
+        renderPopover(which);
+        pop.classList.add("open");
+      }
+
+      function onPopoverClick(which, e) {
+        const nav = e.target.closest("[data-nav]");
+        if (nav) {
+          const delta = Number(nav.dataset.nav);
+          const d = new Date(timerState.viewYear, timerState.viewMonth + delta, 1);
+          timerState.viewYear = d.getFullYear();
+          timerState.viewMonth = d.getMonth();
+          renderPopover(which);
+          return;
+        }
+        const dayBtn = e.target.closest("[data-day]");
+        if (dayBtn && !dayBtn.disabled) {
+          setSelectedDatePart(which, timerState.viewYear, timerState.viewMonth, Number(dayBtn.dataset.day));
+          return;
+        }
+        const act = e.target.closest("[data-act]");
+        if (act) {
+          if (act.dataset.act === "clear") {
+            const base = cloneDate(timerState.eventDate);
+            if (which === "from") timerState.from = base;
+            else timerState.to = base;
+            syncInputs();
+            validateTimerSelection(true);
+            renderPopover(which);
+          } else if (act.dataset.act === "today") {
+            let next = cloneDate(timerState.eventDate);
+            const now = new Date();
+            // keep event day window; "Today" snaps to event time if today outside range
+            if (withinLimit(now)) next = now;
+            if (which === "from") timerState.from = next;
+            else timerState.to = next;
+            timerState.viewYear = next.getFullYear();
+            timerState.viewMonth = next.getMonth();
+            syncInputs();
+            validateTimerSelection(true);
+            renderPopover(which);
+          }
+          return;
+        }
+        const hBtn = e.target.closest("[data-h]");
+        if (hBtn && !hBtn.disabled) {
+          setSelectedTimePart(which, "h", Number(hBtn.dataset.h));
+          return;
+        }
+        const miBtn = e.target.closest("[data-mi]");
+        if (miBtn && !miBtn.disabled) {
+          setSelectedTimePart(which, "mi", Number(miBtn.dataset.mi));
+          return;
+        }
+        const sBtn = e.target.closest("[data-s]");
+        if (sBtn && !sBtn.disabled) {
+          setSelectedTimePart(which, "s", Number(sBtn.dataset.s));
+        }
+      }
+
+      function initPopupTimer(event) {
+        const eventDate = parseEventDate(event.eventTime);
+        clearTimerError();
+        closeAllPopovers();
+        if (!eventDate) {
+          timerState.eventDate = null;
+          timerState.from = null;
+          timerState.to = null;
+          syncInputs();
+          return;
+        }
+        timerState.eventDate = eventDate;
+        timerState.minDate = new Date(eventDate.getTime() - TIMER_LIMIT_MS);
+        timerState.maxDate = new Date(eventDate.getTime() + TIMER_LIMIT_MS);
+        timerState.from = cloneDate(eventDate);
+        timerState.to = cloneDate(eventDate);
+        syncInputs();
+      }
+
       function openEventPopup(id) {
         const event = findEvent(id);
         if (!event) return;
         state.activeEvent = event;
         els.modalTitle.textContent =
           "Escalation Id: " + event.id;
+        initPopupTimer(event);
         els.panelL2.innerHTML = renderPastFuture(event, "L2");
         els.panelL3.innerHTML = renderPastFuture(event, "L3");
         document.querySelectorAll(".pf-accordion").forEach((el) => {
@@ -1155,6 +1694,7 @@
       }
 
       function closeModal() {
+        closeAllPopovers();
         els.modal.classList.remove("show");
         state.activeEvent = null;
       }
@@ -1288,6 +1828,20 @@
           accordion.classList.toggle("open", willOpen);
           btn.setAttribute("aria-expanded", willOpen ? "true" : "false");
         });
+      });
+
+      els.fromDateTime.addEventListener("click", () => openPopover("from"));
+      els.toDateTime.addEventListener("click", () => openPopover("to"));
+      els.fromPopover.addEventListener("click", (e) => {
+        e.stopPropagation();
+        onPopoverClick("from", e);
+      });
+      els.toPopover.addEventListener("click", (e) => {
+        e.stopPropagation();
+        onPopoverClick("to", e);
+      });
+      document.addEventListener("click", (e) => {
+        if (!e.target.closest(".dt-field")) closeAllPopovers();
       });
 
       els.pageSize.addEventListener("change", () => {
