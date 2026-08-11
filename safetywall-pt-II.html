@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Safety wall PT-II - PRO-SAFE</title>
+  <style>
+    html { height: 100%; box-sizing: border-box; }
+    *, *::before, *::after { box-sizing: inherit; }
+    body { margin: 0; min-height: 100%; font-family: 'Inter', Helvetica, Arial, sans-serif; background: #181f26; }
+    .basecamp-header { background: #2c5b89; color: #fff; display: flex; align-items: center; padding: 0 32px; height: 64px; font-size: 1.2rem; font-weight: 600; }
+    .basecamp-header .logo { display: flex; align-items: center; font-size: 2rem; font-weight: bold; margin-right: 16px; }
+    .basecamp-header .logo-img { width: 48px; height: 48px; margin-right: 12px; background: #2c5b89; border-radius: 50%; padding: 4px; }
+    .basecamp-header .user { margin-left: auto; font-size: 1.1rem; font-weight: 500; display: flex; align-items: center; gap: 16px; }
+    .basecamp-wall-container {
+      display: flex;
+      flex-direction: column;
+      height: calc(100vh - 64px);
+      max-height: calc(100vh - 64px);
+      background: rgb(30, 30, 30);
+      min-height: 0;
+      overflow: hidden;
+    }
+    /* 2×2 grid — same pattern as Safety services wall.html */
+    .basecamp-panels {
+      flex: 1;
+      min-height: 0;
+      min-width: 0;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr 1fr;
+      gap: 8px;
+      padding: 8px;
+    }
+    .basecamp-panel { border: 3px solid #ffffff; border-radius: 4px; position: relative; overflow: hidden; min-height: 0; display: flex; flex-direction: column; }
+    .basecamp-panel.border-redflag { border: 6px solid #f81919 !important; }
+    .basecamp-panel.border-orangeflag { border: 6px solid transparent; animation: blinkBorder 1s infinite; }
+    @keyframes blinkBorder { 0% { border: 6px solid #fba706; } 50% { border: 6px solid transparent; } 100% { border: 6px solid #fba706; } }
+    .basecamp-panel-content { padding: 0; color: #fff; flex: 1; min-height: 0; display: flex; flex-direction: column; position: relative; overflow-y: auto; }
+    .panel-media-row {
+      display: flex;
+      flex-direction: row;
+      flex: 1 1 auto;
+      min-height: 120px;
+      min-width: 0;
+    }
+    .panel-media-row .media-card-slot { flex: 1; min-width: 0; }
+    .basecamp-panel-content > .thumbnails-accordion.card-accordion { flex-shrink: 0; }
+    .basecamp-panel-error { text-align: center; color: #ffffff; font-size: 16px; font-weight: 500; }
+    /* Video / media card slots — 16:9 (matches Safety services wall.html) */
+    .media-card-slot {
+      flex: 1;
+      min-width: 0;
+      position: relative;
+      background: #0d1117;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      aspect-ratio: 16 / 9;
+      max-height: 100%;
+    }
+    .media-card-slot .media-wrapper {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .media-card-slot video { width: 100%; height: 100%; max-height: 100%; object-fit: contain; object-position: center; display: block; }
+    .media-card-slot iframe { width: 100%; height: 100%; border: none; display: block; }
+    .media-card-slot .media-image { width: 100%; height: 100%; max-height: 100%; object-fit: contain; object-position: center; display: block; }
+    .media-card-slot .media-placeholder { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: rgba(255,255,255,0.6); font-size: 0.95rem; padding: 20px; text-align: center; }
+    .media-card-slot .media-placeholder .slot-label { font-weight: 600; color: #fff; font-size: 1.1rem; margin-bottom: 8px; }
+    .media-card-slot .media-placeholder .slot-hint { font-size: 0.8rem; opacity: 0.8; }
+    .media-card-slot .media-caption { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.85)); color: #fff; padding: 8px 12px; font-size: 0.8rem; font-weight: 500; }
+    /* Status/action icon strip — full height of media row, aligned with video */
+    .slot-status-icons {
+      width: 44px;
+      flex-shrink: 0;
+      align-self: stretch;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-evenly;
+      padding: 10px 0;
+      border-left: 1px solid rgba(255,255,255,0.15);
+      box-sizing: border-box;
+    }
+    .slot-status-icons .status-icon { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; cursor: pointer; font-weight: 700; }
+    .slot-status-icons .status-icon:hover { opacity: 0.9; }
+    .slot-status-icons .status-icon:focus { outline: 2px solid #fff; outline-offset: 2px; }
+    .slot-status-icons .status-icon.info { background: #fff; color: #1a1a1a; font-size: 14px; font-weight: 700; font-style: italic; }
+    .slot-status-icons .status-icon.emergency-alarm { background: #c62828; color: #fff; }
+    .slot-status-icons .status-icon.check { background: #2e7d32; color: #fff; }
+    .slot-status-icons .status-icon.upload { background: #c62828; color: #fff; }
+    .slot-status-icons .status-icon.notify { background: #ef6c00; color: #fff; }
+    .slot-status-icons .status-icon.play { background: #1565c0; color: #fff; }
+    .slot-status-icons .status-icon svg { width: 14px; height: 14px; stroke: currentColor; stroke-width: 1.2; stroke-linejoin: round; fill: currentColor; }
+    .slot-status-icons .status-icon.outline { background: transparent; border: 2px solid currentColor; }
+    .slot-status-icons .status-icon.outline.emergency-alarm { color: #c62828; }
+    .slot-status-icons .status-icon.outline.upload { color: #c62828; }
+    .slot-status-icons .status-icon.outline.notify { color: #ef6c00; }
+    .slot-status-icons .status-icon.outline.play { color: #1565c0; }
+    @media (max-width: 768px) {
+      .basecamp-panels { grid-template-columns: 1fr; grid-template-rows: repeat(4, 1fr); }
+    }
+    .safety-protocols-list { list-style: none; margin: 0; padding: 0; }
+    .safety-protocols-list li {
+      position: relative;
+      padding: 10px 12px 10px 30px;
+      border-bottom: 1px solid #e5e5e5;
+      font-size: 0.92rem;
+      line-height: 1.45;
+      color: #333;
+    }
+    .safety-protocols-list li:last-child { border-bottom: none; }
+    .safety-protocols-list li::before {
+      content: "";
+      position: absolute;
+      left: 10px;
+      top: 14px;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #2c5b89;
+    }
+    /* Thumbnails accordion under each media card */
+    .thumbnails-accordion { flex-shrink: 0; background: #252d36; border-top: 1px solid rgba(255,255,255,0.12); min-height: 32px; }
+    .thumbnails-accordion.card-accordion { border-top: 1px solid rgba(255,255,255,0.1); margin-top: 0; border-radius: 0 0 6px 6px; }
+    .thumbnails-accordion-header { padding: 6px 10px; min-height: 32px; box-sizing: border-box; cursor: pointer; display: flex; align-items: center; justify-content: space-between; color: #fff; font-weight: 600; font-size: 0.8rem; user-select: none; }
+    .thumbnails-accordion-header:hover { background: rgba(255,255,255,0.06); }
+    .thumbnails-accordion-header .accordion-arrow { transition: transform 0.2s ease; }
+    .thumbnails-accordion-header.is-open .accordion-arrow { transform: rotate(180deg); }
+    .thumbnails-accordion-content { display: none; padding: 16px 20px; max-height: 220px; overflow: auto; }
+    .thumbnails-accordion-content.is-open { display: block; }
+    .card-accordion .thumbnails-accordion-content { max-height: 220px; padding: 8px 10px; overflow: auto; }
+    .past-future-status { font-size: 0.68rem; color: rgba(255,255,255,0.7); margin: 0 0 8px 0; line-height: 1.35; }
+    .past-future-strip { display: grid; grid-template-columns: repeat(auto-fill, minmax(76px, 1fr)); gap: 8px; max-height: 180px; overflow-x: hidden; overflow-y: auto; }
+    .past-future-thumb { position: relative; margin: 0; padding: 0; border: 2px solid rgba(255,255,255,0.15); border-radius: 4px; background: #0d1117; cursor: pointer; overflow: hidden; font: inherit; text-align: center; }
+    .past-future-thumb:hover { border-color: rgba(44, 91, 137, 0.65); }
+    .past-future-thumb.is-selected { border-color: #2c5b89; box-shadow: 0 0 0 1px #2c5b89; }
+    .past-future-thumb img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; display: block; vertical-align: middle; }
+    .past-future-thumb .pf-time { display: block; font-size: 0.62rem; font-weight: 600; color: #fff; padding: 3px 4px; background: rgba(0,0,0,0.72); }
+    .thumbnails-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+    .thumbnail-item { position: relative; background: #0d1117; border-radius: 4px; overflow: hidden; aspect-ratio: 16/9; border: 1px solid rgba(255,255,255,0.15); }
+    .thumbnail-item video { width: 100%; height: 100%; object-fit: cover; display: block; pointer-events: none; }
+    .thumbnail-item .thumbnail-label { position: absolute; bottom: 0; left: 0; right: 0; padding: 4px 8px; background: rgba(0,0,0,0.75); color: #fff; font-size: 0.75rem; font-weight: 500; }
+    @media (max-width: 768px) { .thumbnails-grid { grid-template-columns: repeat(2, 1fr); } }
+    /* Site info modal */
+    .site-info-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1000; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; }
+    .site-info-overlay.is-open { display: flex; }
+    .site-info-modal { background: #fff; color: #222; border-radius: 8px; max-width: 480px; width: 100%; max-height: min(90vh, 640px); box-shadow: 0 8px 32px rgba(0,0,0,0.3); overflow: hidden; display: flex; flex-direction: column; }
+    .site-info-modal .site-info-header { background: #2c5b89; color: #fff; padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; }
+    .site-info-modal .site-info-header h3 { margin: 0; font-size: 1.1rem; font-weight: 600; }
+    .site-info-modal .site-info-close { background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer; padding: 0 4px; line-height: 1; opacity: 0.9; }
+    .site-info-modal .site-info-close:hover { opacity: 1; }
+    .site-info-modal .site-info-body { padding: 20px; font-size: 0.95rem; line-height: 1.6; overflow-y: auto; flex: 1; min-height: 0; }
+    .site-info-modal .site-info-row { margin-bottom: 12px; }
+    .site-info-modal .site-info-row:last-of-type { margin-bottom: 0; }
+    .site-info-modal .site-info-label { font-weight: 600; color: #2c5b89; display: block; margin-bottom: 2px; }
+    .site-info-modal .site-info-value { color: #333; }
+    .site-info-modal .site-info-protocols-block { margin-top: 16px; padding-top: 16px; border-top: 1px solid #e0e0e0; }
+    .site-info-modal .site-info-protocols-block > .site-info-label { margin-bottom: 10px; }
+    .site-info-modal .safety-protocols-list { margin-top: 0; }
+    /* Emergency alarm activated modal */
+    .emergency-alarm-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1001; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; }
+    .emergency-alarm-overlay.is-open { display: flex; }
+    .emergency-alarm-modal { background: #fff; color: #222; border-radius: 8px; max-width: 360px; width: 100%; box-shadow: 0 8px 32px rgba(0,0,0,0.3); overflow: hidden; border-left: 4px solid #c62828; }
+    .emergency-alarm-modal .emergency-alarm-header { background: #c62828; color: #fff; padding: 16px 20px; font-weight: 600; font-size: 1rem; }
+    .emergency-alarm-modal .emergency-alarm-body { padding: 20px; font-size: 1rem; }
+    .emergency-alarm-modal .emergency-alarm-body p { margin: 0 0 16px 0; }
+    .emergency-alarm-modal .emergency-alarm-close { display: block; width: 100%; padding: 10px; background: #2c5b89; color: #fff; border: none; border-radius: 4px; font-size: 0.95rem; font-weight: 600; cursor: pointer; }
+    .emergency-alarm-modal .emergency-alarm-close:hover { background: #1e4062; }
+    /* Compliance resolved modal */
+    .compliance-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1002; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; }
+    .compliance-overlay.is-open { display: flex; }
+    .compliance-modal { background: #fff; color: #222; border-radius: 8px; max-width: 360px; width: 100%; box-shadow: 0 8px 32px rgba(0,0,0,0.3); overflow: hidden; border-left: 4px solid #2e7d32; }
+    .compliance-modal .compliance-header { background: #2e7d32; color: #fff; padding: 16px 20px; font-weight: 600; font-size: 1rem; }
+    .compliance-modal .compliance-body { padding: 20px; font-size: 1rem; }
+    .compliance-modal .compliance-body p { margin: 0 0 16px 0; }
+    .compliance-modal .compliance-close { display: block; width: 100%; padding: 10px; background: #2c5b89; color: #fff; border: none; border-radius: 4px; font-size: 0.95rem; font-weight: 600; cursor: pointer; }
+    .compliance-modal .compliance-close:hover { background: #1e4062; }
+    /* Disposition modal - radio options */
+    .disposition-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1003; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; }
+    .disposition-overlay.is-open { display: flex; }
+    .disposition-modal { background: #fff; color: #222; border-radius: 8px; max-width: 520px; width: 100%; box-shadow: 0 8px 32px rgba(0,0,0,0.3); overflow: hidden; border-left: 4px solid #c62828; }
+    .disposition-modal .disposition-header { background: #c62828; color: #fff; padding: 16px 20px; font-weight: 600; font-size: 1rem; }
+    .disposition-modal .disposition-body { padding: 20px; font-size: 0.92rem; max-height: min(70vh, 520px); overflow-y: auto; }
+    .disposition-modal .disposition-option { display: flex; align-items: flex-start; gap: 10px; padding: 10px 0; border-bottom: 1px solid #eee; cursor: pointer; color: #333; }
+    .disposition-modal .disposition-option:last-of-type { border-bottom: none; }
+    .disposition-modal .disposition-option input[type="checkbox"] { margin-top: 3px; flex-shrink: 0; cursor: pointer; }
+    .disposition-modal .disposition-option label { cursor: pointer; flex: 1; margin: 0; line-height: 1.4; }
+    .disposition-modal .disposition-close { display: block; width: 100%; margin-top: 16px; padding: 10px; background: #2c5b89; color: #fff; border: none; border-radius: 4px; font-size: 0.95rem; font-weight: 600; cursor: pointer; }
+    .disposition-modal .disposition-close:hover { background: #1e4062; }
+    /* Alarm triggered modal (5th icon) */
+    .alarm-trigger-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1004; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; }
+    .alarm-trigger-overlay.is-open { display: flex; }
+    .alarm-trigger-modal { background: #fff; color: #222; border-radius: 8px; max-width: 360px; width: 100%; box-shadow: 0 8px 32px rgba(0,0,0,0.3); overflow: hidden; border-left: 4px solid #ef6c00; }
+    .alarm-trigger-modal .alarm-trigger-header { background: #ef6c00; color: #fff; padding: 16px 20px; font-weight: 600; font-size: 1rem; }
+    .alarm-trigger-modal .alarm-trigger-body { padding: 20px; font-size: 1rem; }
+    .alarm-trigger-modal .alarm-trigger-body p { margin: 0 0 16px 0; }
+    .alarm-trigger-modal .alarm-trigger-close { display: block; width: 100%; padding: 10px; background: #2c5b89; color: #fff; border: none; border-radius: 4px; font-size: 0.95rem; font-weight: 600; cursor: pointer; }
+    .alarm-trigger-modal .alarm-trigger-close:hover { background: #1e4062; }
+  </style>
+</head>
+<body>
+  <div class="basecamp-header">
+    <span class="logo"><img src="https://via.placeholder.com/48x48?text=PS" class="logo-img" alt="Logo" />PRO-SAFE</span>
+    <span class="user">Safety wall PT-II <span style="margin-left: 18px;">Abdul Kalam</span></span>
+  </div>
+  <div id="basecampWallContent" class="basecamp-wall-container">
+    <div class="basecamp-panels">
+      <div class="basecamp-panel" id="panel1_slot">
+        <div class="basecamp-panel-content" id="panel1Container">
+          <div class="panel-media-row">
+            <div class="media-card-slot" id="mediaSlot1">
+              <div class="media-placeholder">
+                <span class="slot-label">Video / media slot 1</span>
+                <span class="slot-hint">Assign a stream or media URL to display here</span>
+              </div>
+            </div>
+            <div class="slot-status-icons" aria-label="Status indicators" data-slot="1">
+            <span class="status-icon info" role="button" tabindex="0" data-icon="info" title="Site Safety info">i</span>
+            <span class="status-icon emergency-alarm" role="button" tabindex="0" data-icon="emergency-alarm" title="Emergency Alarm"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="0.5" y="7" width="1.5" height="10" rx="0.5" stroke="none"/><rect x="2.5" y="7" width="1.5" height="10" rx="0.5" stroke="none"/><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/><rect x="20" y="7" width="1.5" height="10" rx="0.5" stroke="none"/><rect x="22" y="7" width="1.5" height="10" rx="0.5" stroke="none"/></svg></span>
+            <span class="status-icon check" role="button" tabindex="0" data-icon="check" title="Mark As Compliance"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></span>
+            <span class="status-icon upload outline" role="button" tabindex="0" data-icon="upload" title="Disposition"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16h6v-6h4l-7-7-7 7h4v6zm-4 2h14v2H5v-2z"/></svg></span>
+            <span class="status-icon notify outline" role="button" tabindex="0" data-icon="notify" title="Alarm Trigger"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg></span>
+            <span class="status-icon play outline" role="button" tabindex="0" data-icon="play" title="Playback"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+            </div>
+          </div>
+          <div class="thumbnails-accordion card-accordion" data-slot="1">
+            <div class="thumbnails-accordion-header" role="button" tabindex="0" aria-expanded="false" aria-controls="thumbContent1"><span>Past and Future events</span><span class="accordion-arrow" aria-hidden="true">▼</span></div>
+            <div class="thumbnails-accordion-content" id="thumbContent1" role="region">
+              <p class="past-future-status" id="pastFutureStatus1" aria-live="polite"></p>
+              <div class="past-future-strip" id="pastFutureStrip1"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="basecamp-panel" id="panel2_slot">
+        <div class="basecamp-panel-content" id="panel2Container">
+          <div class="panel-media-row">
+            <div class="media-card-slot" id="mediaSlot2">
+              <div class="media-placeholder">
+                <span class="slot-label">Video / media slot 2</span>
+                <span class="slot-hint">Assign a stream or media URL to display here</span>
+              </div>
+            </div>
+            <div class="slot-status-icons" aria-label="Status indicators" data-slot="2">
+            <span class="status-icon info" role="button" tabindex="0" data-icon="info" title="Site Safety info">i</span>
+            <span class="status-icon emergency-alarm" role="button" tabindex="0" data-icon="emergency-alarm" title="Emergency Alarm"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="0.5" y="7" width="1.5" height="10" rx="0.5" stroke="none"/><rect x="2.5" y="7" width="1.5" height="10" rx="0.5" stroke="none"/><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/><rect x="20" y="7" width="1.5" height="10" rx="0.5" stroke="none"/><rect x="22" y="7" width="1.5" height="10" rx="0.5" stroke="none"/></svg></span>
+            <span class="status-icon check" role="button" tabindex="0" data-icon="check" title="Mark As Compliance"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></span>
+            <span class="status-icon upload outline" role="button" tabindex="0" data-icon="upload" title="Disposition"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16h6v-6h4l-7-7-7 7h4v6zm-4 2h14v2H5v-2z"/></svg></span>
+            <span class="status-icon notify outline" role="button" tabindex="0" data-icon="notify" title="Alarm Trigger"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg></span>
+            <span class="status-icon play outline" role="button" tabindex="0" data-icon="play" title="Playback"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+            </div>
+          </div>
+          <div class="thumbnails-accordion card-accordion" data-slot="2">
+            <div class="thumbnails-accordion-header" role="button" tabindex="0" aria-expanded="false" aria-controls="thumbContent2"><span>Past and Future events</span><span class="accordion-arrow" aria-hidden="true">▼</span></div>
+            <div class="thumbnails-accordion-content" id="thumbContent2" role="region">
+              <p class="past-future-status" id="pastFutureStatus2" aria-live="polite"></p>
+              <div class="past-future-strip" id="pastFutureStrip2"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="basecamp-panel" id="panel3_slot">
+        <div class="basecamp-panel-content" id="panel3Container">
+          <div class="panel-media-row">
+            <div class="media-card-slot" id="mediaSlot3">
+              <div class="media-placeholder">
+                <span class="slot-label">Video / media slot 3</span>
+                <span class="slot-hint">Assign a stream or media URL to display here</span>
+              </div>
+            </div>
+            <div class="slot-status-icons" aria-label="Status indicators" data-slot="3">
+            <span class="status-icon info" role="button" tabindex="0" data-icon="info" title="Site Safety info">i</span>
+            <span class="status-icon emergency-alarm" role="button" tabindex="0" data-icon="emergency-alarm" title="Emergency Alarm"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="0.5" y="7" width="1.5" height="10" rx="0.5" stroke="none"/><rect x="2.5" y="7" width="1.5" height="10" rx="0.5" stroke="none"/><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/><rect x="20" y="7" width="1.5" height="10" rx="0.5" stroke="none"/><rect x="22" y="7" width="1.5" height="10" rx="0.5" stroke="none"/></svg></span>
+            <span class="status-icon check" role="button" tabindex="0" data-icon="check" title="Mark As Compliance"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></span>
+            <span class="status-icon upload" role="button" tabindex="0" data-icon="upload" title="Disposition"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16h6v-6h4l-7-7-7 7h4v6zm-4 2h14v2H5v-2z"/></svg></span>
+            <span class="status-icon notify" role="button" tabindex="0" data-icon="notify" title="Alarm Trigger"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg></span>
+            <span class="status-icon play" role="button" tabindex="0" data-icon="play" title="Playback"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+            </div>
+          </div>
+          <div class="thumbnails-accordion card-accordion" data-slot="3">
+            <div class="thumbnails-accordion-header" role="button" tabindex="0" aria-expanded="false" aria-controls="thumbContent3"><span>Past and Future events</span><span class="accordion-arrow" aria-hidden="true">▼</span></div>
+            <div class="thumbnails-accordion-content" id="thumbContent3" role="region">
+              <p class="past-future-status" id="pastFutureStatus3" aria-live="polite"></p>
+              <div class="past-future-strip" id="pastFutureStrip3"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="basecamp-panel" id="panel4_slot">
+        <div class="basecamp-panel-content" id="panel4Container">
+          <div class="panel-media-row">
+            <div class="media-card-slot" id="mediaSlot4">
+              <div class="media-placeholder">
+                <span class="slot-label">Video / media slot 4</span>
+                <span class="slot-hint">Assign a stream or media URL to display here</span>
+              </div>
+            </div>
+            <div class="slot-status-icons" aria-label="Status indicators" data-slot="4">
+            <span class="status-icon info" role="button" tabindex="0" data-icon="info" title="Site Safety info">i</span>
+            <span class="status-icon emergency-alarm" role="button" tabindex="0" data-icon="emergency-alarm" title="Emergency Alarm"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="0.5" y="7" width="1.5" height="10" rx="0.5" stroke="none"/><rect x="2.5" y="7" width="1.5" height="10" rx="0.5" stroke="none"/><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/><rect x="20" y="7" width="1.5" height="10" rx="0.5" stroke="none"/><rect x="22" y="7" width="1.5" height="10" rx="0.5" stroke="none"/></svg></span>
+            <span class="status-icon check" role="button" tabindex="0" data-icon="check" title="Mark As Compliance"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></span>
+            <span class="status-icon upload" role="button" tabindex="0" data-icon="upload" title="Disposition"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16h6v-6h4l-7-7-7 7h4v6zm-4 2h14v2H5v-2z"/></svg></span>
+            <span class="status-icon notify" role="button" tabindex="0" data-icon="notify" title="Alarm Trigger"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg></span>
+            <span class="status-icon play" role="button" tabindex="0" data-icon="play" title="Playback"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+            </div>
+          </div>
+          <div class="thumbnails-accordion card-accordion" data-slot="4">
+            <div class="thumbnails-accordion-header" role="button" tabindex="0" aria-expanded="false" aria-controls="thumbContent4"><span>Past and Future events</span><span class="accordion-arrow" aria-hidden="true">▼</span></div>
+            <div class="thumbnails-accordion-content" id="thumbContent4" role="region">
+              <p class="past-future-status" id="pastFutureStatus4" aria-live="polite"></p>
+              <div class="past-future-strip" id="pastFutureStrip4"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="siteInfoModal" class="site-info-overlay" aria-hidden="true" role="dialog" aria-labelledby="siteInfoModalTitle">
+    <div class="site-info-modal" onclick="event.stopPropagation()">
+      <div class="site-info-header">
+        <h3 id="siteInfoModalTitle">Site Safety Info</h3>
+        <button type="button" class="site-info-close" onclick="document.getElementById('siteInfoModal').classList.remove('is-open')" aria-label="Close">&times;</button>
+      </div>
+      <div class="site-info-body">
+        <div class="site-info-row">
+          <span class="site-info-label">Site Name</span>
+          <span class="site-info-value">Newyork Metro Phase 2 – Package B</span>
+        </div>
+        <div class="site-info-protocols-block">
+          <span class="site-info-label">Safety protocols</span>
+          <ul class="safety-protocols-list" id="safetyProtocolsList">
+            <li>Wear an approved hard hat and high-visibility vest in all active work zones.</li>
+            <li>Use fall protection (harness, guardrails, or nets) when working at height per site policy.</li>
+            <li>Maintain three-point contact on ladders and stairways; no leaning or overreaching.</li>
+            <li>Keep fire extinguishers, eyewash stations, and emergency exits clear and accessible.</li>
+            <li>Report unsafe conditions, near-misses, and incidents to site supervision immediately.</li>
+            <li>Stay outside heavy equipment swing zones unless authorized and in direct communication with the operator.</li>
+            <li>Follow lockout/tagout and energy-isolation procedures before servicing or clearing jammed equipment.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="emergencyAlarmModal" class="emergency-alarm-overlay" aria-hidden="true" role="alertdialog" aria-labelledby="emergencyAlarmModalTitle">
+    <div class="emergency-alarm-modal" onclick="event.stopPropagation()">
+      <div class="emergency-alarm-header" id="emergencyAlarmModalTitle">Emergency Alarm</div>
+      <div class="emergency-alarm-body">
+        <p>Emergency alarm activated.</p>
+        <button type="button" class="emergency-alarm-close" onclick="document.getElementById('emergencyAlarmModal').classList.remove('is-open')">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="complianceModal" class="compliance-overlay" aria-hidden="true" role="dialog" aria-labelledby="complianceModalTitle">
+    <div class="compliance-modal" onclick="event.stopPropagation()">
+      <div class="compliance-header" id="complianceModalTitle">Mark As Compliance</div>
+      <div class="compliance-body">
+        <p>Compliance Resolved.</p>
+        <button type="button" class="compliance-close" onclick="document.getElementById('complianceModal').classList.remove('is-open')">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="dispositionModal" class="disposition-overlay" aria-hidden="true" role="dialog" aria-labelledby="dispositionModalTitle">
+    <div class="disposition-modal" onclick="event.stopPropagation()">
+      <div class="disposition-header" id="dispositionModalTitle">Disposition</div>
+      <div class="disposition-body" role="group" aria-label="Disposition options (multi-select)">
+        <div class="disposition-option">
+          <input type="checkbox" name="disposition" id="disposition-ppe-manual" value="ppe-compliance-manual">
+          <label for="disposition-ppe-manual">PPE compliance detection manually by monitoring agents</label>
+        </div>
+        <div class="disposition-option">
+          <input type="checkbox" name="disposition" id="disposition-signage" value="safety-signage-coverage">
+          <label for="disposition-signage">Safety signage coverage</label>
+        </div>
+        <div class="disposition-option">
+          <input type="checkbox" name="disposition" id="disposition-restricted-zone" value="restricted-zone-enforcement">
+          <label for="disposition-restricted-zone">Restricted zone enforcement</label>
+        </div>
+        <div class="disposition-option">
+          <input type="checkbox" name="disposition" id="disposition-unauthorized" value="unauthorized-person-vehicle-active-zone">
+          <label for="disposition-unauthorized">Unauthorized person or vehicle in active zone</label>
+        </div>
+        <div class="disposition-option">
+          <input type="checkbox" name="disposition" id="disposition-early-shutdown" value="early-shutdown-detection">
+          <label for="disposition-early-shutdown">Early shutdown detection</label>
+        </div>
+        <div class="disposition-option">
+          <input type="checkbox" name="disposition" id="disposition-weather" value="weather-related-stoppage">
+          <label for="disposition-weather">Weather-related stoppage detection</label>
+        </div>
+        <div class="disposition-option">
+          <input type="checkbox" name="disposition" id="disposition-removal-hours" value="material-equipment-removal-outside-hours">
+          <label for="disposition-removal-hours">Material or equipment removal outside hours</label>
+        </div>
+        <div class="disposition-option">
+          <input type="checkbox" name="disposition" id="disposition-suspended-loads" value="workers-under-suspended-loads">
+          <label for="disposition-suspended-loads">Workers under suspended loads</label>
+        </div>
+        <div class="disposition-option">
+          <input type="checkbox" name="disposition" id="disposition-ladder" value="unsafe-ladder-use">
+          <label for="disposition-ladder">Unsafe ladder use</label>
+        </div>
+        <div class="disposition-option">
+          <input type="checkbox" name="disposition" id="disposition-near-miss" value="pedestrian-equipment-near-miss">
+          <label for="disposition-near-miss">Pedestrian-equipment near miss</label>
+        </div>
+        <div class="disposition-option">
+          <input type="checkbox" name="disposition" id="disposition-weekly-report" value="weekly-safety-intelligence-report">
+          <label for="disposition-weekly-report">Weekly safety intelligence report</label>
+        </div>
+        <button type="button" class="disposition-close" onclick="document.getElementById('dispositionModal').classList.remove('is-open')">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="alarmTriggerModal" class="alarm-trigger-overlay" aria-hidden="true" role="alertdialog" aria-labelledby="alarmTriggerModalTitle">
+    <div class="alarm-trigger-modal" onclick="event.stopPropagation()">
+      <div class="alarm-trigger-header" id="alarmTriggerModalTitle">Alarm Trigger</div>
+      <div class="alarm-trigger-body">
+        <p>Custom alarm triggered Successfully.</p>
+        <button type="button" class="alarm-trigger-close" onclick="document.getElementById('alarmTriggerModal').classList.remove('is-open')">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function initStatusIconClicks() {
+      function handleIconAction(iconEl) {
+        var strip = iconEl.closest('.slot-status-icons');
+        var slot = strip ? strip.getAttribute('data-slot') : '';
+        var iconType = iconEl.getAttribute('data-icon') || '';
+        var title = iconEl.getAttribute('title') || '';
+        if (iconType === 'info') {
+          var modal = document.getElementById('siteInfoModal');
+          if (modal) { modal.classList.add('is-open'); modal.setAttribute('aria-hidden', 'false'); }
+        }
+        if (iconType === 'emergency-alarm') {
+          var alarmModal = document.getElementById('emergencyAlarmModal');
+          if (alarmModal) { alarmModal.classList.add('is-open'); alarmModal.setAttribute('aria-hidden', 'false'); }
+        }
+        if (iconType === 'check') {
+          var complianceModal = document.getElementById('complianceModal');
+          if (complianceModal) { complianceModal.classList.add('is-open'); complianceModal.setAttribute('aria-hidden', 'false'); }
+        }
+        if (iconType === 'upload') {
+          var dispositionModal = document.getElementById('dispositionModal');
+          if (dispositionModal) { dispositionModal.classList.add('is-open'); dispositionModal.setAttribute('aria-hidden', 'false'); }
+        }
+        if (iconType === 'notify') {
+          var alarmTriggerModal = document.getElementById('alarmTriggerModal');
+          if (alarmTriggerModal) { alarmTriggerModal.classList.add('is-open'); alarmTriggerModal.setAttribute('aria-hidden', 'false'); }
+        }
+        if (iconType === 'play') {
+          var sn = strip ? parseInt(strip.getAttribute('data-slot'), 10) : 0;
+          var ms = sn ? document.getElementById('mediaSlot' + sn) : null;
+          var vid = ms ? ms.querySelector('video') : null;
+          if (vid) {
+            if (vid.paused) { vid.muted = false; vid.play().catch(function() {}); } else { vid.pause(); }
+          }
+        }
+        if (typeof window.SafetyWallIconClick === 'function') {
+          window.SafetyWallIconClick(parseInt(slot, 10) || 0, iconType, title);
+        }
+        iconEl.dispatchEvent(new CustomEvent('safetywalliconclick', { bubbles: true, detail: { slot: slot, icon: iconType, title: title } }));
+      }
+      document.querySelectorAll('.slot-status-icons .status-icon').forEach(function(icon) {
+        icon.addEventListener('click', function() { handleIconAction(icon); });
+        icon.addEventListener('keydown', function(e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleIconAction(icon); } });
+      });
+      var overlay = document.getElementById('siteInfoModal');
+      if (overlay) {
+        overlay.addEventListener('click', function(e) { if (e.target === overlay) overlay.classList.remove('is-open'); });
+      }
+      var alarmOverlay = document.getElementById('emergencyAlarmModal');
+      if (alarmOverlay) {
+        alarmOverlay.addEventListener('click', function(e) { if (e.target === alarmOverlay) alarmOverlay.classList.remove('is-open'); });
+      }
+      var complianceOverlay = document.getElementById('complianceModal');
+      if (complianceOverlay) {
+        complianceOverlay.addEventListener('click', function(e) { if (e.target === complianceOverlay) complianceOverlay.classList.remove('is-open'); });
+      }
+      var dispositionOverlay = document.getElementById('dispositionModal');
+      if (dispositionOverlay) {
+        dispositionOverlay.addEventListener('click', function(e) { if (e.target === dispositionOverlay) dispositionOverlay.classList.remove('is-open'); });
+      }
+      var alarmTriggerOverlay = document.getElementById('alarmTriggerModal');
+      if (alarmTriggerOverlay) {
+        alarmTriggerOverlay.addEventListener('click', function(e) { if (e.target === alarmTriggerOverlay) alarmTriggerOverlay.classList.remove('is-open'); });
+      }
+      document.querySelectorAll('.disposition-option').forEach(function(div) {
+        div.addEventListener('click', function(e) {
+          if (e.target.matches('input')) return;
+          if (e.target.closest('label')) return;
+          var cb = this.querySelector('input[type="checkbox"]');
+          if (cb) cb.checked = !cb.checked;
+        });
+      });
+      window.getSelectedDispositionValues = function() {
+        return Array.prototype.map.call(
+          document.querySelectorAll('#dispositionModal input[name="disposition"]:checked'),
+          function(el) { return el.value; }
+        );
+      };
+      document.addEventListener('keydown', function(e) {
+        if (e.key !== 'Escape') return;
+        if (overlay && overlay.classList.contains('is-open')) overlay.classList.remove('is-open');
+        if (alarmOverlay && alarmOverlay.classList.contains('is-open')) alarmOverlay.classList.remove('is-open');
+        if (complianceOverlay && complianceOverlay.classList.contains('is-open')) complianceOverlay.classList.remove('is-open');
+        if (dispositionOverlay && dispositionOverlay.classList.contains('is-open')) dispositionOverlay.classList.remove('is-open');
+        if (alarmTriggerOverlay && alarmTriggerOverlay.classList.contains('is-open')) alarmTriggerOverlay.classList.remove('is-open');
+      });
+    })();
+  </script>
+  <script>
+    (function initPastFutureThumbnails() {
+      var SLOT_COUNT = 4;
+      var MAX_SECONDS = 600;
+      var pastFutureGen = {};
+      function formatSec(totalSec) {
+        var m = Math.floor(totalSec / 60);
+        var s = Math.floor(totalSec % 60);
+        return m + ':' + (s < 10 ? '0' : '') + s;
+      }
+      function getMainVideoUrl(slotNum) {
+        var slot = document.getElementById('mediaSlot' + slotNum);
+        if (!slot) return '';
+        var v = slot.querySelector('video');
+        if (!v) return '';
+        return v.currentSrc || v.src || '';
+      }
+      function buildStripForSlot(slotNum) {
+        var strip = document.getElementById('pastFutureStrip' + slotNum);
+        var status = document.getElementById('pastFutureStatus' + slotNum);
+        if (!strip || !status) return;
+        pastFutureGen[slotNum] = (pastFutureGen[slotNum] || 0) + 1;
+        var gen = pastFutureGen[slotNum];
+        var videoUrl = getMainVideoUrl(slotNum);
+        strip.innerHTML = '';
+        if (!videoUrl) {
+          status.textContent = 'No video in this slot.';
+          return;
+        }
+        status.textContent = 'Extracting one frame per second…';
+        var v = document.createElement('video');
+        v.muted = true;
+        v.setAttribute('playsinline', '');
+        v.preload = 'auto';
+        v.src = videoUrl;
+        v.addEventListener('error', function() {
+          if (pastFutureGen[slotNum] !== gen) return;
+          status.textContent = 'Could not load video for thumbnails.';
+        });
+        v.addEventListener('loadedmetadata', function onMeta() {
+          v.removeEventListener('loadedmetadata', onMeta);
+          if (pastFutureGen[slotNum] !== gen) return;
+          var dur = v.duration;
+          if (!isFinite(dur) || dur <= 0) {
+            status.textContent = 'Could not read duration.';
+            return;
+          }
+          var n = Math.round(dur);
+          if (n < 1) n = 1;
+          if (n > MAX_SECONDS) n = MAX_SECONDS;
+          var times = [];
+          for (var s = 0; s < n; s++) {
+            var seekT = Math.min(s, dur - 0.04);
+            if (s === 0 && seekT < 0.02) seekT = Math.min(0.02, Math.max(0, dur - 0.04));
+            times.push({ seek: seekT, labelSec: s });
+          }
+          var i = 0;
+          function onSeeked() {
+            if (pastFutureGen[slotNum] !== gen) return;
+            try {
+              var w = v.videoWidth, h = v.videoHeight;
+              if (w && h) {
+                var canvas = document.createElement('canvas');
+                var scale = Math.min(200 / w, 112 / h, 1);
+                canvas.width = Math.max(1, Math.floor(w * scale));
+                canvas.height = Math.max(1, Math.floor(h * scale));
+                canvas.getContext('2d').drawImage(v, 0, 0, canvas.width, canvas.height);
+                var dataUrl = canvas.toDataURL('image/jpeg', 0.72);
+                var entry = times[i];
+                var secLabel = entry.labelSec;
+                var btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'past-future-thumb';
+                btn.dataset.sec = String(entry.seek);
+                var img = document.createElement('img');
+                img.src = dataUrl;
+                img.alt = 'Frame at ' + formatSec(secLabel);
+                var cap = document.createElement('span');
+                cap.className = 'pf-time';
+                cap.textContent = formatSec(secLabel);
+                btn.appendChild(img);
+                btn.appendChild(cap);
+                btn.addEventListener('click', function() {
+                  document.querySelectorAll('#pastFutureStrip' + slotNum + ' .past-future-thumb').forEach(function(el) { el.classList.remove('is-selected'); });
+                  btn.classList.add('is-selected');
+                  var mv = document.querySelector('#mediaSlot' + slotNum + ' video');
+                  if (mv) {
+                    try {
+                      mv.pause();
+                      mv.currentTime = parseFloat(btn.dataset.sec) || 0;
+                    } catch (e) {}
+                  }
+                });
+                strip.appendChild(btn);
+              }
+            } catch (err) {}
+            i++;
+            status.textContent = 'Extracting… ' + Math.min(i, times.length) + ' / ' + times.length;
+            if (pastFutureGen[slotNum] !== gen) return;
+            if (i >= times.length) {
+              status.textContent = times.length + ' s of frames · click to jump the main video';
+              try { v.removeAttribute('src'); v.load(); } catch (e2) {}
+              return;
+            }
+            v.currentTime = times[i].seek;
+          }
+          v.addEventListener('seeked', onSeeked);
+          v.currentTime = times[0].seek;
+        });
+        try { v.load(); } catch (e3) {}
+      }
+      window.refreshPastFutureThumbnails = function(slotOpt) {
+        var list = [];
+        if (slotOpt != null && slotOpt >= 1 && slotOpt <= SLOT_COUNT) list = [slotOpt];
+        else for (var k = 1; k <= SLOT_COUNT; k++) list.push(k);
+        list.forEach(function(sn) { buildStripForSlot(sn); });
+      };
+      document.querySelectorAll('.card-accordion').forEach(function(accordion) {
+        var slot = parseInt(accordion.getAttribute('data-slot'), 10);
+        var header = accordion.querySelector('.thumbnails-accordion-header');
+        var content = accordion.querySelector('.thumbnails-accordion-content');
+        if (!header || !content || !slot) return;
+        function toggle() {
+          var isOpen = content.classList.toggle('is-open');
+          header.classList.toggle('is-open', isOpen);
+          header.setAttribute('aria-expanded', isOpen);
+          if (isOpen) {
+            var st = document.getElementById('pastFutureStrip' + slot);
+            if (st && st.children.length === 0) buildStripForSlot(slot);
+          }
+        }
+        header.addEventListener('click', toggle);
+        header.addEventListener('keydown', function(e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); } });
+      });
+    })();
+  </script>
+  <script>
+    function renderBasecampWall() {
+      // Update borders based on flags
+      function updatePanelBorders(panelId, redFlag, orangeFlag) {
+        const panel = document.getElementById(panelId);
+        if (!panel) return;
+        panel.className = 'basecamp-panel';
+        if (redFlag) panel.classList.add('border-redflag');
+        else if (orangeFlag) panel.classList.add('border-orangeflag');
+      }
+      
+      // Video/media slot helpers
+      function escapeHtml(s) {
+        if (!s) return '';
+        var d = document.createElement('div');
+        d.textContent = s;
+        return d.innerHTML;
+      }
+      function getSlotData(key) {
+        try {
+          var raw = localStorage.getItem(key);
+          return raw ? JSON.parse(raw) : null;
+        } catch (e) { return null; }
+      }
+      function renderMediaSlot(slotId, data) {
+        var slot = document.getElementById(slotId);
+        if (!slot) return;
+        var html = '';
+        var url = (data && data.url) ? String(data.url).trim() : '';
+        var type = (data && data.type) ? String(data.type).toLowerCase() : 'video';
+        var title = (data && data.title) ? String(data.title).trim() : '';
+        if (url) {
+          if (type === 'iframe') {
+            html = '<div class="media-wrapper"><iframe src="' + escapeHtml(url) + '" title="' + escapeHtml(title || 'Stream') + '"></iframe>';
+          } else if (type === 'image') {
+            html = '<div class="media-wrapper"><img class="media-image" src="' + escapeHtml(url) + '" alt="' + escapeHtml(title || '') + '" />';
+          } else {
+            html = '<div class="media-wrapper"><video src="' + escapeHtml(url) + '" controls muted loop playsinline preload="metadata"></video>';
+          }
+          if (title) html += '<span class="media-caption">' + escapeHtml(title) + '</span>';
+          html += '</div>';
+          slot.innerHTML = html;
+          var video = slot.querySelector('video');
+          if (video) { video.pause(); try { video.currentTime = 0; } catch (e) {} }
+        } else {
+          var n = slotId.replace('mediaSlot', '');
+          slot.innerHTML = '<div class="media-placeholder"><span class="slot-label">Video / media slot ' + n + '</span><span class="slot-hint">Assign a stream or media URL to display here</span></div>';
+        }
+      }
+      var urlParams = new URLSearchParams(window.location.search);
+      var slotKeys = ['safetyWallSlot1', 'safetyWallSlot2', 'safetyWallSlot3', 'safetyWallSlot4'];
+      var slotIds = ['mediaSlot1', 'mediaSlot2', 'mediaSlot3', 'mediaSlot4'];
+      var slotIndices = [1, 2, 3, 4];
+      function resolveMediaBasePath(up) {
+        if (!up || !up.has('mediaBase')) return 'media/';
+        var base = up.get('mediaBase') || '';
+        if (!base) return '';
+        return /\/$/.test(base) ? base : base + '/';
+      }
+      var mediaBasePath = resolveMediaBasePath(urlParams);
+      var defaultSlot1Video = mediaBasePath + encodeURIComponent('MDX3484 Camera 02 2026-03-24 13_42_32.mp4');
+      var defaultSlot2Video = mediaBasePath + encodeURIComponent('MDX3588DC Cam01 -NW camera South view 2026-03-24 13_51_12.mp4');
+      var defaultSlot3Video = mediaBasePath + encodeURIComponent('MDX3588DC Cam01 -NW camera South view 2026-03-24 13_59_09.mp4');
+      var defaultSlot4Video = mediaBasePath + encodeURIComponent('MDX3588DC Cam02 -NW camera East view 2026-03-24 14_05_40.mp4');
+      for (var i = 0; i < slotIndices.length; i++) {
+        var idx = slotIndices[i];
+        var url = urlParams.get('slot' + idx + 'url') || urlParams.get('slot' + idx);
+        var type = (urlParams.get('slot' + idx + 'type') || 'video').toLowerCase();
+        var data = getSlotData(slotKeys[i]);
+        if (url && !data) data = { type: type, url: url, title: '' };
+        if (idx === 1 && !data) data = { type: 'video', url: defaultSlot1Video, title: '' };
+        if (idx === 2 && !data) data = { type: 'video', url: defaultSlot2Video, title: '' };
+        if (idx === 3 && !data) data = { type: 'video', url: defaultSlot3Video, title: '' };
+        if (idx === 4 && !data) data = { type: 'video', url: defaultSlot4Video, title: '' };
+        renderMediaSlot(slotIds[i], data);
+      }
+      var p1 = getSlotData('panel1Data'), p2 = getSlotData('panel2Data');
+      var p3 = getSlotData('panel3Data'), p4 = getSlotData('panel4Data');
+      if (p1) updatePanelBorders('panel1_slot', !!p1.redFlag, !!p1.orangeFlag);
+      if (p2) updatePanelBorders('panel2_slot', !!p2.redFlag, !!p2.orangeFlag);
+      if (p3) updatePanelBorders('panel3_slot', !!p3.redFlag, !!p3.orangeFlag);
+      if (p4) updatePanelBorders('panel4_slot', !!p4.redFlag, !!p4.orangeFlag);
+      window.BasecampWallCommunication = {
+        loadPanelData: function() {
+          for (var j = 0; j < slotIndices.length; j++) renderMediaSlot(slotIds[j], getSlotData(slotKeys[j]));
+          if (typeof window.refreshPastFutureThumbnails === 'function') window.refreshPastFutureThumbnails();
+        },
+        setSlot: function(slotIndex, data) {
+          if (slotIndex < 1 || slotIndex > 4) return;
+          var key = 'safetyWallSlot' + slotIndex;
+          try { localStorage.setItem(key, JSON.stringify(data)); } catch (e) {}
+          renderMediaSlot('mediaSlot' + slotIndex, data);
+          if (typeof window.refreshPastFutureThumbnails === 'function') window.refreshPastFutureThumbnails(slotIndex);
+        },
+        updatePanelBorders: updatePanelBorders
+      };
+    }
+
+    renderBasecampWall();
+    if (typeof window.refreshPastFutureThumbnails === 'function') window.refreshPastFutureThumbnails();
+  </script>
+</body>
+</html>
