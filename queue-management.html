@@ -1,0 +1,1368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Queue Management - PRO-SAFE ADMIN</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <style>
+    :root {
+      --primary-dark: #0e5a86;
+      --primary: #1f6fa1;
+      --primary-light: #e6f1f8;
+      --accent: #2f6fb2;
+      --border: #d4dde6;
+      --text: #2b2f33;
+      --muted: #6b7785;
+      --bg: #f5f7fb;
+      --white: #ffffff;
+      --table-header: #0f5a86;
+      --table-row: #e6f2f7;
+      --link: #1565c0;
+      --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.12);
+      --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: "Roboto", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    button, a, select, input, label { font-family: inherit; }
+
+    /* —— Topbar —— */
+    .topbar {
+      background: var(--primary-dark);
+      color: var(--white);
+      padding: 8px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: var(--shadow-sm);
+      flex-wrap: wrap;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+      flex-shrink: 0;
+    }
+
+    .brand-name { font-size: 15px; }
+    .brand-admin {
+      font-weight: 500;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      opacity: 0.95;
+    }
+
+    .brand-divider {
+      width: 1px;
+      height: 28px;
+      background: rgba(255, 255, 255, 0.35);
+      margin: 0 4px;
+    }
+
+    .crumb-nav {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 13px;
+    }
+
+    .icon-btn {
+      border: none;
+      background: transparent;
+      color: #fff;
+      width: 32px;
+      height: 32px;
+      border-radius: 4px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .icon-btn:hover,
+    .icon-btn.active { background: rgba(0, 0, 0, 0.15); }
+    .icon-btn .material-icons { font-size: 20px; }
+
+    .crumb-current {
+      color: #fff;
+      text-decoration: underline;
+      font-size: 13px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 0;
+    }
+    .crumb-current:hover { opacity: 0.9; }
+
+    .search-bar {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--white);
+      border-radius: 22px;
+      padding: 4px 12px;
+      width: min(420px, 100%);
+      border: 2px solid #cfe3f2;
+      margin: 0 auto;
+      flex: 1 1 240px;
+      max-width: 480px;
+    }
+    .search-bar input {
+      border: none;
+      outline: none;
+      flex: 1;
+      font-size: 13px;
+      color: var(--text);
+      background: transparent;
+      min-width: 0;
+    }
+    .search-bar input::placeholder { color: #8896a0; }
+    .search-bar .material-icons {
+      color: var(--primary-dark);
+      font-size: 20px;
+      cursor: pointer;
+    }
+    .search-bar button {
+      border: none;
+      background: transparent;
+      padding: 0;
+      display: flex;
+      cursor: pointer;
+      color: var(--primary-dark);
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      margin-left: auto;
+      flex-shrink: 0;
+    }
+
+    .nav-dd {
+      position: relative;
+    }
+    .nav-dd-btn {
+      border: none;
+      background: transparent;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 500;
+      padding: 8px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+    }
+    .nav-dd-btn:hover,
+    .nav-dd.open .nav-dd-btn { background: rgba(0, 0, 0, 0.15); }
+    .nav-dd-btn .material-icons { font-size: 16px; }
+
+    .nav-dd-menu {
+      display: none;
+      position: absolute;
+      top: calc(100% + 4px);
+      right: 0;
+      min-width: 180px;
+      background: #fff;
+      border-radius: 6px;
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--border);
+      padding: 6px 0;
+      z-index: 200;
+    }
+    .nav-dd.open .nav-dd-menu { display: block; }
+    .nav-dd-menu a {
+      display: block;
+      padding: 8px 14px;
+      color: var(--text);
+      text-decoration: none;
+      font-size: 13px;
+    }
+    .nav-dd-menu a:hover { background: var(--primary-light); color: var(--primary-dark); }
+
+    .user-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: none;
+      background: rgba(255, 255, 255, 0.18);
+      color: #fff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      margin-left: 6px;
+    }
+    .user-btn:hover { background: rgba(255, 255, 255, 0.28); }
+    .user-btn .material-icons { font-size: 20px; }
+
+    .version {
+      font-size: 12px;
+      opacity: 0.95;
+      margin-left: 8px;
+      white-space: nowrap;
+    }
+
+    /* —— Page —— */
+    .page {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 12px 16px 0;
+      min-height: 0;
+    }
+
+    .toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .page-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .menu-toggle {
+      border: none;
+      background: transparent;
+      color: var(--primary-dark);
+      width: 36px;
+      height: 36px;
+      border-radius: 4px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+    .menu-toggle:hover { background: var(--primary-light); }
+    .page-title {
+      font-size: 22px;
+      font-weight: 500;
+      color: var(--primary-dark);
+    }
+
+    .toolbar-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .floating-select {
+      position: relative;
+      min-width: 200px;
+    }
+    .floating-select label {
+      position: absolute;
+      top: -8px;
+      left: 10px;
+      background: var(--bg);
+      padding: 0 4px;
+      font-size: 11px;
+      color: var(--muted);
+      z-index: 1;
+      pointer-events: none;
+    }
+    .floating-select select {
+      width: 100%;
+      height: 42px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0 32px 0 12px;
+      font-size: 14px;
+      color: var(--text);
+      background: var(--white);
+      appearance: none;
+      cursor: pointer;
+      outline: none;
+    }
+    .floating-select select:focus {
+      border-color: var(--primary-dark);
+      box-shadow: 0 0 0 2px rgba(14, 90, 134, 0.15);
+    }
+    .floating-select .caret {
+      position: absolute;
+      right: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      pointer-events: none;
+      font-size: 20px;
+    }
+
+    .site-search {
+      display: flex;
+      align-items: center;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 2px 10px 2px 14px;
+      min-width: 220px;
+      width: 280px;
+    }
+    .site-search input {
+      border: none;
+      outline: none;
+      flex: 1;
+      height: 36px;
+      font-size: 13px;
+      background: transparent;
+      min-width: 0;
+    }
+    .site-search input::placeholder { color: #8896a0; }
+    .site-search button {
+      border: none;
+      background: transparent;
+      color: var(--primary-dark);
+      display: flex;
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    .refresh-btn {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      border: none;
+      background: var(--primary-dark);
+      color: #fff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: var(--shadow-sm);
+      transition: background 0.15s, transform 0.2s;
+    }
+    .refresh-btn:hover { background: var(--primary); }
+    .refresh-btn.spinning .material-icons {
+      animation: spin 0.7s linear;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* —— Table —— */
+    .table-panel {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      overflow: hidden;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+    }
+
+    .table-scroll {
+      overflow: auto;
+      flex: 1;
+      min-height: 280px;
+    }
+
+    .queue-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      min-width: 1280px;
+    }
+
+    .queue-table thead th {
+      background: var(--table-header);
+      color: #fff;
+      font-weight: 600;
+      text-align: left;
+      padding: 10px 12px;
+      white-space: nowrap;
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      border: none;
+    }
+
+    .queue-table thead th.center,
+    .queue-table tbody td.center {
+      text-align: center;
+    }
+
+    .queue-table tbody td {
+      padding: 10px 12px;
+      border-bottom: 1px solid #e8eef2;
+      vertical-align: middle;
+      white-space: nowrap;
+    }
+
+    .queue-table tbody tr:nth-child(odd) { background: var(--white); }
+    .queue-table tbody tr:nth-child(even) { background: var(--table-row); }
+    .queue-table tbody tr:hover { background: #dceaf2; }
+    .queue-table tbody tr.selected { background: #cfe3f0; }
+
+    .queue-table input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--primary-dark);
+      cursor: pointer;
+    }
+
+    .event-link {
+      color: var(--link);
+      text-decoration: underline;
+      background: none;
+      border: none;
+      padding: 0;
+      font-size: inherit;
+      font-family: inherit;
+      cursor: pointer;
+    }
+    .event-link:hover { color: var(--primary-dark); }
+
+    .play-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: none;
+      background: var(--primary-dark);
+      color: #fff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.15s;
+    }
+    .play-btn:hover {
+      background: var(--primary);
+      transform: scale(1.06);
+    }
+    .play-btn .material-icons { font-size: 18px; margin-left: 2px; }
+
+    .action-btns {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .info-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: none;
+      background: var(--primary-dark);
+      color: #fff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.15s;
+    }
+    .info-btn:hover {
+      background: var(--primary);
+      transform: scale(1.06);
+    }
+    .info-btn .material-icons { font-size: 18px; }
+
+    .empty-row td {
+      text-align: center;
+      padding: 40px 16px;
+      color: var(--muted);
+      white-space: normal;
+    }
+
+    /* —— Footer —— */
+    .table-foot {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding: 10px 14px;
+      border-top: 1px solid var(--border);
+      background: var(--white);
+    }
+
+    .page-size {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .page-size select {
+      height: 32px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0 8px;
+      font-size: 13px;
+      background: #fff;
+      cursor: pointer;
+    }
+
+    .pager {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--text);
+    }
+    .pager-btn {
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      width: 32px;
+      height: 32px;
+      border-radius: 4px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+    .pager-btn:hover:not(:disabled) {
+      background: var(--primary-light);
+      color: var(--primary-dark);
+    }
+    .pager-btn:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+
+    /* —— Toast / Modal —— */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--primary-dark);
+      color: #fff;
+      padding: 12px 18px;
+      border-radius: 6px;
+      box-shadow: var(--shadow-md);
+      font-size: 13px;
+      z-index: 1000;
+      opacity: 0;
+      transform: translateY(12px);
+      transition: opacity 0.2s, transform 0.2s;
+      pointer-events: none;
+      max-width: 360px;
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.55);
+      z-index: 900;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .modal-backdrop.show { display: flex; }
+    .modal-card {
+      background: #fff;
+      border-radius: 2px;
+      width: min(920px, 96vw);
+      max-height: min(78vh, 640px);
+      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.35);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .modal-card .modal-hd {
+      background: var(--primary-dark);
+      color: #fff;
+      padding: 12px 14px 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+    .modal-card .modal-hd-text {
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 1.35;
+      word-break: break-word;
+    }
+    .modal-close-x {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: none;
+      background: #e67e22;
+      color: #fff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+    }
+    .modal-close-x:hover { background: #d35400; }
+    .modal-close-x .material-icons { font-size: 18px; font-weight: 700; }
+    .modal-card .modal-body {
+      padding: 14px 16px 20px;
+      font-size: 14px;
+      line-height: 1.5;
+      overflow: auto;
+      flex: 1;
+      background: #fff;
+      min-height: 280px;
+    }
+    .pf-accordion {
+      border: 1px solid #d8dee4;
+      margin-bottom: 8px;
+      background: #f3f5f7;
+    }
+    .pf-accordion:nth-child(2) { background: #e8ebef; }
+    .pf-accordion-btn {
+      width: 100%;
+      border: none;
+      background: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 14px;
+      font-size: 14px;
+      font-weight: 500;
+      color: #2b2f33;
+      cursor: pointer;
+      text-align: left;
+    }
+    .pf-accordion-btn:hover { background: rgba(0, 0, 0, 0.04); }
+    .pf-accordion-btn .material-icons {
+      font-size: 22px;
+      color: #5a6570;
+      transition: transform 0.2s;
+    }
+    .pf-accordion.open .pf-accordion-btn .material-icons {
+      transform: rotate(180deg);
+    }
+    .pf-accordion-panel {
+      display: none;
+      padding: 0 14px 14px;
+      background: #fff;
+      border-top: 1px solid #d8dee4;
+    }
+    .pf-accordion.open .pf-accordion-panel { display: block; }
+    .pf-empty {
+      padding: 48px 16px;
+      color: #333;
+      font-size: 14px;
+      text-align: center;
+      min-height: 160px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .pf-list {
+      list-style: none;
+      margin: 0;
+      padding: 10px 0 0;
+    }
+    .pf-list li {
+      padding: 8px 0;
+      border-bottom: 1px solid #eef2f5;
+      font-size: 13px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+    }
+    .pf-list li:last-child { border-bottom: none; }
+    .pf-list .pf-meta { color: var(--muted); font-size: 12px; }
+
+    .side-drawer {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 260px;
+      height: 100%;
+      background: #fff;
+      box-shadow: var(--shadow-md);
+      z-index: 850;
+      transform: translateX(-100%);
+      transition: transform 0.25s ease;
+      padding: 16px;
+    }
+    .side-drawer.open { transform: translateX(0); }
+    .side-drawer h3 {
+      color: var(--primary-dark);
+      margin-bottom: 12px;
+      font-size: 16px;
+    }
+    .side-drawer a {
+      display: block;
+      padding: 10px 8px;
+      color: var(--text);
+      text-decoration: none;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    .side-drawer a:hover { background: var(--primary-light); color: var(--primary-dark); }
+    .drawer-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.3);
+      z-index: 800;
+    }
+    .drawer-backdrop.show { display: block; }
+
+    @media (max-width: 900px) {
+      .search-bar { order: 3; flex: 1 1 100%; max-width: none; margin: 4px 0 0; }
+      .site-search { width: 100%; min-width: 0; }
+      .floating-select { min-width: 160px; flex: 1; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="material-icons">security</span>
+      <span class="brand-name">PRO-SAFE</span>
+      <span class="brand-admin">ADMIN</span>
+      <span class="brand-divider" aria-hidden="true"></span>
+      <div class="crumb-nav">
+        <button type="button" class="icon-btn" id="favBtn" title="Favorites" aria-label="Favorites">
+          <span class="material-icons">star_border</span>
+        </button>
+        <button type="button" class="icon-btn" id="homeBtn" title="Home" aria-label="Home">
+          <span class="material-icons">home</span>
+        </button>
+        <button type="button" class="icon-btn" id="docsBtn" title="Documents" aria-label="Documents">
+          <span class="material-icons">folder_open</span>
+        </button>
+        <span class="material-icons" style="font-size:16px;opacity:.8;">chevron_right</span>
+        <button type="button" class="crumb-current" id="crumbQueue">Queue Management</button>
+      </div>
+    </div>
+
+    <div class="search-bar">
+      <input type="search" id="globalSearch" placeholder="Search By Site Details" aria-label="Search by site details">
+      <button type="button" id="globalSearchBtn" aria-label="Search">
+        <span class="material-icons">search</span>
+      </button>
+    </div>
+
+    <div class="top-actions">
+      <div class="nav-dd" data-dd="view">
+        <button type="button" class="nav-dd-btn">View <span class="material-icons">arrow_drop_down</span></button>
+        <div class="nav-dd-menu">
+          <a href="#" data-action="view-dashboard">Dashboard</a>
+          <a href="#" data-action="view-queue">Queue Management</a>
+          <a href="#" data-action="view-activity">User Activity</a>
+          <a href="reports-dashboard.html">Reports Dashboard</a>
+        </div>
+      </div>
+      <div class="nav-dd" data-dd="forensic">
+        <button type="button" class="nav-dd-btn">Forensic <span class="material-icons">arrow_drop_down</span></button>
+        <div class="nav-dd-menu">
+          <a href="#" data-action="forensic-search">Event Search</a>
+          <a href="#" data-action="forensic-clips">Motion Clips</a>
+          <a href="#" data-action="forensic-audit">Audit Trail</a>
+        </div>
+      </div>
+      <div class="nav-dd" data-dd="configure">
+        <button type="button" class="nav-dd-btn">Configure <span class="material-icons">arrow_drop_down</span></button>
+        <div class="nav-dd-menu">
+          <a href="site-config.html">Site Config</a>
+          <a href="zone-management.html">Zone Management</a>
+          <a href="Admin device config.html">Device Config</a>
+        </div>
+      </div>
+      <div class="nav-dd" data-dd="admin">
+        <button type="button" class="nav-dd-btn">Admin <span class="material-icons">arrow_drop_down</span></button>
+        <div class="nav-dd-menu">
+          <a href="admin-site-info-page.html">Site Information</a>
+          <a href="user-activity.html">User Activity</a>
+          <a href="#" data-action="admin-users">User Management</a>
+        </div>
+      </div>
+      <div class="nav-dd" data-dd="user">
+        <button type="button" class="user-btn" aria-label="User profile">
+          <span class="material-icons">person</span>
+        </button>
+        <div class="nav-dd-menu">
+          <a href="#" data-action="profile">My Profile</a>
+          <a href="#" data-action="settings">Settings</a>
+          <a href="#" data-action="logout">Logout</a>
+        </div>
+      </div>
+      <span class="version">v6.6.8</span>
+    </div>
+  </header>
+
+  <div class="drawer-backdrop" id="drawerBackdrop"></div>
+  <aside class="side-drawer" id="sideDrawer" aria-hidden="true">
+    <h3>Navigation</h3>
+    <a href="index.html">Home</a>
+    <a href="queue-management.html">Queue Management</a>
+    <a href="reports-dashboard.html">Reports Dashboard</a>
+    <a href="user-activity.html">User Activity</a>
+    <a href="admin-site-info-page.html">Site Information</a>
+    <a href="zone-management.html">Zone Management</a>
+  </aside>
+
+  <main class="page">
+    <div class="toolbar">
+      <div class="page-title-wrap">
+        <button type="button" class="menu-toggle" id="menuToggle" aria-label="Open menu">
+          <span class="material-icons">menu</span>
+        </button>
+        <h1 class="page-title">Queue Management</h1>
+      </div>
+      <div class="toolbar-controls">
+        <div class="floating-select">
+          <label for="queueSelect">Select Queue</label>
+          <select id="queueSelect" aria-label="Select Queue">
+            <option value="L1 - HighPriority" selected>L1 - HighPriority</option>
+            <option value="L1 - Standard">L1 - Standard</option>
+            <option value="L2 - Review">L2 - Review</option>
+            <option value="L3 - Escalation">L3 - Escalation</option>
+            <option value="AI - PreFilter">AI - PreFilter</option>
+          </select>
+          <span class="material-icons caret">arrow_drop_down</span>
+        </div>
+        <div class="site-search">
+          <input type="search" id="siteSearch" placeholder="Search By Site Name" aria-label="Search by site name">
+          <button type="button" id="siteSearchBtn" aria-label="Search sites">
+            <span class="material-icons">search</span>
+          </button>
+        </div>
+        <button type="button" class="refresh-btn" id="refreshBtn" title="Refresh" aria-label="Refresh queue">
+          <span class="material-icons">refresh</span>
+        </button>
+      </div>
+    </div>
+
+    <section class="table-panel" aria-label="Queue events">
+      <div class="table-scroll">
+        <table class="queue-table" id="queueTable">
+          <thead>
+            <tr>
+              <th class="center" style="width:40px">
+                <input type="checkbox" id="selectAll" aria-label="Select all rows">
+              </th>
+              <th>Event Id</th>
+              <th>Site Name</th>
+              <th>Camera Name</th>
+              <th>Previous Tag</th>
+              <th>Status</th>
+              <th>Level Duration</th>
+              <th>Current User</th>
+              <th>Event Time</th>
+              <th>Event Received</th>
+              <th>Elapsed Time</th>
+              <th>Time Zone</th>
+              <th class="center">Action</th>
+            </tr>
+          </thead>
+          <tbody id="queueBody"></tbody>
+        </table>
+      </div>
+      <div class="table-foot">
+        <div class="page-size">
+          <span>Items per page:</span>
+          <select id="pageSize" aria-label="Items per page">
+            <option value="25">25</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+            <option value="200" selected>200</option>
+          </select>
+        </div>
+        <div class="pager">
+          <button type="button" class="pager-btn" id="prevPage" aria-label="Previous page" disabled>
+            <span class="material-icons">chevron_left</span>
+          </button>
+          <span id="pageRange">1 - 0 of 0</span>
+          <button type="button" class="pager-btn" id="nextPage" aria-label="Next page" disabled>
+            <span class="material-icons">chevron_right</span>
+          </button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <div class="modal-backdrop" id="eventModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-card">
+      <div class="modal-hd">
+        <div class="modal-hd-text" id="modalTitle">Escalation Id:</div>
+        <button type="button" class="modal-close-x" id="modalClose" aria-label="Close">
+          <span class="material-icons">close</span>
+        </button>
+      </div>
+      <div class="modal-body" id="modalBody">
+        <div class="pf-accordion" data-level="L2">
+          <button type="button" class="pf-accordion-btn" aria-expanded="false">
+            <span>L2 - Past &amp; Future Events</span>
+            <span class="material-icons">expand_more</span>
+          </button>
+          <div class="pf-accordion-panel" id="panelL2"></div>
+        </div>
+        <div class="pf-accordion" data-level="L3">
+          <button type="button" class="pf-accordion-btn" aria-expanded="false">
+            <span>L3 - Past &amp; Future Events</span>
+            <span class="material-icons">expand_more</span>
+          </button>
+          <div class="pf-accordion-panel" id="panelL3"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      const QUEUES = {
+        "L1 - HighPriority": seedEvents("L1 - HighPriority", 72),
+        "L1 - Standard": seedEvents("L1 - Standard", 48),
+        "L2 - Review": seedEvents("L2 - Review", 35),
+        "L3 - Escalation": seedEvents("L3 - Escalation", 18),
+        "AI - PreFilter": seedEvents("AI - PreFilter", 90)
+      };
+
+      const state = {
+        queue: "L1 - HighPriority",
+        siteFilter: "",
+        page: 1,
+        pageSize: 200,
+        selected: new Set(),
+        activeEvent: null
+      };
+
+      const els = {
+        body: document.getElementById("queueBody"),
+        selectAll: document.getElementById("selectAll"),
+        queueSelect: document.getElementById("queueSelect"),
+        siteSearch: document.getElementById("siteSearch"),
+        siteSearchBtn: document.getElementById("siteSearchBtn"),
+        globalSearch: document.getElementById("globalSearch"),
+        globalSearchBtn: document.getElementById("globalSearchBtn"),
+        refreshBtn: document.getElementById("refreshBtn"),
+        pageSize: document.getElementById("pageSize"),
+        pageRange: document.getElementById("pageRange"),
+        prevPage: document.getElementById("prevPage"),
+        nextPage: document.getElementById("nextPage"),
+        toast: document.getElementById("toast"),
+        modal: document.getElementById("eventModal"),
+        modalTitle: document.getElementById("modalTitle"),
+        panelL2: document.getElementById("panelL2"),
+        panelL3: document.getElementById("panelL3"),
+        drawer: document.getElementById("sideDrawer"),
+        drawerBackdrop: document.getElementById("drawerBackdrop"),
+        favBtn: document.getElementById("favBtn")
+      };
+
+      function seedEvents(queueName, count) {
+        const sites = [
+          ["Enterprise 0899 F2333", "F2333 Cam25"],
+          ["Enterprise 0899 F2333", "F2333 Cam24"],
+          ["Enterprise 0899 F2333", "F2333 Cam23"],
+          ["Enterprise 0899 F2333", "F2333 Cam22"],
+          ["Enterprise 0899 F2333", "F2333 Cam21"],
+          ["Enterprise 0899 F2333", "F2333 Cam19"],
+          ["Enterprise 0899 F2333", "F2333 Cam18"],
+          ["Enterprise 0899 F2333", "F2333 Cam17"],
+          ["Enterprise 0899 F2333", "F2333 Cam16"],
+          ["Westland Daisy F4334", "F4334 Cam03"],
+          ["Newco Metals F3097", "F3097 Cam08"],
+          ["Century Communities MDX", "MDX Cam12"]
+        ];
+        const tags = [
+          "Person", "AI_TRUE_PERSON", "AI_TRUE_MOVING_LIGHT", "AI_TRUE_VEHICLE",
+          "AI_TRUE_ANIMAL", "Motion", "AI_TRUE_PERSON", "AI_TRUE_MOVING_LIGHT"
+        ];
+        const users = ["PRO4093", "PRO4102", "PRO4088", "PRO4115", "PRO4071", "—"];
+        const zones = ["ET", "PT", "MT", "CT"];
+        const rows = [];
+
+        for (let i = 0; i < count; i++) {
+          const site = sites[i % sites.length];
+          const secs = 8 + ((i * 7) % 55);
+          const elapsed = 40 + ((i * 13) % 180);
+          const hour = String(3 + (i % 6)).padStart(2, "0");
+          const min = String((i * 3) % 60).padStart(2, "0");
+          const sec = String((i * 5) % 60).padStart(2, "0");
+          const eventTime = `2026-08-11 ${hour}:${min}:${sec}`;
+          const recvMin = String(((i * 3) + 1) % 60).padStart(2, "0");
+          const eventId = makeEventId(i, queueName);
+          rows.push({
+            id: eventId,
+            siteName: site[0],
+            cameraName: site[1],
+            previousTag: tags[i % tags.length],
+            status: "Review",
+            levelDuration: formatDuration(secs),
+            currentUser: users[i % users.length],
+            eventTime,
+            eventReceived: `2026-08-11 ${hour}:${recvMin}:${sec}`,
+            elapsedTime: formatDuration(elapsed),
+            timeZone: zones[i % zones.length],
+            queue: queueName
+          });
+        }
+        return rows;
+      }
+
+      function makeEventId(i, queue) {
+        const prefix = ["W7", "X3", "Q9", "R2", "M5"][i % 5];
+        const mid = (731142 + i * 17).toString(36).toUpperCase();
+        const suf = (queue.replace(/\W/g, "").slice(0, 3) + (1000 + i)).toUpperCase();
+        return (prefix + mid + suf + "ZABCDEFGHIJKLMNO").slice(0, 28);
+      }
+
+      function formatDuration(totalSeconds) {
+        const h = Math.floor(totalSeconds / 3600);
+        const m = Math.floor((totalSeconds % 3600) / 60);
+        const s = totalSeconds % 60;
+        return `${h}h ${m}m ${String(s).padStart(2, "0")}s`;
+      }
+
+      function filteredRows() {
+        const all = QUEUES[state.queue] || [];
+        const q = state.siteFilter.trim().toLowerCase();
+        if (!q) return all;
+        return all.filter((r) =>
+          r.siteName.toLowerCase().includes(q) ||
+          r.cameraName.toLowerCase().includes(q) ||
+          r.id.toLowerCase().includes(q) ||
+          r.previousTag.toLowerCase().includes(q) ||
+          r.currentUser.toLowerCase().includes(q)
+        );
+      }
+
+      function pageSlice(rows) {
+        const start = (state.page - 1) * state.pageSize;
+        return rows.slice(start, start + state.pageSize);
+      }
+
+      function render() {
+        const rows = filteredRows();
+        const total = rows.length;
+        const maxPage = Math.max(1, Math.ceil(total / state.pageSize) || 1);
+        if (state.page > maxPage) state.page = maxPage;
+        const pageRows = pageSlice(rows);
+        const start = total === 0 ? 0 : (state.page - 1) * state.pageSize + 1;
+        const end = Math.min(state.page * state.pageSize, total);
+
+        els.pageRange.textContent = `${start} - ${end} of ${total}`;
+        els.prevPage.disabled = state.page <= 1;
+        els.nextPage.disabled = state.page >= maxPage || total === 0;
+
+        if (pageRows.length === 0) {
+          els.body.innerHTML = `<tr class="empty-row"><td colspan="13">No events found for this queue${state.siteFilter ? " matching your search" : ""}.</td></tr>`;
+          els.selectAll.checked = false;
+          els.selectAll.indeterminate = false;
+          return;
+        }
+
+        els.body.innerHTML = pageRows.map((r) => {
+          const checked = state.selected.has(r.id) ? "checked" : "";
+          const selected = state.selected.has(r.id) ? "selected" : "";
+          return `<tr class="${selected}" data-id="${r.id}">
+            <td class="center"><input type="checkbox" class="row-check" data-id="${r.id}" ${checked} aria-label="Select ${r.id}"></td>
+            <td title="${r.id}"><button type="button" class="event-link" data-event-id="${r.id}">${r.id}</button></td>
+            <td>${escapeHtml(r.siteName)}</td>
+            <td>${escapeHtml(r.cameraName)}</td>
+            <td>${escapeHtml(r.previousTag)}</td>
+            <td>${escapeHtml(r.status)}</td>
+            <td>${r.levelDuration}</td>
+            <td>${escapeHtml(r.currentUser)}</td>
+            <td><button type="button" class="event-link" data-open="${r.id}">${r.eventTime}</button></td>
+            <td>${r.eventReceived}</td>
+            <td>${r.elapsedTime}</td>
+            <td>${r.timeZone}</td>
+            <td class="center">
+              <div class="action-btns">
+                <button type="button" class="play-btn" data-play="${r.id}" title="Open event" aria-label="Play event ${r.id}">
+                  <span class="material-icons">play_arrow</span>
+                </button>
+                <button type="button" class="info-btn" data-info="${r.id}" title="Event info" aria-label="Info for event ${r.id}">
+                  <span class="material-icons">info</span>
+                </button>
+              </div>
+            </td>
+          </tr>`;
+        }).join("");
+
+        const pageIds = pageRows.map((r) => r.id);
+        const selectedOnPage = pageIds.filter((id) => state.selected.has(id)).length;
+        els.selectAll.checked = selectedOnPage === pageIds.length && pageIds.length > 0;
+        els.selectAll.indeterminate = selectedOnPage > 0 && selectedOnPage < pageIds.length;
+      }
+
+      function escapeHtml(str) {
+        return String(str)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;");
+      }
+
+      function findEvent(id) {
+        return (QUEUES[state.queue] || []).find((r) => r.id === id) || null;
+      }
+
+      function showToast(msg) {
+        els.toast.textContent = msg;
+        els.toast.classList.add("show");
+        clearTimeout(showToast._t);
+        showToast._t = setTimeout(() => els.toast.classList.remove("show"), 2600);
+      }
+
+      function openEventPopup(id) {
+        const event = findEvent(id);
+        if (!event) return;
+        state.activeEvent = event;
+        els.modalTitle.textContent =
+          "Escalation Id: " + event.id;
+        els.panelL2.innerHTML = renderPastFuture(event, "L2");
+        els.panelL3.innerHTML = renderPastFuture(event, "L3");
+        document.querySelectorAll(".pf-accordion").forEach((el) => {
+          el.classList.remove("open");
+          const btn = el.querySelector(".pf-accordion-btn");
+          if (btn) btn.setAttribute("aria-expanded", "false");
+        });
+        els.modal.classList.add("show");
+      }
+
+      function renderPastFuture(event, level) {
+        return `<div class="pf-empty">There is no past &amp; future events for ${escapeHtml(level)}</div>`;
+      }
+
+      function closeModal() {
+        els.modal.classList.remove("show");
+        state.activeEvent = null;
+      }
+
+      function openEvent(id) {
+        openEventPopup(id);
+      }
+
+      function closeDropdowns() {
+        document.querySelectorAll(".nav-dd.open").forEach((el) => el.classList.remove("open"));
+      }
+
+      /* —— Events —— */
+      document.querySelectorAll(".nav-dd").forEach((dd) => {
+        const btn = dd.querySelector(".nav-dd-btn, .user-btn");
+        if (!btn) return;
+        btn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          const wasOpen = dd.classList.contains("open");
+          closeDropdowns();
+          if (!wasOpen) dd.classList.add("open");
+        });
+      });
+
+      document.addEventListener("click", () => closeDropdowns());
+
+      document.querySelectorAll(".nav-dd-menu a").forEach((a) => {
+        a.addEventListener("click", (e) => {
+          const href = a.getAttribute("href");
+          const action = a.dataset.action;
+          if (href === "#" || action) {
+            e.preventDefault();
+            showToast(action ? `Opened: ${action.replace(/-/g, " ")}` : "Menu action selected");
+          }
+          closeDropdowns();
+        });
+      });
+
+      els.queueSelect.addEventListener("change", () => {
+        state.queue = els.queueSelect.value;
+        state.page = 1;
+        state.selected.clear();
+        render();
+        showToast(`Loaded queue: ${state.queue}`);
+      });
+
+      function applySiteSearch() {
+        state.siteFilter = els.siteSearch.value;
+        state.page = 1;
+        render();
+        showToast(state.siteFilter ? `Filtered by "${state.siteFilter}"` : "Showing all sites");
+      }
+
+      els.siteSearchBtn.addEventListener("click", applySiteSearch);
+      els.siteSearch.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") applySiteSearch();
+      });
+
+      function applyGlobalSearch() {
+        const q = els.globalSearch.value.trim();
+        if (!q) {
+          showToast("Enter site details to search");
+          return;
+        }
+        els.siteSearch.value = q;
+        state.siteFilter = q;
+        state.page = 1;
+        render();
+        showToast(`Site search: "${q}"`);
+      }
+
+      els.globalSearchBtn.addEventListener("click", applyGlobalSearch);
+      els.globalSearch.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") applyGlobalSearch();
+      });
+
+      els.refreshBtn.addEventListener("click", () => {
+        els.refreshBtn.classList.add("spinning");
+        setTimeout(() => {
+          els.refreshBtn.classList.remove("spinning");
+          const list = QUEUES[state.queue];
+          if (list && list.length) {
+            const first = list[0];
+            first.elapsedTime = formatDuration(
+              Math.min(999, parseInt(first.elapsedTime.split("m")[0].split("h")[1] || "1", 10) * 60 + Math.floor(Math.random() * 20) + 1)
+            );
+          }
+          render();
+          showToast("Queue refreshed");
+        }, 700);
+      });
+
+      els.selectAll.addEventListener("change", () => {
+        const rows = pageSlice(filteredRows());
+        if (els.selectAll.checked) {
+          rows.forEach((r) => state.selected.add(r.id));
+        } else {
+          rows.forEach((r) => state.selected.delete(r.id));
+        }
+        render();
+        showToast(`${state.selected.size} event(s) selected`);
+      });
+
+      els.body.addEventListener("change", (e) => {
+        const cb = e.target.closest(".row-check");
+        if (!cb) return;
+        if (cb.checked) state.selected.add(cb.dataset.id);
+        else state.selected.delete(cb.dataset.id);
+        render();
+      });
+
+      els.body.addEventListener("click", (e) => {
+        const eventIdBtn = e.target.closest("[data-event-id]");
+        const openBtn = e.target.closest("[data-open]");
+        const playBtn = e.target.closest("[data-play]");
+        const infoBtn = e.target.closest("[data-info]");
+        if (eventIdBtn) {
+          e.preventDefault();
+          openEventPopup(eventIdBtn.dataset.eventId);
+          return;
+        }
+        if (openBtn) openEvent(openBtn.dataset.open);
+        if (playBtn) openEvent(playBtn.dataset.play);
+        if (infoBtn) openEvent(infoBtn.dataset.info);
+      });
+
+      document.querySelectorAll(".pf-accordion-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const accordion = btn.closest(".pf-accordion");
+          const willOpen = !accordion.classList.contains("open");
+          accordion.classList.toggle("open", willOpen);
+          btn.setAttribute("aria-expanded", willOpen ? "true" : "false");
+        });
+      });
+
+      els.pageSize.addEventListener("change", () => {
+        state.pageSize = parseInt(els.pageSize.value, 10);
+        state.page = 1;
+        render();
+      });
+
+      els.prevPage.addEventListener("click", () => {
+        if (state.page > 1) {
+          state.page -= 1;
+          render();
+        }
+      });
+
+      els.nextPage.addEventListener("click", () => {
+        const maxPage = Math.ceil(filteredRows().length / state.pageSize) || 1;
+        if (state.page < maxPage) {
+          state.page += 1;
+          render();
+        }
+      });
+
+      document.getElementById("menuToggle").addEventListener("click", () => {
+        els.drawer.classList.add("open");
+        els.drawerBackdrop.classList.add("show");
+        els.drawer.setAttribute("aria-hidden", "false");
+      });
+
+      function closeDrawer() {
+        els.drawer.classList.remove("open");
+        els.drawerBackdrop.classList.remove("show");
+        els.drawer.setAttribute("aria-hidden", "true");
+      }
+
+      els.drawerBackdrop.addEventListener("click", closeDrawer);
+      els.drawer.querySelectorAll("a").forEach((a) => {
+        a.addEventListener("click", () => closeDrawer());
+      });
+
+      document.getElementById("homeBtn").addEventListener("click", () => {
+        window.location.href = "index.html";
+      });
+
+      document.getElementById("docsBtn").addEventListener("click", () => {
+        showToast("Documents panel opened");
+      });
+
+      document.getElementById("crumbQueue").addEventListener("click", () => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        showToast("Queue Management");
+      });
+
+      els.favBtn.addEventListener("click", () => {
+        const icon = els.favBtn.querySelector(".material-icons");
+        const active = icon.textContent === "star";
+        icon.textContent = active ? "star_border" : "star";
+        els.favBtn.classList.toggle("active", !active);
+        showToast(active ? "Removed from favorites" : "Added to favorites");
+      });
+
+      document.getElementById("modalClose").addEventListener("click", closeModal);
+      els.modal.addEventListener("click", (e) => {
+        if (e.target === els.modal) closeModal();
+      });
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+          closeModal();
+          closeDrawer();
+          closeDropdowns();
+        }
+      });
+
+      render();
+    })();
+  </script>
+</body>
+</html>
