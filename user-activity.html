@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>User Activity - PRO-SAFE</title>
+  <style>
+    :root {
+      --bg: #181f26;
+      --header: #2c5b89;
+      --header-dark: #1f4a72;
+      --text: #ffffff;
+      --card: #ffffff;
+      --card-border: #b2bec6;
+      --muted: #8a9aac;
+      --accent: #2c5b89;
+      --table-head: #0f5a78;
+      --table-head-text: #ffffff;
+      --input-border: #c7d1d9;
+      --input-bg: #ffffff;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Inter', Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: #1c2b36;
+    }
+    .app-header {
+      background: var(--header);
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      padding: 0 28px;
+      height: 64px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      gap: 18px;
+    }
+    .app-header .logo {
+      display: flex;
+      align-items: center;
+      font-size: 1.6rem;
+      font-weight: 700;
+      gap: 10px;
+    }
+    .app-header .logo-img {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      padding: 4px;
+      background: var(--header);
+    }
+    .app-header .nav {
+      display: flex;
+      gap: 18px;
+      margin-left: auto;
+      align-items: center;
+      font-size: 0.95rem;
+      font-weight: 500;
+    }
+    .app-header .nav-item {
+      cursor: pointer;
+      opacity: 0.95;
+    }
+    .app-header .version {
+      font-size: 0.85rem;
+      opacity: 0.9;
+      margin-left: 8px;
+    }
+    .app-search {
+      flex: 1;
+      max-width: 520px;
+      position: relative;
+    }
+    .app-search input {
+      width: 100%;
+      height: 38px;
+      border-radius: 22px;
+      border: 2px solid #e2edf5;
+      padding: 0 40px 0 16px;
+      background: #ffffff;
+      font-size: 0.95rem;
+    }
+    .app-search .icon {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--header);
+      font-size: 1.1rem;
+    }
+    .page {
+      max-width: 1400px;
+      margin: 16px auto 32px;
+      background: var(--card);
+      border-radius: 8px;
+      border: 1px solid var(--card-border);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      padding-bottom: 16px;
+    }
+    .page-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 5px 18px;
+      border-bottom: 1px solid var(--card-border);
+    }
+    .page-header .back-btn {
+      background: var(--header);
+      color: var(--text);
+      border: none;
+      padding: 10px 16px;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .page-header .title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #1c2b36;
+    }
+    .filters {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr 1fr 0.8fr auto;
+      gap: 12px;
+      padding: 16px 18px 12px;
+      align-items: end;
+    }
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .field label {
+      font-size: 0.85rem;
+      color: #52606d;
+    }
+    .field input,
+    .field select {
+      height: 40px;
+      border-radius: 6px;
+      border: 1px solid var(--input-border);
+      padding: 0 12px;
+      font-size: 0.95rem;
+      background: var(--input-bg);
+    }
+    .field .icon-input {
+      position: relative;
+    }
+    .field .icon-input .calendar {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      font-size: 1rem;
+      pointer-events: none;
+    }
+    .actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      padding-bottom: 2px;
+    }
+    .icon-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: none;
+      background: var(--header);
+      color: var(--text);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 1.1rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    .table-wrap {
+      border-top: 1px solid var(--card-border);
+      margin-top: 4px;
+      padding: 30px;
+    }
+    .row-info {
+      position: relative;
+    }
+    .row-info-btn {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 1px solid #8aa3b6;
+      background: #f0f5f9;
+      color: #2c5b89;
+      font-weight: 700;
+      font-size: 0.8rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .row-info-panel {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 30px;
+      width: 280px;
+      background: #ffffff;
+      border: 1px solid #c7d1d9;
+      border-radius: 8px;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.15);
+      padding: 10px;
+      z-index: 10;
+      font-size: 0.85rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    thead th {
+      background: var(--table-head);
+      color: var(--table-head-text);
+      text-align: left;
+      padding: 12px 10px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      border-right: 1px solid #1b6a89;
+    }
+    thead th:last-child { border-right: none; }
+    tbody td {
+      padding: 12px 10px;
+      border-bottom: 1px solid #e6edf2;
+      font-size: 0.9rem;
+      color: #1c2b36;
+    }
+    .empty-state {
+      text-align: center;
+      padding: 80px 0 120px;
+      color: #1c2b36;
+      font-size: 1.1rem;
+    }
+    .pagination {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 18px 0;
+      color: #41525f;
+      font-size: 0.9rem;
+    }
+    .pagination .pager {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .pagination select {
+      height: 32px;
+      border-radius: 6px;
+      border: 1px solid var(--input-border);
+      padding: 0 8px;
+      background: #fff;
+    }
+    .chevron {
+      font-size: 1.2rem;
+      color: #9aa7b2;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-header">
+    <span class="logo">
+      <img src="https://via.placeholder.com/38x38?text=PS" class="logo-img" alt="Logo" />
+      PRO-SAFE
+    </span>
+    <span style="font-size:0.95rem; font-weight:600;">ADMIN</span>
+    <div class="app-search">
+      <input type="text" placeholder="Search By Site Details" />
+      <span class="icon">🔍</span>
+    </div>
+    <div class="nav">
+      <span class="nav-item">View</span>
+      <span class="nav-item">Forensic</span>
+      <span class="nav-item">Configure</span>
+      <span class="nav-item">Admin</span>
+      <span class="nav-item">👤</span>
+      <span class="version">v6.5.3</span>
+    </div>
+  </div>
+
+  <div class="page">
+    <div class="page-header">
+      <button class="back-btn">Reports DashBoard</button>
+      <div class="title">User Activity</div>
+    </div>
+
+    <div class="filters">
+      <div class="field">
+        <label>User Name</label>
+        <input type="text" value="kalam" />
+      </div>
+      <div class="field">
+        <label>Choose From Date&Time</label>
+        <div class="icon-input">
+          <input type="text" value="07-JAN-2026 12:43:16 AM" />
+          <span class="calendar">📅</span>
+        </div>
+      </div>
+      <div class="field">
+        <label>Choose To Date&Time</label>
+        <div class="icon-input">
+          <input type="text" value="01-JAN-2026 12:43:20 AM" />
+          <span class="calendar">📅</span>
+        </div>
+      </div>
+      <div class="field">
+        <label>Time Zone</label>
+        <select>
+          <option>CT</option>
+          <option>ET</option>
+          <option>MT</option>
+          <option>PT</option>
+        </select>
+      </div>
+      <div class="actions">
+        <button class="icon-btn" title="Search">🔎</button>
+        <button class="icon-btn" title="Download">⬇️</button>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>User Id</th>
+            <th>Login</th>
+            <th>Logout</th>
+            <th>Total Work Hours (CT)<br>(HH:mm:ss)</th>
+            <th>Total Break Hours (CT)<br>(HH:mm:ss)</th>
+            <th>Actual Work Hours (CT)<br>(HH:mm:ss)</th>
+            <th>Session Reset Time (CT)<br>(HH:mm:ss)</th>
+            <th>Info</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>USR-1042</td>
+            <td>07-JAN-2026 09:00:00 AM</td>
+            <td>07-JAN-2026 08:10:00 PM</td>
+            <td>11:10:00</td>
+            <td>01:15:00</td>
+            <td>09:55:00</td>
+            <td>07:00:00</td>
+            <td class="row-info">
+              <button class="row-info-btn" data-panel="row-info-1">i</button>
+              <div class="row-info-panel" id="row-info-1">
+                <strong>Logins/Logouts</strong>
+                <ul>
+                  <li>09:00 AM - 12:10 PM</li>
+                  <li>01:05 PM - 05:22 PM</li>
+                  <li>06:10 PM - 08:10 PM</li>
+                </ul>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>USR-1042</td>
+            <td>08-JAN-2026 08:45:12 AM</td>
+            <td>08-JAN-2026 06:05:33 PM</td>
+            <td>09:20:21</td>
+            <td>00:45:00</td>
+            <td>08:35:21</td>
+            <td>00:00:00</td>
+            <td class="row-info">
+              <button class="row-info-btn" data-panel="row-info-2">i</button>
+              <div class="row-info-panel" id="row-info-2">
+                <strong>Logins/Logouts</strong>
+                <ul>
+                  <li>08:45 AM - 12:30 PM</li>
+                  <li>01:15 PM - 06:05 PM</li>
+                </ul>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>USR-2057</td>
+            <td>08-JAN-2026 10:05:44 AM</td>
+            <td>08-JAN-2026 07:20:18 PM</td>
+            <td>09:14:34</td>
+            <td>00:55:00</td>
+            <td>08:19:34</td>
+            <td>00:30:00</td>
+            <td class="row-info">
+              <button class="row-info-btn" data-panel="row-info-3">i</button>
+              <div class="row-info-panel" id="row-info-3">
+                <strong>Logins/Logouts</strong>
+                <ul>
+                  <li>10:05 AM - 01:00 PM</li>
+                  <li>02:00 PM - 07:20 PM</li>
+                </ul>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="pagination">
+      <div>
+        Items per page:&nbsp;
+        <select>
+          <option>50</option>
+          <option>25</option>
+          <option>100</option>
+        </select>
+      </div>
+      <div class="pager">
+        <span>0 of 0</span>
+        <span class="chevron">‹</span>
+        <span class="chevron">›</span>
+      </div>
+    </div>
+  </div>
+  <script>
+    (function () {
+      const buttons = Array.from(document.querySelectorAll('.row-info-btn'));
+      const panels = Array.from(document.querySelectorAll('.row-info-panel'));
+      buttons.forEach((button) => {
+        button.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const targetId = button.getAttribute('data-panel');
+          panels.forEach((panel) => {
+            panel.style.display = panel.id === targetId && panel.style.display !== 'block' ? 'block' : 'none';
+          });
+        });
+      });
+      document.addEventListener('click', () => {
+        panels.forEach((panel) => { panel.style.display = 'none'; });
+      });
+    })();
+  </script>
+</body>
+</html>

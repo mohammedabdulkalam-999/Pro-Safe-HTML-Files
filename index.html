@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PRO-SAFE Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2c5b89;
+            --primary-dark: #1e4062;
+            --secondary-color: #f0b178;
+            --secondary-dark: #e09a3c;
+            --success-color: #28a745;
+            --border-color: #e9ecef;
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.1);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.15);
+            --shadow-lg: 0 8px 24px rgba(0,0,0,0.2);
+            --border-radius: 8px;
+            --border-radius-lg: 12px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: #333;
+            line-height: 1.6;
+        }
+        .dashboard-container { display: flex; flex-direction: column; min-height: 100vh; }
+        .header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            padding: 0 32px;
+            height: 72px;
+            box-shadow: var(--shadow-md);
+        }
+        .logo { display: flex; align-items: center; font-size: 1.8rem; font-weight: 800; margin-right: 24px; }
+        .logo-img { width: 52px; height: 52px; margin-right: 16px; background: rgba(255,255,255,0.1); border-radius: 50%; padding: 8px; border: 2px solid rgba(255,255,255,0.2); }
+        .header .search { margin-left: 24px; flex: 1; max-width: 400px; background: rgba(255,255,255,0.95); border: 2px solid transparent; border-radius: var(--border-radius); padding: 12px 16px; font-size: 1rem; }
+        .header .search:focus { outline: none; border-color: var(--secondary-color); }
+        .header .icon-btn { background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.2); color: #fff; width: 44px; height: 44px; border-radius: var(--border-radius); margin: 0 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: var(--transition); }
+        .header .icon-btn:hover { background: rgba(255,255,255,0.2); border-color: var(--secondary-color); transform: translateY(-2px); }
+        .header-controls { display: flex; gap: 8px; margin-left: auto; margin-right: 24px; }
+        .level { margin-left: 24px; font-size: 1.3rem; font-weight: 700; }
+        .level-indicator { color: #4CAF50; margin-left: 4px; }
+        .user-info { display: flex; align-items: center; gap: 8px; margin-left: 24px; }
+        .logout { margin-left: 16px; cursor: pointer; font-size: 1.2rem; }
+        .version { margin-left: auto; font-size: 1rem; opacity: 0.8; }
+        .main-content { display: flex; flex-direction: row; align-items: flex-start; width: 100vw; min-height: calc(100vh - 72px); padding: 24px; gap: 24px; }
+        .left-column { flex: 0 0 auto; display: flex; flex-direction: column; gap: 24px; max-width: calc(100% - 750px); }
+        .video-card { background: #fff; border-radius: var(--border-radius-lg); box-shadow: var(--shadow-lg); display: flex; flex-direction: row; width: 100%; max-width: 975px; min-height: 475px; overflow: hidden; transition: var(--transition); }
+        .video-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,0.2); }
+        .video-area { flex: 1; height: 475px; background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); border-radius: var(--border-radius-lg) 0 0 var(--border-radius-lg); position: relative; overflow: hidden; }
+        .video-area video { width: 100%; height: 100%; object-fit: cover; }
+        .overlay-top { position: absolute; top: 12px; left: 12px; background: rgba(0,0,0,0.8); color: #fff; padding: 8px 16px; border-radius: var(--border-radius); font-size: 0.9rem; font-weight: 600; }
+        .overlay-site { position: absolute; top: 12px; left: 200px; background: rgba(44, 91, 137, 0.9); color: #fff; padding: 8px 16px; border-radius: var(--border-radius); font-size: 0.9rem; font-weight: 600; }
+        .overlay-count { position: absolute; top: 12px; right: 12px; background: rgba(240, 177, 120, 0.9); color: #333; padding: 8px 16px; border-radius: var(--border-radius); font-size: 0.9rem; font-weight: 700; }
+        .icon-bar { width: 70px; background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%); display: flex; flex-direction: column; align-items: center; padding: 20px 0; gap: 12px; }
+        .icon-btn-vert { width: 44px; height: 44px; background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%); color: #fff; border-radius: var(--border-radius); display: flex; align-items: center; justify-content: center; font-size: 1.2rem; border: none; cursor: pointer; transition: var(--transition); }
+        .icon-btn-vert:hover { background: linear-gradient(135deg, var(--secondary-color) 0%, var(--secondary-dark) 100%); color: #333; transform: translateY(-2px); }
+        .past-future-bar { width: 100%; max-width: 975px; background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%); border-radius: 0 0 var(--border-radius-lg) var(--border-radius-lg); display: flex; align-items: center; padding: 16px 24px; color: #fff; }
+        .past-future-label { font-weight: 600; margin-right: 32px; }
+        .past-future-center { display: flex; align-items: center; gap: 12px; flex: 1; justify-content: center; }
+        .toggle-switch { display: inline-flex; align-items: center; background: #fff; border-radius: 16px; border: 1.5px solid #2c5b89; margin: 0 16px; cursor: pointer; position: relative; width: 64px; height: 28px; }
+        .toggle-switch .toggle-knob { width: 26px; height: 26px; background: #2c5b89; border-radius: 50%; position: absolute; top: 1px; left: 1px; transition: left 0.2s; }
+        .toggle-switch.active .toggle-knob { left: 37px; background: #f0b178; }
+        .past-future-arrow { margin-left: auto; cursor: pointer; transition: transform 0.2s; }
+        .past-future-arrow.open { transform: rotate(180deg); }
+        .past-future-accordion-content { background: #f5f5f5; padding: 12px 20px; display: none; border-radius: 0 0 6px 6px; width: 950px; margin: 0 auto 24px auto; }
+        .past-future-accordion-content.active { display: block; }
+        .camera-thumbnails-row { display: flex; flex-direction: row; gap: 12px; width: 100%; padding: 8px 0; }
+        .camera-thumb { width: 120px; height: 90px; border-radius: var(--border-radius); overflow: hidden; border: 2px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.1); position: relative; cursor: pointer; transition: var(--transition); }
+        .camera-thumb:hover { border-color: var(--secondary-color); transform: scale(1.05); }
+        .camera-thumb img { width: 100%; height: 100%; object-fit: cover; }
+        .camera-thumb-checkbox { position: absolute; top: 6px; left: 6px; z-index: 2; width: 18px; height: 18px; accent-color: #2c5b89; }
+        .right-column { width: 750px; min-width: 750px; display: flex; flex-direction: column; gap: 16px; }
+        .accordion-section { background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%); color: #fff; border-radius: var(--border-radius-lg); box-shadow: var(--shadow-md); overflow: hidden; transition: var(--transition); }
+        .accordion-section:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+        .accordion-title { font-weight: 600; font-size: 1.1rem; padding: 20px 24px; cursor: pointer; display: flex; align-items: center; justify-content: space-between; }
+        .accordion-title:hover { background: rgba(255,255,255,0.1); }
+        .accordion-content { padding: 24px; display: none; background: rgba(255,255,255,0.05); border-top: 1px solid rgba(255,255,255,0.1); }
+        .accordion-content.active { display: block; }
+        .site-config-btn { background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.2); color: #fff; font-size: 1rem; cursor: pointer; padding: 8px 12px; border-radius: var(--border-radius); transition: var(--transition); }
+        .site-config-btn:hover { background: rgba(255,255,255,0.2); border-color: var(--secondary-color); }
+        @media (max-width: 1400px) { .main-content { flex-direction: column; align-items: center; } .left-column { max-width: 100%; } .right-column { width: 100%; min-width: auto; max-width: 975px; } }
+    </style>
+</head>
+<body>
+<div class="dashboard-container">
+    <div class="header">
+        <span class="logo"><img src="https://via.placeholder.com/52x52?text=PS" class="logo-img" alt="Logo" />PRO-SAFE</span>
+        <div class="header-controls">
+            <button class="icon-btn" title="Pause">&#10073;&#10073;</button>
+            <button class="icon-btn" title="Play">&#9654;</button>
+            <button class="icon-btn" title="Add">&#43;</button>
+        </div>
+        <span class="level">Level 2 <span class="level-indicator">●</span></span>
+        <span class="user-info"><span>👤</span>Abdul Kalam</span>
+        <span class="logout">🚪</span>
+        <span class="version">v4.10.0</span>
+    </div>
+    <div class="main-content">
+        <div class="left-column">
+            <div class="video-card">
+                <div class="video-area">
+                    <span class="overlay-top">2025-07-03 00:00:00 CDT</span>
+                    <span class="overlay-site">Century Communities MDX3330</span>
+                    <span class="overlay-count">0 / 23</span>
+                    <video src="https://www.w3schools.com/html/mov_bbb.mp4" controls poster="https://via.placeholder.com/800x456?text=Video+Feed"></video>
+                </div>
+                <div class="icon-bar">
+                    <button class="icon-btn-vert" title="Close">&#10006;</button>
+                    <button class="icon-btn-vert" title="M">M</button>
+                    <button class="icon-btn-vert" title="Map">&#128506;</button>
+                    <button class="icon-btn-vert" title="Pin">&#128205;</button>
+                    <button class="icon-btn-vert" id="ctmBtn" title="CTM">CTM</button>
+                    <button class="icon-btn-vert" title="Play">&#9654;</button>
+                </div>
+            </div>
+            <div class="past-future-bar">
+                <span class="past-future-label">Past and Future Images</span>
+                <div class="past-future-center">
+                    <span>This Cam</span>
+                    <div class="toggle-switch" id="toggleSwitch1"><div class="toggle-knob"></div></div>
+                    <span>All Cams</span>
+                    <input type="checkbox" id="multiClipSms1"><label for="multiClipSms1" style="margin-left:4px;">Multi Clip SMS</label>
+                </div>
+                <span class="past-future-arrow" id="pastFutureArrow1" onclick="togglePastFutureAccordion('pastFutureAccordionContent1', 'pastFutureArrow1')">
+                    <svg width="18" height="18" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9" fill="none" stroke="#fff" stroke-width="2"/></svg>
+                </span>
+            </div>
+            <div class="past-future-accordion-content" id="pastFutureAccordionContent1">
+                <div class="camera-thumbnails-row">
+                    <div class="camera-thumb"><input type="checkbox" class="camera-thumb-checkbox" id="cam1-1"><img src="https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=400&q=80" alt="Camera 1" /></div>
+                    <div class="camera-thumb"><input type="checkbox" class="camera-thumb-checkbox" id="cam1-2"><img src="https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=400&q=80" alt="Camera 2" /></div>
+                    <div class="camera-thumb"><input type="checkbox" class="camera-thumb-checkbox" id="cam1-3"><img src="https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=400&q=80" alt="Camera 3" /></div>
+                    <div class="camera-thumb"><input type="checkbox" class="camera-thumb-checkbox" id="cam1-4"><img src="https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=400&q=80" alt="Camera 4" /></div>
+                    <div class="camera-thumb"><input type="checkbox" class="camera-thumb-checkbox" id="cam1-5"><img src="https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=400&q=80" alt="Camera 5" /></div>
+                    <div class="camera-thumb"><input type="checkbox" class="camera-thumb-checkbox" id="cam1-6"><img src="https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=400&q=80" alt="Camera 6" /></div>
+                </div>
+            </div>
+        </div>
+        <div class="right-column">
+            <div class="accordion-section">
+                <div class="accordion-title" onclick="toggleAccordion(this)">Site Name: Newco Metals F3097AO - ET<div style="display:flex;align-items:center;gap:8px;"><button class="site-config-btn" onclick="openZoneConfiguration(event, 'Newco Metals F3097AO - ET', 270258, 'Commercial Property')"><i class="fas fa-cog"></i></button><span>&#9660;</span></div></div>
+                <div class="accordion-content active"><strong>Monitoring Hours:</strong><br>Mon-Fri: 6:00 AM - 6:00 PM<br>Sat: 8:00 AM - 4:00 PM<br>Sun: Closed</div>
+            </div>
+            <div class="accordion-section">
+                <div class="accordion-title" onclick="toggleAccordion(this)">Site Name: Martin Marietta - Tanner 2012 F7-3<div style="display:flex;align-items:center;gap:8px;"><button class="site-config-btn" onclick="openZoneConfiguration(event, 'Martin Marietta', 270258, 'Commercial Property')"><i class="fas fa-cog"></i></button><span>&#9660;</span></div></div>
+                <div class="accordion-content"><strong>Monitoring Hours:</strong><br>Mon-Fri: 7:00 AM - 7:00 PM<br>Sat: 8:00 AM - 5:00 PM<br>Sun: Closed</div>
+            </div>
+            <div class="accordion-section">
+                <div class="accordion-title" onclick="toggleAccordion(this)">Recent History<span>&#9660;</span></div>
+                <div class="accordion-content active"><table style="width:100%;border-collapse:collapse;font-size:0.9rem;"><thead><tr style="background:#217ca6;"><th style="padding:8px;text-align:left;">Escalation ID</th><th style="padding:8px;">Camera Name</th><th style="padding:8px;">Event Time</th><th style="padding:8px;">User</th><th style="padding:8px;">Action</th></tr></thead><tbody><tr><td colspan="5" style="padding:12px;text-align:center;color:#ccc;">No escalations in the last 4 hours.</td></tr></tbody></table></div>
+            </div>
+            <div class="accordion-section"><div class="accordion-title" onclick="toggleAccordion(this)">SMP Notes<span>&#9660;</span></div><div class="accordion-content"></div></div>
+            <div class="accordion-section"><div class="accordion-title" onclick="toggleAccordion(this)">IFTTT Table<span>&#9660;</span></div><div class="accordion-content"></div></div>
+            <div class="accordion-section"><div class="accordion-title" onclick="toggleAccordion(this)">Guard<span>&#9660;</span></div><div class="accordion-content"></div></div>
+            <div class="accordion-section"><div class="accordion-title" onclick="toggleAccordion(this)">Contact Information<span>&#9660;</span></div><div class="accordion-content"></div></div>
+        </div>
+    </div>
+</div>
+<script>
+function toggleAccordion(titleElem) {
+    const content = titleElem.nextElementSibling;
+    const isActive = content.classList.contains('active');
+    content.classList.toggle('active');
+    titleElem.querySelector('span:last-child').innerHTML = isActive ? '&#9660;' : '&#9650;';
+}
+function togglePastFutureAccordion(contentId, arrowId) {
+    const content = document.getElementById(contentId);
+    const arrow = document.getElementById(arrowId);
+    content.classList.toggle('active');
+    arrow.classList.toggle('open');
+}
+function getSelectedCameras() {
+    const checkboxes = document.querySelectorAll('.camera-thumb-checkbox:checked');
+    const selected = [];
+    checkboxes.forEach(cb => {
+        const thumb = cb.closest('.camera-thumb');
+        if (thumb) {
+            const img = thumb.querySelector('img');
+            selected.push({ id: cb.id, img: img ? img.src : '', alt: img ? img.alt : '' });
+        }
+    });
+    return selected.slice(0, 9);
+}
+document.getElementById('ctmBtn').onclick = function() {
+    const selected = getSelectedCameras();
+    if (selected.length === 0) { alert('Please select at least one camera.'); return; }
+    localStorage.setItem('selectedCameras', JSON.stringify(selected));
+    window.location.href = 'ctm-wall.html';
+};
+function openZoneConfiguration(event, siteName, siteId, industry) {
+    event.stopPropagation();
+    sessionStorage.setItem('selectedSite', JSON.stringify({ id: siteId, name: siteName, industry: industry }));
+    window.location.href = 'zone-management.html';
+}
+document.querySelectorAll('.toggle-switch').forEach(toggle => { toggle.onclick = () => toggle.classList.toggle('active'); });
+</script>
+</body>
+</html>

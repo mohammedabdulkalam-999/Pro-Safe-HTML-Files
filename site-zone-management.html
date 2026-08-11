@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Site Zone Management - PRO-SAFE</title>
+    <link href="https://fonts.googleapis.com/css?family=Inter:400,500,600,700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: #ededed; color: #333; }
+        .dashboard-container { display: flex; flex-direction: column; min-height: 100vh; }
+        .header { background: #2c5b89; color: #fff; display: flex; align-items: center; padding: 0 32px; height: 64px; font-size: 1.2rem; font-weight: 600; }
+        .logo { display: flex; align-items: center; font-size: 2rem; font-weight: bold; margin-right: 16px; }
+        .logo-img { width: 48px; height: 48px; margin-right: 12px; background: #2c5b89; border-radius: 50%; padding: 4px; }
+        .header .search { margin-left: 24px; flex: 1; max-width: 350px; background: #fff; border: none; border-radius: 4px; padding: 7px 12px; font-size: 1rem; }
+        .main-content { flex: 1; padding: 32px; max-width: 1400px; margin: 0 auto; width: 100%; }
+        .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; }
+        .page-title { font-size: 2rem; font-weight: 700; color: #2c5b89; }
+        .header-actions { display: flex; align-items: center; gap: 16px; }
+        .search-box { position: relative; flex: 1; max-width: 400px; }
+        .search-input { width: 100%; padding: 12px 16px 12px 48px; border: 2px solid #e9ecef; border-radius: 6px; font-size: 1rem; }
+        .search-input:focus { outline: none; border-color: #2c5b89; }
+        .search-icon { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #6c757d; }
+        .btn { padding: 12px 24px; border: none; border-radius: 6px; font-size: 1rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
+        .btn-primary { background: #2c5b89; color: #fff; }
+        .btn-primary:hover { background: #1e4062; }
+        .btn-success { background: #28a745; color: #fff; }
+        .btn-success:hover { background: #218838; }
+        .table-container { background: #fff; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.1); overflow: hidden; }
+        .table-header { background: #2c5b89; color: #fff; padding: 20px; display: flex; justify-content: space-between; align-items: center; }
+        .table-title { font-size: 1.3rem; font-weight: 700; }
+        .table { width: 100%; border-collapse: collapse; }
+        .table th { background: #f8f9fa; color: #495057; font-weight: 600; text-align: left; padding: 16px 20px; border-bottom: 2px solid #e9ecef; font-size: 0.9rem; text-transform: uppercase; }
+        .table td { padding: 16px 20px; border-bottom: 1px solid #e9ecef; }
+        .table tbody tr:hover { background: #f8f9fa; }
+        .potential-id { font-weight: 600; color: #2c5b89; font-family: 'Courier New', monospace; }
+        .site-name { font-weight: 500; color: #495057; }
+        .industry { background: #e9ecef; color: #495057; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; }
+        .timezone { background: #d1ecf1; color: #0c5460; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: 600; }
+        .action-btn { background: #2c5b89; color: #fff; border: none; width: 36px; height: 36px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .action-btn:hover { background: #1e4062; }
+        .zone-badge { padding: 4px 8px; border-radius: 12px; font-size: 0.8rem; font-weight: 600; }
+        .zone-badge.configured { background: #d4edda; color: #155724; }
+        .zone-badge.not-configured { background: #f8d7da; color: #721c24; }
+        .pagination { display: flex; justify-content: space-between; align-items: center; padding: 20px; background: #f8f9fa; border-top: 1px solid #e9ecef; }
+        .pagination-arrow { background: #fff; border: 1px solid #ced4da; color: #6c757d; width: 32px; height: 32px; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .pagination-arrow:hover:not(:disabled) { background: #2c5b89; color: #fff; }
+        .pagination-arrow:disabled { opacity: 0.5; cursor: not-allowed; }
+        .empty-state { text-align: center; padding: 60px 20px; color: #6c757d; }
+        .empty-state i { font-size: 4rem; margin-bottom: 16px; opacity: 0.5; }
+        .loading { display: flex; justify-content: center; align-items: center; padding: 40px; }
+        .spinner { width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid #2c5b89; border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <header class="header"><div class="logo"><img src="https://via.placeholder.com/48x48?text=PS" alt="PRO-SAFE" class="logo-img">PRO-SAFE</div><input type="text" class="search" placeholder="Search sites, zones, devices..."></header>
+        <main class="main-content">
+            <div class="page-header">
+                <h1 class="page-title">Site Zone Management</h1>
+                <div class="header-actions">
+                    <div class="search-box"><i class="fas fa-search search-icon"></i><input type="text" id="siteSearch" class="search-input" placeholder="Search by site name or Potential ID"></div>
+                    <button class="btn btn-primary" onclick="searchSites()"><i class="fas fa-search"></i> Search Sites</button>
+                    <button class="btn btn-success" onclick="createNewZone()"><i class="fas fa-plus"></i> Create New Zone</button>
+                </div>
+            </div>
+            <div id="alertContainer"></div>
+            <div id="sitesTable" class="table-container" style="display: none;">
+                <div class="table-header"><h2 class="table-title">Sites with Zone Management</h2></div>
+                <table class="table"><thead><tr><th>POTENTIAL ID</th><th>SITE NAME</th><th>INDUSTRY</th><th>TIME ZONE</th><th>ZONE STATUS</th><th>ACTION</th></tr></thead><tbody id="sitesTableBody"></tbody></table>
+                <div class="pagination">
+                    <div style="display: flex; align-items: center; gap: 8px;"><span>Items per page:</span><select id="itemsPerPage" onchange="changeItemsPerPage()"><option value="8">8</option><option value="16">16</option></select></div>
+                    <div style="display: flex; align-items: center; gap: 16px;"><span id="paginationText">1 - 8 of 16</span><div style="display: flex; gap: 8px;"><button class="pagination-arrow" id="prevPage" onclick="previousPage()" disabled><i class="fas fa-chevron-left"></i></button><button class="pagination-arrow" id="nextPage" onclick="nextPage()"><i class="fas fa-chevron-right"></i></button></div></div>
+                </div>
+            </div>
+            <div id="emptyState" class="empty-state"><i class="fas fa-search"></i><h3>Search for Sites</h3><p>Enter a site name or Potential ID to find and configure zone management.</p></div>
+            <div id="loadingState" class="loading" style="display: none;"><div class="spinner"></div></div>
+        </main>
+    </div>
+    <script>
+        let sites = [
+            { id: 270258, name: "Martin Marietta - Tanner 2012 F7-3", industry: "Commercial Property", timezone: "CT", zoneStatus: "configured" },
+            { id: 464927, name: "R & R Consultants - 1875 Marin Street F38", industry: "Consulting", timezone: "PT", zoneStatus: "not-configured" },
+            { id: 532403, name: "Martin Marietta - Genoa Red Bluff F7-4", industry: "Construction Commercial", timezone: "CT", zoneStatus: "configured" },
+            { id: 535269, name: "Martin Marietta - Cherry Yard F7-6", industry: "Construction Commercial", timezone: "CT", zoneStatus: "not-configured" },
+            { id: 612847, name: "Century Communities - MDX3330", industry: "Residential Construction", timezone: "MT", zoneStatus: "configured" },
+            { id: 723456, name: "Newco Metals - F3097AO", industry: "Manufacturing", timezone: "ET", zoneStatus: "configured" },
+            { id: 834567, name: "TechCorp Solutions - Silicon Valley Campus", industry: "Technology", timezone: "PT", zoneStatus: "configured" },
+            { id: 945678, name: "Green Energy Solar Farm - Desert Site", industry: "Renewable Energy", timezone: "MT", zoneStatus: "not-configured" }
+        ];
+        let currentPage = 1, itemsPerPage = 8, filteredSites = [];
+        document.addEventListener('DOMContentLoaded', function() { document.getElementById('siteSearch').addEventListener('keypress', function(e) { if (e.key === 'Enter') searchSites(); }); });
+        function searchSites() { const searchTerm = document.getElementById('siteSearch').value.trim(); if (!searchTerm) { showAlert('Please enter a search term', 'warning'); return; } showLoading(); setTimeout(() => { filteredSites = sites.filter(site => site.name.toLowerCase().includes(searchTerm.toLowerCase()) || site.id.toString().includes(searchTerm)); if (filteredSites.length === 0) { showEmptyState(); showAlert('No sites found', 'warning'); } else { showSitesTable(); renderSitesTable(); } }, 500); }
+        function showLoading() { document.getElementById('loadingState').style.display = 'flex'; document.getElementById('sitesTable').style.display = 'none'; document.getElementById('emptyState').style.display = 'none'; }
+        function showEmptyState() { document.getElementById('loadingState').style.display = 'none'; document.getElementById('sitesTable').style.display = 'none'; document.getElementById('emptyState').style.display = 'block'; }
+        function showSitesTable() { document.getElementById('loadingState').style.display = 'none'; document.getElementById('emptyState').style.display = 'none'; document.getElementById('sitesTable').style.display = 'block'; }
+        function renderSitesTable() { const tableBody = document.getElementById('sitesTableBody'); const startIndex = (currentPage - 1) * itemsPerPage; const pageSites = filteredSites.slice(startIndex, startIndex + itemsPerPage); tableBody.innerHTML = ''; pageSites.forEach(site => { const row = document.createElement('tr'); row.innerHTML = `<td><span class="potential-id">${site.id}</span></td><td><span class="site-name">${site.name}</span></td><td><span class="industry">${site.industry}</span></td><td><span class="timezone">${site.timezone}</span></td><td><span class="zone-badge ${site.zoneStatus}">${site.zoneStatus === 'configured' ? 'Configured' : 'Not Configured'}</span></td><td><button class="action-btn" onclick="configureZones(${site.id})" title="Configure Zones"><i class="fas fa-cog"></i></button></td>`; tableBody.appendChild(row); }); updatePagination(); }
+        function updatePagination() { const totalItems = filteredSites.length; const startItem = (currentPage - 1) * itemsPerPage + 1; const endItem = Math.min(currentPage * itemsPerPage, totalItems); document.getElementById('paginationText').textContent = `${startItem} - ${endItem} of ${totalItems}`; document.getElementById('prevPage').disabled = currentPage === 1; document.getElementById('nextPage').disabled = endItem >= totalItems; }
+        function configureZones(siteId) { const site = sites.find(s => s.id === siteId); if (!site) return; sessionStorage.setItem('selectedSite', JSON.stringify(site)); window.location.href = 'zone-management.html'; }
+        function createNewZone() { alert('Create New Zone - This would open a site selection dialog'); }
+        function showAlert(message, type) { const alertContainer = document.getElementById('alertContainer'); const alert = document.createElement('div'); alert.style.cssText = `padding: 12px 16px; border-radius: 6px; margin-bottom: 16px; background: ${type === 'warning' ? '#fff3cd' : '#d4edda'}; color: ${type === 'warning' ? '#856404' : '#155724'}; border: 1px solid ${type === 'warning' ? '#ffeaa7' : '#c3e6cb'};`; alert.innerHTML = `<i class="fas fa-${type === 'warning' ? 'exclamation-triangle' : 'check-circle'}"></i> ${message}`; alertContainer.appendChild(alert); setTimeout(() => alert.remove(), 5000); }
+        function previousPage() { if (currentPage > 1) { currentPage--; renderSitesTable(); } }
+        function nextPage() { const totalPages = Math.ceil(filteredSites.length / itemsPerPage); if (currentPage < totalPages) { currentPage++; renderSitesTable(); } }
+        function changeItemsPerPage() { itemsPerPage = parseInt(document.getElementById('itemsPerPage').value); currentPage = 1; renderSitesTable(); }
+    </script>
+</body>
+</html>

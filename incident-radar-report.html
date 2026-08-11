@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Incident Radar Report – SLA Breach Identification</title>
+  <style>
+    :root {
+      --page-padding: clamp(12px, 1.5vw, 24px);
+      --filter-gap: clamp(8px, 1vw, 12px);
+      --title-size: clamp(16px, 1.8vw, 22px);
+      --table-font: clamp(11px, 0.9vw, 13px);
+      --cell-padding: clamp(6px, 0.8vw, 12px);
+      --input-min: min(140px, 18vw);
+    }
+    * { box-sizing: border-box; }
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: var(--page-padding); background: #f5f5f5; color: #333; min-height: 100vh; }
+    .report-page { width: 100%; max-width: min(1920px, 98vw); margin: 0 auto; background: #fff; padding: var(--page-padding); border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+
+    .header { display: flex; flex-wrap: wrap; align-items: center; gap: clamp(8px, 1vw, 16px); margin-bottom: clamp(12px, 1.5vw, 16px); padding-bottom: 12px; border-bottom: 2px solid #0c5b82; }
+    .back-btn { padding: clamp(6px, 0.8vw, 8px) clamp(12px, 1.2vw, 16px); background: #206288; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-size: clamp(12px, 1vw, 14px); flex-shrink: 0; }
+    .back-btn:hover { background: #0c5b82; }
+    .title { font-size: var(--title-size); font-weight: 600; color: #0c5b82; margin: 0; flex: 1; min-width: 200px; }
+
+    .filters { display: flex; flex-wrap: wrap; gap: var(--filter-gap); align-items: flex-end; margin-bottom: clamp(12px, 1.5vw, 16px); padding: var(--page-padding); background: #fafafa; border-radius: 8px; border: 1px solid #e0e0e0; }
+    .filter-group { display: flex; flex-direction: column; gap: 4px; }
+    .filter-group label { font-size: clamp(11px, 0.9vw, 12px); color: #666; }
+    .filter-group input, .filter-group select { padding: clamp(6px, 0.6vw, 8px) clamp(8px, 0.8vw, 12px); border: 1px solid #ccc; border-radius: 4px; min-width: var(--input-min); font-size: clamp(12px, 1vw, 14px); }
+    .filter-dropdown { position: relative; min-width: var(--input-min); }
+    .filter-dropdown-trigger { display: flex; align-items: center; justify-content: space-between; padding: clamp(6px, 0.6vw, 8px) clamp(8px, 0.8vw, 12px); border: 1px solid #ccc; border-radius: 4px; background: #fff; cursor: pointer; font-size: clamp(12px, 1vw, 14px); min-width: 140px; }
+    .filter-dropdown-trigger:hover { border-color: #999; }
+    .filter-dropdown-trigger::after { content: '▼'; font-size: 10px; color: #666; }
+    .filter-dropdown-panel { display: none; position: absolute; top: 100%; left: 0; margin-top: 4px; padding: 6px 4px; background: #fff; border: 1px solid #ccc; border-radius: 4px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 100; min-width: 200px; }
+    .filter-dropdown-panel.open { display: block; }
+    .filter-dropdown-panel label { display: flex; align-items: center; gap: 0; padding: 3px 0; cursor: pointer; font-size: 0; white-space: nowrap; line-height: 1; }
+    .filter-dropdown-panel label input { font-size: 13px; }
+    .filter-dropdown-panel label span { font-size: 13px; margin-left: -6px; }
+    .filter-dropdown-panel input[type="checkbox"] { margin: 0 !important; padding: 0 !important; border: none; outline: none; cursor: pointer; flex-shrink: 0; width: 14px; height: 14px; min-width: 14px; min-height: 14px; vertical-align: middle; box-sizing: border-box; }
+    .btn-search, .btn-download { padding: clamp(6px, 0.6vw, 8px) clamp(16px, 1.5vw, 20px); border: none; border-radius: 4px; cursor: pointer; font-size: clamp(12px, 1vw, 14px); flex-shrink: 0; }
+    .btn-search { background: #206288; color: #fff; }
+    .btn-search:hover { background: #0c5b82; }
+    .btn-download { background: #2e7d32; color: #fff; }
+    .btn-download:hover { background: #1b5e20; }
+
+    .legend { display: flex; flex-wrap: wrap; gap: var(--filter-gap); margin-bottom: clamp(12px, 1.5vw, 16px); font-size: clamp(11px, 0.9vw, 12px); }
+    .legend span { padding: clamp(4px, 0.5vw, 6px) clamp(8px, 1vw, 12px); border-radius: 4px; }
+    .legend .amber { background: #ffe0b2; color: #e65100; }
+    .legend .red { background: #ffcdd2; color: #b71c1c; }
+    .legend .gray { background: #f5f5f5; color: #616161; }
+
+    .table-wrap { overflow-x: scroll; margin-top: clamp(12px, 1.5vw, 16px); border: 1px solid #e0e0e0; border-radius: 8px; -webkit-overflow-scrolling: touch; }
+    table { width: 100%; min-width: 1300px; border-collapse: collapse; font-size: var(--table-font); table-layout: fixed; }
+    th, td { padding: var(--cell-padding); text-align: center; border-bottom: 1px solid #eee; overflow: hidden; text-overflow: ellipsis; }
+    th { background: #0c5b82; color: #fff; font-weight: 500; white-space: nowrap; }
+    /* Full-row color coding by SLA status */
+    tr.row-sla-amber { background: #ffe0b2 !important; color: #e65100; }
+    tr.row-sla-amber td { background: #ffe0b2 !important; }
+    tr.row-sla-amber:hover td { background: #f5d09a !important; }
+    tr.row-sla-miss { background: #ffcdd2 !important; color: #b71c1c; }
+    tr.row-sla-miss td { background: #ffcdd2 !important; }
+    tr.row-sla-miss:hover td { background: #f5bcc2 !important; }
+    tr.row-sla-no { background: #eeeeee !important; color: #616161; }
+    tr.row-sla-no td { background: #eeeeee !important; }
+    tr.row-sla-no:hover td { background: #e0e0e0 !important; }
+    .tech-delay { background-color: #fff8e1 !important; color: #f57f17; font-weight: 500; }
+
+    .empty-state { text-align: center; padding: 48px 16px; color: #666; font-size: 16px; }
+
+    @media (max-width: 1200px) {
+      .report-page { padding: 12px; }
+      .filters { padding: 12px; }
+    }
+    @media (min-width: 1920px) {
+      .report-page { max-width: 1800px; }
+    }
+    @media (min-width: 2560px) {
+      .report-page { max-width: 2200px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="report-page">
+    <div class="header">
+      <button class="back-btn" onclick="window.history.back()">← Reports Dashboard</button>
+      <h1 class="title">Incident Radar Report – SLA Breach Identification & Incident Analysis</h1>
+    </div>
+
+    <!-- Filters -->
+    <div class="filters">
+      <div class="filter-group">
+        <label>From Date & Time</label>
+        <input type="datetime-local" id="fromDate">
+      </div>
+      <div class="filter-group">
+        <label>To Date & Time</label>
+        <input type="datetime-local" id="toDate">
+      </div>
+      <div class="filter-group">
+        <label>Select Tag</label>
+        <div class="filter-dropdown" id="selectTagDropdown">
+          <div class="filter-dropdown-trigger" onclick="toggleDropdown('selectTagDropdown')" id="selectTagTrigger">All</div>
+          <div class="filter-dropdown-panel" id="selectTagPanel" onclick="event.stopPropagation()">
+            <label><input type="checkbox" value="Police Notified" onchange="updateFilterLabel('selectTag')"><span>Police Notified</span></label>
+            <label><input type="checkbox" value="PC/SC Called" onchange="updateFilterLabel('selectTag')"><span>PC/SC Called</span></label>
+            <label><input type="checkbox" value="Guard Contacted" onchange="updateFilterLabel('selectTag')"><span>Guard Contacted</span></label>
+            <label><input type="checkbox" value="Police Notified – PC/SC Not Available" onchange="updateFilterLabel('selectTag')"><span>Police Notified – PC/SC Not Available</span></label>
+          </div>
+        </div>
+      </div>
+      <div class="filter-group">
+        <label>Forensic Disposition</label>
+        <div class="filter-dropdown" id="forensicDispositionDropdown">
+          <div class="filter-dropdown-trigger" onclick="toggleDropdown('forensicDispositionDropdown')" id="forensicDispositionTrigger">All</div>
+          <div class="filter-dropdown-panel" id="forensicDispositionPanel" onclick="event.stopPropagation()">
+            <label><input type="checkbox" value="Arrest Confirmed" onchange="updateFilterLabel('forensicDisposition')"><span>Arrest Confirmed</span></label>
+            <label><input type="checkbox" value="Deter Confirmed" onchange="updateFilterLabel('forensicDisposition')"><span>Deter Confirmed</span></label>
+            <label><input type="checkbox" value="Intervention Confirmed" onchange="updateFilterLabel('forensicDisposition')"><span>Intervention Confirmed</span></label>
+          </div>
+        </div>
+      </div>
+      <button class="btn-search" onclick="applyFilters()">Search</button>
+      <button class="btn-download" onclick="downloadReport()">Download CSV</button>
+    </div>
+
+    <!-- Legend -->
+    <div class="legend">
+      <span class="amber">Approaching (9–10 min)</span>
+      <span class="red">SLA Breached (&gt;10 min)</span>
+      <span class="gray">No Intervention Taken</span>
+    </div>
+
+    <!-- Table -->
+    <div class="table-wrap">
+      <table>
+        <colgroup>
+          <col style="width: 5%"><col style="width: 5%"><col style="width: 4%"><col style="width: 7%"><col style="width: 7%"><col style="width: 7%"><col style="width: 4%"><col style="width: 4%"><col style="width: 4%"><col style="width: 4%"><col style="width: 5%"><col style="width: 6%"><col style="width: 4%"><col style="width: 4%"><col style="width: 4%"><col style="width: 4%"><col style="width: 5%"><col style="width: 5%"><col style="width: 5%"><col style="width: 7%">
+        </colgroup>
+        <thead>
+          <tr>
+            <th>Event ID</th>
+            <th>Site Name</th>
+            <th>Camera ID</th>
+            <th>Event Generated (T0)</th>
+            <th>Final Action (T4)</th>
+            <th>Final Action Tag</th>
+            <th>Engineering</th>
+            <th>L1 Time</th>
+            <th>L2 Time</th>
+            <th>L3 Time</th>
+            <th>Overall Time</th>
+            <th>Overall SLA</th>
+            <th>Eng SLA</th>
+            <th>L1 SLA</th>
+            <th>L2 SLA</th>
+            <th>L3 SLA</th>
+            <th>L1 Operator</th>
+            <th>L2 Operator</th>
+            <th>L3 Operator</th>
+            <th>Forensic Disposition</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody">
+          <!-- Sample data loaded on page load -->
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <script>
+    var sampleData = [
+      { eventId: 'ESC-001', site: 'Warehouse North', camera: 'CAM-101', type: 'Alarm', t0: '2025-02-11 08:00:00', t4: '2025-02-11 08:07:15', tag: 'Police Notified', eng: '18s', l1: '42s', l2: '85s', l3: '110s', overall: '7m 15s', sla: 'met', engSla: 'ok', l1Sla: 'ok', l2Sla: 'ok', l3Sla: 'ok', l1op: 'J.Smith', l2op: 'M.Jones', l3op: 'R.Lee' },
+      { eventId: 'ESC-002', site: 'Retail Plaza East', camera: 'CAM-202', type: 'Motion', t0: '2025-02-11 08:15:00', t4: '2025-02-11 08:24:50', tag: 'Guard Contacted', eng: '22s', l1: '55s', l2: '120s', l3: '173s', overall: '9m 50s', sla: 'amber', engSla: 'ok', l1Sla: 'ok', l2Sla: 'ok', l3Sla: 'breach', l1op: 'A.Kumar', l2op: 'S.Patel', l3op: 'T.Chen', forensicDisposition: 'Intervention Confirmed' },
+      { eventId: 'ESC-003', site: 'Industrial Park 7', camera: 'CAM-305', type: 'Alarm', t0: '2025-02-11 09:00:00', t4: '2025-02-11 09:13:20', tag: 'PC/SC Called', eng: '45s', l1: '70s', l2: '150s', l3: '195s', overall: '13m 20s', sla: 'miss', engSla: 'breach', l1Sla: 'breach', l2Sla: 'breach', l3Sla: 'breach', l1op: 'K.Wilson', l2op: 'D.Brown', l3op: 'L.Garcia', forensicDisposition: 'Arrest Confirmed' },
+      { eventId: 'ESC-004', site: 'Office Complex B', camera: 'CAM-412', type: 'Tamper', t0: '2025-02-11 09:30:00', t4: '2025-02-11 09:36:40', tag: 'Police Notified', eng: '12s', l1: '38s', l2: '72s', l3: '98s', overall: '6m 40s', sla: 'met', engSla: 'ok', l1Sla: 'ok', l2Sla: 'ok', l3Sla: 'ok', l1op: 'J.Smith', l2op: 'M.Jones', l3op: 'R.Lee' },
+      { eventId: 'ESC-005', site: 'Warehouse North', camera: 'CAM-102', type: 'Motion', t0: '2025-02-11 10:00:00', t4: '—', tag: 'Pending Review', eng: '620s', l1: '—', l2: '—', l3: '—', overall: '—', sla: 'no', engSla: '—', l1Sla: '—', l2Sla: '—', l3Sla: '—', l1op: 'A.Kumar', l2op: '—', l3op: '—' },
+      { eventId: 'ESC-006', site: 'Retail Plaza East', camera: 'CAM-201', type: 'Alarm', t0: '2025-02-11 10:45:00', t4: '2025-02-11 10:52:00', tag: 'Police Notified – PC/SC Not Available', eng: '28s', l1: '48s', l2: '95s', l3: '129s', overall: '7m 0s', sla: 'met', engSla: 'ok', l1Sla: 'ok', l2Sla: 'ok', l3Sla: 'ok', l1op: 'S.Patel', l2op: 'T.Chen', l3op: 'D.Brown' },
+      { eventId: 'ESC-007', site: 'Industrial Park 7', camera: 'CAM-306', type: 'Alarm', t0: '2025-02-11 11:20:00', t4: '2025-02-11 11:35:45', tag: 'Guard Contacted', eng: '52s', l1: '88s', l2: '165s', l3: '220s', overall: '15m 45s', sla: 'miss', engSla: 'breach', l1Sla: 'breach', l2Sla: 'breach', l3Sla: 'breach', l1op: 'K.Wilson', l2op: 'L.Garcia', l3op: 'R.Lee', forensicDisposition: 'Deter Confirmed' },
+      { eventId: 'ESC-008', site: 'Office Complex B', camera: 'CAM-411', type: 'Motion', t0: '2025-02-11 12:00:00', t4: '2025-02-11 12:08:50', tag: 'PC/SC Called', eng: '20s', l1: '50s', l2: '100s', l3: '140s', overall: '8m 50s', sla: 'met', engSla: 'ok', l1Sla: 'ok', l2Sla: 'ok', l3Sla: 'ok', l1op: 'J.Smith', l2op: 'M.Jones', l3op: 'T.Chen' },
+      { eventId: 'ESC-009', site: 'Warehouse North', camera: 'CAM-103', type: 'Alarm', t0: '2025-02-11 13:00:00', t4: '2025-02-11 13:09:55', tag: 'Police Notified', eng: '25s', l1: '58s', l2: '115s', l3: '157s', overall: '9m 55s', sla: 'amber', engSla: 'ok', l1Sla: 'ok', l2Sla: 'ok', l3Sla: 'ok', l1op: 'A.Kumar', l2op: 'S.Patel', l3op: 'D.Brown' },
+      { eventId: 'ESC-010', site: 'Retail Plaza East', camera: 'CAM-203', type: 'Tamper', t0: '2025-02-11 14:30:00', t4: '2025-02-11 14:44:10', tag: 'Guard Contacted', eng: '35s', l1: '62s', l2: '130s', l3: '203s', overall: '14m 10s', sla: 'miss', engSla: 'breach', l1Sla: 'breach', l2Sla: 'ok', l3Sla: 'breach', l1op: 'K.Wilson', l2op: 'L.Garcia', l3op: 'R.Lee' }
+    ];
+
+    function getRowClass(sla) {
+      if (sla === 'amber') return 'row-sla-amber';
+      if (sla === 'miss') return 'row-sla-miss';
+      return 'row-sla-no';
+    }
+    function techClass(eng) { return (eng && eng !== '—' && parseInt(eng, 10) > 30) ? ' tech-delay' : ''; }
+
+    function toggleDropdown(id) {
+      var panel = document.getElementById(id).querySelector('.filter-dropdown-panel');
+      document.querySelectorAll('.filter-dropdown-panel').forEach(function(p) { p.classList.remove('open'); });
+      panel.classList.toggle('open');
+    }
+    function updateFilterLabel(filterId) {
+      var ids = filterId === 'selectTag' ? 'selectTagDropdown' : 'forensicDispositionDropdown';
+      var panel = document.getElementById(ids).querySelector('.filter-dropdown-panel');
+      var checkboxes = panel.querySelectorAll('input[type="checkbox"]:checked');
+      var trigger = document.getElementById(ids === 'selectTagDropdown' ? 'selectTagTrigger' : 'forensicDispositionTrigger');
+      var values = Array.from(checkboxes).map(function(cb) { return cb.value; });
+      var text = values.length === 0 ? 'All' : values.length === 1 ? values[0] : values.length + ' selected';
+      trigger.textContent = text;
+      trigger.title = values.length > 1 ? values.join(', ') : '';
+    }
+    document.addEventListener('click', function(e) {
+      if (!e.target.closest('.filter-dropdown')) {
+        document.querySelectorAll('.filter-dropdown-panel').forEach(function(p) { p.classList.remove('open'); });
+      }
+    });
+
+    function getSelectedTags() {
+      return Array.from(document.querySelectorAll('#selectTagPanel input[type="checkbox"]:checked')).map(function(cb) { return cb.value; });
+    }
+    function getSelectedForensic() {
+      return Array.from(document.querySelectorAll('#forensicDispositionPanel input[type="checkbox"]:checked')).map(function(cb) { return cb.value; });
+    }
+
+    function buildSampleRows() {
+      var html = '';
+      var tagFilters = getSelectedTags();
+      var forensicFilters = getSelectedForensic();
+      var displayed = sampleData.filter(function(r) {
+        if (r.sla === 'met') return false;
+        if (tagFilters.length > 0 && !tagFilters.includes(r.tag)) return false;
+        if (forensicFilters.length > 0 && !forensicFilters.includes(r.forensicDisposition)) return false;
+        return true;
+      });
+      displayed.forEach(function(r) {
+        var rowClass = getRowClass(r.sla);
+        html += '<tr class="' + rowClass + '">' +
+          '<td>' + r.eventId + '</td><td>' + r.site + '</td><td>' + r.camera + '</td>' +
+          '<td>' + r.t0 + '</td><td>' + r.t4 + '</td><td>' + r.tag + '</td>' +
+          '<td class="' + techClass(r.eng) + '">' + r.eng + '</td><td>' + r.l1 + '</td><td>' + r.l2 + '</td><td>' + r.l3 + '</td><td>' + r.overall + '</td>' +
+          '<td>' + (r.sla === 'miss' ? 'Miss' : r.sla === 'amber' ? 'Approaching' : 'No Intervention') + '</td>' +
+          '<td>' + (r.engSla === 'ok' ? 'OK' : r.engSla === 'breach' ? 'Breach' : '—') + '</td>' +
+          '<td>' + (r.l1Sla === 'ok' ? 'OK' : r.l1Sla === 'breach' ? 'Breach' : '—') + '</td>' +
+          '<td>' + (r.l2Sla === 'ok' ? 'OK' : r.l2Sla === 'breach' ? 'Breach' : '—') + '</td>' +
+          '<td>' + (r.l3Sla === 'ok' ? 'OK' : r.l3Sla === 'breach' ? 'Breach' : '—') + '</td>' +
+          '<td>—</td><td>' + (r.l2op || '—') + '</td><td>' + (r.l3op || '—') + '</td>' +
+          '<td>' + (r.forensicDisposition || '—') + '</td>' +
+          '</tr>';
+      });
+      return html;
+    }
+
+    function renderSampleData() {
+      document.getElementById('tableBody').innerHTML = buildSampleRows();
+    }
+
+    function applyFilters() {
+      var from = document.getElementById('fromDate').value;
+      var to = document.getElementById('toDate').value;
+      if (!from || !to) {
+        alert('Please select From Date and To Date.');
+        return;
+      }
+      renderSampleData();
+    }
+
+    function downloadReport() {
+      alert('In the live app, this downloads CSV from the API. Open the report in Pro-Safe Admin at /reports-dashboard/incident-radar for full export.');
+    }
+
+    // Load sample data when page opens
+    document.addEventListener('DOMContentLoaded', renderSampleData);
+  </script>
+</body>
+</html>

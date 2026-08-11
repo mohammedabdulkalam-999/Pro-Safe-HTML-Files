@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>LPR info On L2& L3 Wall - PRO-SAFE</title>
+  <style>
+    body { margin: 0; font-family: 'Inter', Helvetica, Arial, sans-serif; background: #181f26; }
+    .basecamp-header { background: #2c5b89; color: #fff; display: flex; align-items: center; padding: 0 32px; height: 64px; font-size: 1.2rem; font-weight: 600; }
+    .basecamp-header .logo { display: flex; align-items: center; font-size: 2rem; font-weight: bold; margin-right: 16px; }
+    .basecamp-header .logo-img { width: 48px; height: 48px; margin-right: 12px; background: #2c5b89; border-radius: 50%; padding: 4px; }
+    .basecamp-header .user { margin-left: auto; font-size: 1.1rem; font-weight: 500; display: flex; align-items: center; gap: 16px; }
+    .basecamp-wall-container { display: flex; height: calc(100vh - 64px); background: rgb(30, 30, 30); }
+    .basecamp-panels { flex: 1; display: flex; flex-direction: column; border-right: 2px solid #fff; }
+    .basecamp-panel { flex: 1; border: 3px solid #ffffff; margin: 8px; border-radius: 4px; position: relative; min-height: calc(50vh - 40px); }
+    .basecamp-panel.border-redflag { border: 6px solid #f81919 !important; }
+    .basecamp-panel.border-orangeflag { border: 6px solid transparent; animation: blinkBorder 1s infinite; }
+    @keyframes blinkBorder { 0% { border: 6px solid #fba706; } 50% { border: 6px solid transparent; } 100% { border: 6px solid #fba706; } }
+    .basecamp-panel-content { padding: 20px; color: #fff; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+    .basecamp-panel-error { text-align: center; color: #ffffff; font-size: 16px; font-weight: 500; }
+    .basecamp-table-panel { flex: 1; background: #e8f0f5; overflow: auto; padding: 20px; }
+    .lpr-detections-content { padding: 0; }
+    .lpr-table-wrap { overflow-x: auto; }
+    .lpr-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    .lpr-table thead { background: #2c5b89; color: #fff; }
+    .lpr-table th { padding: 6px 8px; font-weight: 600; font-size: 0.72rem; vertical-align: middle; line-height: 1.2; }
+    .lpr-table th.lpr-th-date { text-align: left; }
+    .lpr-table th.lpr-th-center { text-align: center; }
+    .lpr-table th.lpr-th-type { text-align: left; }
+    .lpr-table th.lpr-th-camera { text-align: left; }
+    .lpr-table th.lpr-th-cropped { text-align: center; }
+    .lpr-table tbody tr { background: #fff; border-bottom: 1px solid #e0e0e0; }
+    .lpr-table tbody tr:nth-child(even) { background: #f0f4f8; }
+    .lpr-table td { padding: 12px 10px; color: #333; vertical-align: middle; line-height: 1.4; }
+    .lpr-table .lpr-cell-datetime { text-align: left; white-space: nowrap; }
+    .lpr-table .lpr-cell-datetime .lpr-date { display: block; }
+    .lpr-table .lpr-cell-datetime .lpr-time { display: block; font-size: 0.8rem; color: #555; }
+    .lpr-table .lpr-cell-plate { font-weight: 600; color: #2c5b89; text-align: center; }
+    .lpr-table .lpr-cell-center { text-align: center; }
+    .lpr-table .lpr-cell-type { text-align: left; }
+    .lpr-table .lpr-cell-camera { text-align: left; }
+    .lpr-table .lpr-cell-cropped { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; text-align: center; }
+    .lpr-table .lpr-thumb { width: 56px; height: 36px; background: #e0e6eb; border: 1px solid #b2bec6; border-radius: 4px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; overflow: hidden; margin: 0 auto; }
+    .lpr-table .lpr-thumb img { max-width: 100%; max-height: 100%; object-fit: contain; }
+    .lpr-table .lpr-plate-label { font-size: 0.8rem; color: #2c5b89; display: block; }
+    .lpr-date-filter { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-right: 12px; }
+    .lpr-date-filter label { font-weight: 600; color: #fff; font-size: 0.85rem; }
+    .lpr-date-filter input[type="date"] { padding: 6px 10px; border: 1px solid rgba(255,255,255,0.5); border-radius: 4px; font-size: 0.85rem; color: #222; background: #fff; }
+    .lpr-date-filter input[type="date"]:focus { outline: none; border-color: #fff; }
+    .lpr-detections-empty { text-align: center; color: #666; font-size: 0.95rem; padding: 24px 12px; }
+    .basecamp-empty { color: #fff; text-align: center; margin: 80px auto; font-size: 1.3rem; }
+    .basecamp-loading { display: flex; justify-content: center; align-items: center; height: 100%; color: #fff; font-size: 1.2rem; }
+    .basecamp-single-slot-msg { text-align: center; color: white; margin: 15%; font-size: 18px; font-weight: 900; }
+    .accordion-card { background: #2c5b89; border-radius: 8px; margin-bottom: 16px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .accordion-header { background: #2c5b89; color: #fff; padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; font-size: 1.1rem; font-weight: 600; }
+    .accordion-header:hover { background: #1e4062; }
+    .accordion-header .header-left { display: flex; align-items: center; gap: 12px; flex: 1; }
+    .accordion-header .header-right { display: flex; align-items: center; gap: 12px; }
+    .accordion-icon { width: 20px; height: 20px; cursor: pointer; transition: transform 0.3s; }
+    .accordion-icon.rotated { transform: rotate(180deg); }
+    .accordion-content { background: #fff; color: #222; padding: 0; max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
+    .accordion-content.expanded { max-height: 2000px; padding: 20px; }
+    .accordion-card-lpr .accordion-header { padding: 16px 20px; box-sizing: border-box; }
+    .accordion-card-lpr .accordion-content.expanded { padding: 20px 0; box-sizing: border-box; }
+    .accordion-card-lpr .lpr-detections-content { padding: 0 20px 0 20px; box-sizing: border-box; width: 100%; }
+    .accordion-card-lpr .lpr-date-filter { flex: 1; justify-content: flex-end; min-width: 0; }
+    .accordion-card-lpr .lpr-table-wrap { width: 100%; box-sizing: border-box; margin: 0; }
+    .accordion-card-lpr .lpr-table { width: 100%; box-sizing: border-box; }
+    .monitoring-hours { padding: 12px 0; }
+    .monitoring-hours-item { padding: 6px 0; font-size: 1rem; color: #333; }
+    .escalation-table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+    .escalation-table thead { background: #e8f0f5; }
+    .escalation-table th { padding: 12px; text-align: left; font-weight: 600; color: #2c5b89; font-size: 0.95rem; border-bottom: 2px solid #b2bec6; }
+    .escalation-table td { padding: 12px; border-bottom: 1px solid #e0e0e0; color: #333; font-size: 0.95rem; }
+    .escalation-empty { text-align: center; padding: 20px; color: #666; font-size: 1rem; }
+    @media (max-width: 1100px) { .basecamp-wall-container { flex-direction: column; } .basecamp-panels { border-right: none; border-bottom: 2px solid #fff; } }
+  </style>
+</head>
+<body>
+  <div class="basecamp-header">
+    <span class="logo"><img src="https://via.placeholder.com/48x48?text=PS" class="logo-img" alt="Logo" />PRO-SAFE</span>
+    <span class="user">LPR info On L2& L3 Wall <span style="margin-left: 18px;">Abdul Kalam</span></span>
+  </div>
+  <div id="basecampWallContent" class="basecamp-wall-container">
+    <div class="basecamp-panels">
+      <div class="basecamp-panel" id="panel1_slot">
+        <div class="basecamp-panel-content" id="panel1Container">
+          <div class="basecamp-panel-error" id="panel1Error">Loading...</div>
+        </div>
+      </div>
+      <div class="basecamp-panel" id="panel2_slot">
+        <div class="basecamp-panel-content" id="panel2Container">
+          <div class="basecamp-panel-error" id="panel2Error">Loading...</div>
+        </div>
+      </div>
+    </div>
+    <div class="basecamp-table-panel" id="tablePanel">
+      <!-- Site Information Accordion 1 -->
+      <div class="accordion-card">
+        <div class="accordion-header" onclick="toggleAccordion('site1')">
+          <div class="header-left">
+            <span>Site Name: Newco Metals F3097AO - ET</span>
+          </div>
+          <div class="header-right">
+            <span class="accordion-icon" id="icon-site1">▼</span>
+          </div>
+        </div>
+        <div class="accordion-content" id="content-site1">
+          <div class="monitoring-hours">
+            <div style="font-weight: 600; color: #2c5b89; margin-bottom: 12px; font-size: 1.05rem;">Monitoring Hours:</div>
+            <div class="monitoring-hours-item">Mon-Fri: 6:00 AM - 6:00 PM</div>
+            <div class="monitoring-hours-item">Sat: 8:00 AM - 4:00 PM</div>
+            <div class="monitoring-hours-item">Sun: Closed</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Site Information Accordion 2 -->
+      <div class="accordion-card">
+        <div class="accordion-header" onclick="toggleAccordion('site2')">
+          <div class="header-left">
+            <span>Site Name: Martin Marietta - Tanner 2012 F7-3</span>
+          </div>
+          <div class="header-right">
+            <span class="accordion-icon" id="icon-site2">▼</span>
+          </div>
+        </div>
+        <div class="accordion-content" id="content-site2">
+          <div class="monitoring-hours">
+            <div style="font-weight: 600; color: #2c5b89; margin-bottom: 12px; font-size: 1.05rem;">Monitoring Hours:</div>
+            <div class="monitoring-hours-item">Mon-Fri: 7:00 AM - 7:00 PM</div>
+            <div class="monitoring-hours-item">Sat: 9:00 AM - 5:00 PM</div>
+            <div class="monitoring-hours-item">Sun: Closed</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent History accordion -->
+      <div class="accordion-card">
+        <div class="accordion-header" onclick="toggleAccordion('escalations')">
+          <div class="header-left">
+            <span>Recent History</span>
+          </div>
+          <div class="header-right">
+            <span class="accordion-icon" id="icon-escalations">▼</span>
+          </div>
+        </div>
+        <div class="accordion-content expanded" id="content-escalations">
+          <table class="escalation-table">
+            <thead>
+              <tr>
+                <th>Escalation ID</th>
+                <th>Camera Name</th>
+                <th>Event Time</th>
+                <th>User</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="escalation-tbody">
+              <tr>
+                <td colspan="5" class="escalation-empty">No escalations in the last 4 hours.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- LPR detections (under Recent History) -->
+      <div class="accordion-card accordion-card-lpr">
+        <div class="accordion-header" onclick="toggleAccordion('lpr')">
+          <div class="header-left">
+            <span>LPR detections</span>
+          </div>
+          <div class="header-right" onclick="event.stopPropagation()">
+            <div class="lpr-date-filter">
+              <label for="lprFromDate">From:</label>
+              <input type="date" id="lprFromDate" />
+              <label for="lprToDate">To:</label>
+              <input type="date" id="lprToDate" />
+            </div>
+            <span class="accordion-icon" id="icon-lpr">▼</span>
+          </div>
+        </div>
+        <div class="accordion-content expanded" id="content-lpr">
+          <div class="lpr-detections-content" id="lprDetectionsContent">
+            <div class="lpr-table-wrap">
+              <table class="lpr-table" id="lprTable">
+                <thead>
+                  <tr>
+                    <th class="lpr-th-date">Date &amp;<br />Time</th>
+                    <th class="lpr-th-center">License Plate<br />Number</th>
+                    <th class="lpr-th-type">Vehicle Type<br />/ Brand</th>
+                    <th class="lpr-th-center">Color</th>
+                    <th class="lpr-th-center">Direction</th>
+                    <th class="lpr-th-camera">Camera ID<br />/ Model</th>
+                    <th class="lpr-th-cropped">Cropped Plate<br />Image</th>
+                  </tr>
+                </thead>
+                <tbody id="lprDetectionsList">
+                  <tr>
+                    <td class="lpr-cell-datetime"><span class="lpr-date">2026-01-20</span><span class="lpr-time">06:58:21</span></td>
+                    <td class="lpr-cell-plate">8XKJ214</td>
+                    <td class="lpr-cell-type">Sedan / Toyota</td>
+                    <td class="lpr-cell-center">White</td>
+                    <td class="lpr-cell-center">Entry</td>
+                    <td class="lpr-cell-camera">CAM-02 / QNO-7082R</td>
+                    <td><div class="lpr-cell-cropped"><span class="lpr-thumb"><img src="https://via.placeholder.com/56x36?text=8XKJ" alt="" /></span><span class="lpr-plate-label">Plate 8XKJ214</span></div></td>
+                  </tr>
+                  <tr>
+                    <td class="lpr-cell-datetime"><span class="lpr-date">2026-01-20</span><span class="lpr-time">06:41:03</span></td>
+                    <td class="lpr-cell-plate">7LMR882</td>
+                    <td class="lpr-cell-type">SUV / Honda</td>
+                    <td class="lpr-cell-center">Black</td>
+                    <td class="lpr-cell-center">Exit</td>
+                    <td class="lpr-cell-camera">CAM-03 / QNO-7082R</td>
+                    <td><div class="lpr-cell-cropped"><span class="lpr-thumb"><img src="https://via.placeholder.com/56x36?text=7LMR" alt="" /></span><span class="lpr-plate-label">Plate 7LMR882</span></div></td>
+                  </tr>
+                  <tr>
+                    <td class="lpr-cell-datetime"><span class="lpr-date">2026-01-20</span><span class="lpr-time">06:15:47</span></td>
+                    <td class="lpr-cell-plate">5TME112</td>
+                    <td class="lpr-cell-type">Pickup / Ford</td>
+                    <td class="lpr-cell-center">Blue</td>
+                    <td class="lpr-cell-center">Entry</td>
+                    <td class="lpr-cell-camera">CAM-01 / QNO-7082R</td>
+                    <td><div class="lpr-cell-cropped"><span class="lpr-thumb"><img src="https://via.placeholder.com/56x36?text=5TME" alt="" /></span><span class="lpr-plate-label">Plate 5TME112</span></div></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="lpr-detections-empty" id="lprDetectionsEmpty" style="display: none;">No LPR detections at this time.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function renderBasecampWall() {
+      const container = document.getElementById('basecampWallContent');
+      let slotNumber = 2;
+      try { slotNumber = parseInt(localStorage.getItem('Slots')) || 2; } catch (e) { slotNumber = 2; }
+      
+      const urlParams = new URLSearchParams(window.location.search);
+      const isMirror = urlParams.get('mirror') === 'true';
+      
+      // Update panel visibility based on slot number
+      const panel2 = document.getElementById('panel2_slot');
+      if (slotNumber === 1 && panel2) {
+        panel2.innerHTML = '<div class="basecamp-single-slot-msg">User Setup with single slot.</div>';
+      }
+      
+      // Update borders based on flags
+      function updatePanelBorders(panelId, redFlag, orangeFlag) {
+        const panel = document.getElementById(panelId);
+        if (!panel) return;
+        panel.className = 'basecamp-panel';
+        if (redFlag) panel.classList.add('border-redflag');
+        else if (orangeFlag) panel.classList.add('border-orangeflag');
+      }
+      
+      // Load panel data
+      function loadPanelData() {
+        // Get data from localStorage or use mock data
+        let panel1Data = {}, panel2Data = {};
+        try {
+          panel1Data = JSON.parse(localStorage.getItem('panel1Data')) || {};
+          panel2Data = JSON.parse(localStorage.getItem('panel2Data')) || {};
+        } catch (e) {
+          panel1Data = {};
+          panel2Data = {};
+        }
+        
+        // Update Panel 1
+        const panel1Container = document.getElementById('panel1Container');
+        const panel1Error = document.getElementById('panel1Error');
+        if (Object.keys(panel1Data).length > 0) {
+          panel1Container.innerHTML = `
+            <div style="width: 100%;">
+              <h4 style="color: #fff; margin-bottom: 16px;">Panel 1 - LPR info On L2& L3 Wall</h4>
+              <p style="color: #fff;">Event ID: ${panel1Data.eventId || 'N/A'}</p>
+              <p style="color: #fff;">Status: ${panel1Data.status || 'N/A'}</p>
+            </div>
+          `;
+          updatePanelBorders('panel1_slot', panel1Data.redFlag || false, panel1Data.orangeFlag || false);
+        } else {
+          panel1Error.textContent = panel1Data.error || 'No events available';
+        }
+        
+        // Update Panel 2
+        if (slotNumber !== 1) {
+          const panel2Container = document.getElementById('panel2Container');
+          const panel2Error = document.getElementById('panel2Error');
+          if (Object.keys(panel2Data).length > 0) {
+            panel2Container.innerHTML = `
+              <div style="width: 100%;">
+                <h4 style="color: #fff; margin-bottom: 16px;">Panel 2 - LPR info On L2& L3 Wall</h4>
+                <p style="color: #fff;">Event ID: ${panel2Data.eventId || 'N/A'}</p>
+                <p style="color: #fff;">Status: ${panel2Data.status || 'N/A'}</p>
+              </div>
+            `;
+            updatePanelBorders('panel2_slot', panel2Data.redFlag || false, panel2Data.orangeFlag || false);
+          } else {
+            panel2Error.textContent = panel2Data.error || 'No events available';
+          }
+        }
+        
+      }
+      
+      // Initialize
+      loadPanelData();
+      
+      // Expose for external updates
+      window.BasecampWallCommunication = {
+        loadPanelData: loadPanelData,
+        updatePanelBorders: updatePanelBorders
+      };
+    }
+    
+    // Accordion toggle function
+    function toggleAccordion(id) {
+      const content = document.getElementById('content-' + id);
+      const icon = document.getElementById('icon-' + id);
+      
+      if (content.classList.contains('expanded')) {
+        content.classList.remove('expanded');
+        icon.classList.remove('rotated');
+      } else {
+        content.classList.add('expanded');
+        icon.classList.add('rotated');
+      }
+    }
+    
+    // Initialize escalations table (can be updated with real data)
+    function loadEscalations() {
+      const tbody = document.getElementById('escalation-tbody');
+      if (!tbody) return;
+      
+      // Get escalations from localStorage or use empty state
+      let escalations = [];
+      try {
+        escalations = JSON.parse(localStorage.getItem('escalations')) || [];
+      } catch (e) {
+        escalations = [];
+      }
+      
+      if (escalations.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" class="escalation-empty">No escalations in the last 4 hours.</td></tr>';
+      } else {
+        tbody.innerHTML = escalations.map(esc => `
+          <tr>
+            <td>${esc.id || 'N/A'}</td>
+            <td>${esc.cameraName || 'N/A'}</td>
+            <td>${esc.eventTime || 'N/A'}</td>
+            <td>${esc.user || 'N/A'}</td>
+            <td>${esc.action || 'N/A'}</td>
+          </tr>
+        `).join('');
+      }
+    }
+    
+    // LPR detections: optional localStorage 'lprDetections' array. Fields: dateTime, licensePlate, vehicleType, vehicleBrand, vehicleColor, direction, cameraId, cameraModel, croppedImageUrl
+    function getLPRDateRange() {
+      var fromEl = document.getElementById('lprFromDate');
+      var toEl = document.getElementById('lprToDate');
+      return {
+        from: fromEl && fromEl.value ? fromEl.value : null,
+        to: toEl && toEl.value ? toEl.value : null
+      };
+    }
+
+    function applyLPRDateFilterToTable() {
+      const tbody = document.getElementById('lprDetectionsList');
+      const emptyEl = document.getElementById('lprDetectionsEmpty');
+      if (!tbody) return;
+      var range = getLPRDateRange();
+      var from = range.from;
+      var to = range.to;
+      var rows = tbody.getElementsByTagName('tr');
+      var visibleCount = 0;
+      for (var i = 0; i < rows.length; i++) {
+        var dateCell = rows[i].querySelector('.lpr-date');
+        var rowDate = dateCell ? (dateCell.textContent || '').trim() : '';
+        var inRange = true;
+        if (from && rowDate < from) inRange = false;
+        if (to && rowDate > to) inRange = false;
+        rows[i].style.display = inRange ? '' : 'none';
+        if (inRange) visibleCount++;
+      }
+      if (emptyEl) emptyEl.style.display = visibleCount === 0 ? 'block' : 'none';
+    }
+
+    function loadLPRDetections() {
+      const tbody = document.getElementById('lprDetectionsList');
+      const emptyEl = document.getElementById('lprDetectionsEmpty');
+      if (!tbody) return;
+      var items = [];
+      try {
+        items = JSON.parse(localStorage.getItem('lprDetections')) || [];
+      } catch (e) {
+        items = [];
+      }
+      var range = getLPRDateRange();
+      if (items.length > 0) {
+        var plate = function(p) { return (p || '—').replace(/</g, '&lt;').replace(/"/g, '&quot;'); };
+        var dt = function(v) {
+          if (!v) return { date: '—', time: '' };
+          var s = String(v).trim();
+          if (s.indexOf(' ') !== -1) { var p = s.split(' '); return { date: p[0], time: p[1] || '' }; }
+          return { date: s, time: '' };
+        };
+        items = items.filter(function(d) {
+          var dts = dt(d.dateTime || d.time);
+          var rowDate = dts.date;
+          if (range.from && rowDate < range.from) return false;
+          if (range.to && rowDate > range.to) return false;
+          return true;
+        });
+        tbody.innerHTML = items.map(function(d) {
+          var vehicleTypeBrand = [d.vehicleType, d.vehicleBrand].filter(Boolean).join(' / ') || '—';
+          var color = (d.vehicleColor || d.color || '—');
+          var camera = [d.cameraId, d.cameraModel].filter(Boolean).join(' / ') || (d.camera || '—');
+          var direction = d.direction || '—';
+          var plateNum = d.licensePlate || d.plate || '—';
+          var dts = dt(d.dateTime || d.time);
+          var thumb = d.croppedImageUrl
+            ? '<span class="lpr-thumb"><img src="' + plate(d.croppedImageUrl) + '" alt="" /></span>'
+            : '<span class="lpr-thumb"></span>';
+          return '<tr><td class="lpr-cell-datetime"><span class="lpr-date">' + plate(dts.date) + '</span><span class="lpr-time">' + plate(dts.time) + '</span></td><td class="lpr-cell-plate">' + plate(plateNum) + '</td><td class="lpr-cell-type">' + plate(vehicleTypeBrand) + '</td><td class="lpr-cell-center">' + plate(color) + '</td><td class="lpr-cell-center">' + plate(direction) + '</td><td class="lpr-cell-camera">' + plate(camera) + '</td><td><div class="lpr-cell-cropped">' + thumb + '<span class="lpr-plate-label">Plate ' + plate(plateNum) + '</span></div></td></tr>';
+        }).join('');
+      }
+      applyLPRDateFilterToTable();
+    }
+
+    function initLPRDateFilters() {
+      var fromEl = document.getElementById('lprFromDate');
+      var toEl = document.getElementById('lprToDate');
+      if (fromEl) fromEl.addEventListener('change', loadLPRDetections);
+      if (toEl) toEl.addEventListener('change', loadLPRDetections);
+    }
+
+    renderBasecampWall();
+    loadEscalations();
+    loadLPRDetections();
+    initLPRDateFilters();
+  </script>
+</body>
+</html>

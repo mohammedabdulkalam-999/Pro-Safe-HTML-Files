@@ -1,0 +1,3 @@
+# Legacy wireframe HTML prototypes (not part of Next.js app)
+*.html
+!app/**/*.html

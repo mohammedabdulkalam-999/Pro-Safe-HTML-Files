@@ -1,0 +1,2242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Communication Module - UI Preview</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #0c5b82;
+      --primary-dark: #206288;
+      --secondary-color: #f47738;
+      --success-color: #28a745;
+      --warning-color: #ffc107;
+      --danger-color: #dc3545;
+      --text-primary: #212529;
+      --text-secondary: #6c757d;
+      --bg-light: #f8f9fa;
+      --bg-white: #ffffff;
+      --border-color: #dee2e6;
+      --border-primary: #206288;
+      --level-l1: #6366f1;
+      --level-l2: #8b5cf6;
+      --level-l3: #ec4899;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: #f0f2f5;
+      color: var(--text-primary);
+    }
+
+    /* Header */
+    .app-header {
+      background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-color) 100%);
+      color: white;
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+
+    .app-header .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    .user-menu {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .user-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+    }
+
+    /* Main Container */
+    .main-container {
+      padding: 20px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    /* Tabs */
+    .tabs-container {
+      background: var(--bg-white);
+      border-radius: 8px 8px 0 0;
+      border-bottom: 2px solid var(--border-primary);
+      display: flex;
+      gap: 0;
+    }
+
+    .tab {
+      padding: 16px 32px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .tab:hover {
+      color: var(--primary-color);
+      background: rgba(12, 91, 130, 0.05);
+    }
+
+    .tab.active {
+      color: var(--primary-color);
+      border-bottom-color: var(--primary-color);
+      background: rgba(12, 91, 130, 0.08);
+    }
+
+    .tab .material-icons {
+      font-size: 20px;
+    }
+
+    /* Content Area */
+    .content-area {
+      background: var(--bg-white);
+      border: 2px solid #9f9f9f;
+      border-style: ridge;
+      border-radius: 0 0 8px 8px;
+      padding: 24px;
+      min-height: 600px;
+    }
+
+    /* Page Header */
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .header-left .material-icons {
+      font-size: 36px;
+      color: var(--primary-dark);
+    }
+
+    .page-title {
+      font-size: 24px;
+      font-weight: 600;
+      color: var(--primary-dark);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: none;
+    }
+
+    .new-message-btn {
+      padding-top: 15px;
+      padding-bottom: 15px;
+      padding-left: 25px;
+      padding-right: 25px;
+    }
+
+    .btn-primary {
+      background: var(--primary-color);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid #3498db;
+      color: #3498db;
+    }
+
+    .btn-outline:hover {
+      background: #3498db;
+      color: white;
+    }
+
+    /* Filter Bar */
+    .filter-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .search-box {
+      display: flex;
+      align-items: center;
+      border: 1px solid var(--border-primary);
+      border-radius: 22px;
+      padding: 0 16px;
+      height: 42px;
+      width: 320px;
+      background: white;
+    }
+
+    .search-box input {
+      flex: 1;
+      border: none;
+      outline: none;
+      font-size: 14px;
+    }
+
+    .search-box .material-icons {
+      color: var(--primary-color);
+      cursor: pointer;
+    }
+
+    .filter-group {
+      display: flex;
+      gap: 12px;
+    }
+
+    .level-filter {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      background: white;
+      font-size: 13px;
+      color: var(--text-secondary);
+      flex-wrap: wrap;
+    }
+
+    .level-filter label {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 500;
+      color: var(--text-primary);
+      cursor: pointer;
+    }
+
+    .level-filter input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--primary-color);
+      cursor: pointer;
+    }
+
+    .level-dropdown {
+      position: relative;
+      min-width: 170px;
+    }
+
+    .level-dropdown-toggle {
+      width: 100%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 10px 12px;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      background: white;
+      font-size: 13px;
+      color: var(--text-primary);
+      cursor: pointer;
+    }
+
+    .level-dropdown-toggle .material-icons {
+      font-size: 18px;
+      color: var(--text-secondary);
+    }
+
+    .level-dropdown-menu {
+      position: absolute;
+      top: calc(100% + 6px);
+      right: 0;
+      min-width: 200px;
+      background: white;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+      padding: 10px;
+      display: none;
+      z-index: 20;
+    }
+
+    .level-dropdown-menu.open {
+      display: block;
+    }
+
+    .level-dropdown-menu label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 6px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      color: var(--text-primary);
+    }
+
+    .level-dropdown-menu label:hover {
+      background: rgba(12, 91, 130, 0.06);
+    }
+
+    .filter-select {
+      padding: 10px 16px;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      font-size: 14px;
+      color: var(--text-primary);
+      background: white;
+      min-width: 150px;
+    }
+
+    /* Message Card */
+    .message-card {
+      display: flex;
+      background: var(--bg-white);
+      border: 2px solid var(--border-primary);
+      border-radius: 9px;
+      margin-bottom: 16px;
+      overflow: hidden;
+      transition: all 0.2s;
+    }
+
+    .message-card:hover {
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      transform: translateY(-2px);
+    }
+
+    .card-priority {
+      width: 6px;
+      flex-shrink: 0;
+    }
+
+    .card-priority.high { background: var(--danger-color); }
+    .card-priority.medium { background: var(--warning-color); }
+    .card-priority.low { background: #17a2b8; }
+
+    .card-body {
+      flex: 1;
+      padding: 18px;
+      cursor: pointer;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+
+    .card-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--primary-dark);
+      margin: 0;
+    }
+
+    .status-badge {
+      padding: 4px 12px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .status-sent { background: #d4edda; color: #155724; }
+    .status-partial { background: #fff3cd; color: #856404; }
+    .status-complete { background: #d4edda; color: #155724; }
+    .status-scheduled { background: #cce5ff; color: #004085; }
+
+    .card-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin-bottom: 12px;
+    }
+
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .meta-item .material-icons {
+      font-size: 16px;
+    }
+
+    .level-tag {
+      background: rgba(12, 91, 130, 0.1);
+      color: var(--primary-color);
+      padding: 2px 10px;
+      border-radius: 4px;
+    }
+
+    .card-preview {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 15px;
+    }
+
+    .ack-progress {
+      margin-bottom: 12px;
+    }
+
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      margin-bottom: 6px;
+      color: var(--text-secondary);
+    }
+
+    .progress-percent {
+      font-weight: 600;
+      color: var(--primary-color);
+    }
+
+    .progress-bar-track {
+      height: 8px;
+      background: #e9ecef;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary-color), var(--success-color));
+      border-radius: 4px;
+      transition: width 0.3s;
+    }
+
+    .card-actions {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 10px;
+      background: var(--bg-light);
+      border-left: 1px solid var(--border-color);
+      gap: 4px;
+    }
+
+    .icon-btn {
+      width: 36px;
+      height: 36px;
+      border: none;
+      background: transparent;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-secondary);
+      transition: all 0.2s;
+    }
+
+    .icon-btn:hover {
+      background: rgba(12, 91, 130, 0.1);
+      color: var(--primary-color);
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+
+    .stat-card {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 20px;
+      background: var(--bg-white);
+      border: 2px solid var(--border-primary);
+      border-radius: 9px;
+    }
+
+    .stat-icon {
+      width: 54px;
+      height: 54px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .stat-icon.total { background: rgba(12, 91, 130, 0.12); color: var(--primary-color); }
+    .stat-icon.acknowledged { background: rgba(40, 167, 69, 0.12); color: var(--success-color); }
+    .stat-icon.pending { background: rgba(255, 193, 7, 0.15); color: #d39e00; }
+    .stat-icon.rate { background: rgba(23, 162, 184, 0.12); color: #17a2b8; }
+
+    .stat-content {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .stat-value {
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .stat-label {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    /* Data Table */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .data-table th,
+    .data-table td {
+      padding: 14px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .data-table th {
+      background: linear-gradient(180deg, var(--bg-light) 0%, #e9ecef 100%);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--primary-dark);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .data-table tbody tr {
+      transition: background 0.15s;
+    }
+
+    .data-table tbody tr:hover {
+      background: rgba(12, 91, 130, 0.04);
+    }
+
+    .user-cell {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .user-avatar-sm {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .level-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .level-l1 { background: rgba(99, 102, 241, 0.12); color: var(--level-l1); }
+    .level-l2 { background: rgba(139, 92, 246, 0.12); color: var(--level-l2); }
+    .level-l3 { background: rgba(236, 72, 153, 0.12); color: var(--level-l3); }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .modal-overlay.hidden {
+      display: none;
+    }
+
+    .modal {
+      background: var(--bg-white);
+      border-radius: 10px;
+      width: 100%;
+      max-width: 650px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 25px;
+      border-bottom: 2px solid var(--border-primary);
+      background: linear-gradient(180deg, #f8f9fa 0%, #fff 100%);
+    }
+
+    .modal-header h3 {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 20px;
+      color: var(--primary-dark);
+    }
+
+    .close-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: none;
+      background: var(--secondary-color);
+      color: white;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-body {
+      padding: 25px;
+    }
+
+    .edit-action-modal {
+      max-width: 460px;
+    }
+
+    .edit-action-modal .modal-body {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .edit-action-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .edit-action-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 16px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-white);
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+
+    .edit-action-btn:hover {
+      border-color: var(--primary-color);
+      box-shadow: 0 2px 6px rgba(12, 91, 130, 0.15);
+    }
+
+    .edit-action-btn .material-icons {
+      color: var(--primary-color);
+    }
+
+    .resend-after-update {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      border-radius: 8px;
+      border: 1px dashed var(--border-color);
+      background: rgba(12, 91, 130, 0.04);
+      margin-top: 10px;
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .resend-after-update input {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--primary-color);
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      font-size: 14px;
+      transition: border-color 0.2s;
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: var(--primary-color);
+    }
+
+    textarea.form-control {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 20px;
+    }
+
+    .form-row .form-group {
+      flex: 1;
+    }
+
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 15px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border-color);
+    }
+
+    /* Responsive */
+    @media (max-width: 992px) {
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .filter-bar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .search-box {
+        width: 100%;
+      }
+
+      .message-card {
+        flex-direction: column;
+      }
+
+      .card-priority {
+        width: 100%;
+        height: 6px;
+      }
+
+      .card-actions {
+        flex-direction: row;
+        justify-content: flex-end;
+        border-left: none;
+        border-top: 1px solid var(--border-color);
+      }
+    }
+
+    /* View Switcher */
+    /* Enhanced Scheduling Section */
+    .scheduling-section {
+      margin-bottom: 20px;
+      padding: 20px;
+      background: rgba(12, 91, 130, 0.05);
+      border-radius: 8px;
+      border: 1px solid rgba(12, 91, 130, 0.2);
+    }
+
+    .scheduling-header {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid rgba(12, 91, 130, 0.2);
+    }
+
+    .scheduling-header h4 {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0;
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--primary-dark);
+    }
+
+    .scheduling-header h4 .material-icons {
+      color: var(--primary-color);
+      font-size: 24px;
+      width: 24px;
+      height: 24px;
+    }
+
+    .schedule-options {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .option-card {
+      flex: 1;
+      display: flex;
+      align-items: flex-start;
+      gap: 15px;
+      padding: 18px 20px;
+      background: var(--bg-white);
+      border: 2px solid var(--border-color);
+      border-radius: 9px;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+    }
+
+    .option-card:hover {
+      border-color: var(--primary-color);
+      box-shadow: 0 2px 8px rgba(12, 91, 130, 0.15);
+    }
+
+    .option-card.selected {
+      border-color: var(--primary-color);
+      background: rgba(12, 91, 130, 0.08);
+      box-shadow: 0 4px 12px rgba(12, 91, 130, 0.2);
+    }
+
+    .option-card .material-icons {
+      font-size: 28px;
+      width: 28px;
+      height: 28px;
+      color: var(--primary-color);
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .option-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      min-width: 0;
+    }
+
+    .option-content strong {
+      font-size: 15px;
+      color: var(--text-primary);
+      font-weight: 600;
+      line-height: 1.4;
+      display: block;
+    }
+
+    .option-content span {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      display: block;
+    }
+
+    .option-card input[type="radio"] {
+      flex-shrink: 0;
+      margin-left: auto;
+      margin-top: 2px;
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+      accent-color: var(--primary-color);
+    }
+
+    .schedule-picker {
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(12, 91, 130, 0.2);
+    }
+
+    .picker-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 15px;
+      align-items: start;
+    }
+
+    .picker-row .form-group {
+      margin-bottom: 0;
+    }
+
+    .schedule-preview {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 18px;
+      background: rgba(40, 167, 69, 0.1);
+      border: 1px solid rgba(40, 167, 69, 0.3);
+      border-radius: 6px;
+      color: #155724;
+      font-size: 14px;
+      margin-top: 10px;
+    }
+
+    .schedule-preview .material-icons {
+      color: var(--success-color);
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+    }
+
+    .schedule-preview span {
+      flex: 1;
+      line-height: 1.5;
+    }
+
+    .schedule-preview strong {
+      font-weight: 600;
+      margin-right: 4px;
+    }
+
+    /* Attachments Section */
+    .attachments-section {
+      margin-bottom: 20px;
+      padding: 15px;
+      background: var(--bg-light);
+      border-radius: 8px;
+      border: 1px dashed var(--border-color);
+    }
+
+    .attachments-section .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .attachments-section .section-header span {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    .attachments-section .section-header .material-icons {
+      color: var(--text-secondary);
+    }
+
+    .url-input-section {
+      margin: 15px 0;
+      padding: 15px;
+      background: rgba(12, 91, 130, 0.05);
+      border-radius: 8px;
+      border: 1px solid rgba(12, 91, 130, 0.2);
+    }
+
+    .url-input-section .form-group {
+      margin-bottom: 0;
+    }
+
+    .url-input-section small {
+      display: block;
+      margin-top: 5px;
+    }
+
+    @media (max-width: 768px) {
+      .scheduling-section .schedule-options {
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .scheduling-section .schedule-picker .picker-row {
+        grid-template-columns: 1fr;
+        gap: 15px;
+      }
+    }
+
+    /* Acknowledgment Modal Styles */
+    .acknowledgment-modal {
+      max-width: 95%;
+      width: 1200px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .acknowledgment-modal .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      overflow: hidden;
+      margin-top: 15px;
+    }
+
+    .acknowledgment-modal .data-table th {
+      background: var(--bg-light);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 14px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .acknowledgment-modal .data-table th:nth-child(1) { width: 18%; min-width: 150px; }
+    .acknowledgment-modal .data-table th:nth-child(2) { width: 15%; min-width: 120px; }
+    .acknowledgment-modal .data-table th:nth-child(3) { width: 20%; min-width: 180px; }
+    .acknowledgment-modal .data-table th:nth-child(4) { width: 10%; min-width: 80px; }
+
+    .acknowledgment-modal .data-table td {
+      padding: 14px 16px;
+      font-size: 14px;
+      color: var(--text-primary);
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .acknowledgment-modal .data-table tbody tr {
+      transition: background 0.15s;
+    }
+
+    .acknowledgment-modal .data-table tbody tr:hover {
+      background: rgba(12, 91, 130, 0.04);
+    }
+
+    .acknowledgment-modal .data-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .tab-content-active {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <!-- App Header -->
+  <header class="app-header">
+    <div class="logo">
+      <span class="material-icons">security</span>
+      ProSafe Admin
+    </div>
+    <div class="user-menu">
+      <span class="material-icons" style="cursor:pointer">notifications</span>
+      <div class="user-avatar">AK</div>
+      <span>Abdul Kalam</span>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <div class="main-container">
+    <!-- Tabs -->
+    <div class="tabs-container">
+      <div class="tab active" onclick="showTab('board')">
+        <span class="material-icons">dashboard</span>
+        Communication Board
+      </div>
+      <div class="tab" onclick="showTab('history')">
+        <span class="material-icons">history</span>
+        Message History
+      </div>
+    </div>
+
+    <!-- Content Area -->
+    <div class="content-area">
+      <!-- Communication Board View -->
+      <div id="board-view">
+        <!-- Page Header -->
+        <div class="page-header">
+          <div class="header-left">
+            <span class="material-icons">campaign</span>
+            <h1 class="page-title">Communication Board</h1>
+          </div>
+          <button class="btn btn-primary new-message-btn" onclick="openModal()">
+            <span class="material-icons">add</span>
+            New Message
+          </button>
+        </div>
+
+        <!-- Filter Bar -->
+        <div class="filter-bar">
+          <div class="search-box">
+            <input type="text" placeholder="Search messages...">
+            <span class="material-icons">search</span>
+          </div>
+          <div class="filter-group">
+            <select class="filter-select">
+              <option>All Priorities</option>
+              <option>High</option>
+              <option>Medium</option>
+              <option>Low</option>
+            </select>
+            <div class="level-dropdown" data-level-filter>
+              <button class="level-dropdown-toggle" type="button" onclick="toggleLevelDropdown(this)">
+                <span class="level-dropdown-label">All Levels</span>
+                <span class="material-icons">expand_more</span>
+              </button>
+              <div class="level-dropdown-menu">
+                <label><input type="checkbox" value="L1" checked> Level 1</label>
+                <label><input type="checkbox" value="L2" checked> Level 2</label>
+                <label><input type="checkbox" value="L3" checked> Level 3</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Message Cards -->
+        <div class="message-card">
+          <div class="card-priority high"></div>
+          <div class="card-body">
+            <div class="card-header">
+              <div style="display: flex; align-items: center; gap: 12px; flex: 1; flex-wrap: wrap;">
+                <h3 class="card-title">Critical System Update - Action Required</h3>
+                <span class="category-badge" style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; background: rgba(0,0,0,0.05); border-radius: 12px; font-size: 12px; font-weight: 500;">
+                  <span class="material-icons" style="font-size: 16px; color: #e91e63;">campaign</span>
+                  <span>Announcements</span>
+                </span>
+              </div>
+              <span class="status-badge status-partial">Partially Acknowledged</span>
+            </div>
+            <div class="card-meta">
+              <span class="meta-item">
+                <span class="material-icons">person</span>
+                Admin User
+              </span>
+              <span class="meta-item">
+                <span class="material-icons">schedule</span>
+                Jan 6, 2026 10:30 AM
+              </span>
+              <span class="meta-item level-tag">
+                <span class="material-icons">groups</span>
+                All Levels
+              </span>
+            </div>
+            <p class="card-preview">
+              Important: All monitoring personnel are required to acknowledge the new escalation protocols effective immediately. Please review the attached documentation...
+            </p>
+            <div class="ack-progress">
+              <div class="progress-header">
+                <span>18/25 acknowledged</span>
+                <span class="progress-percent">72%</span>
+              </div>
+              <div class="progress-bar-track">
+                <div class="progress-bar-fill" style="width: 72%"></div>
+              </div>
+            </div>
+          </div>
+          <div class="card-actions">
+            <button class="icon-btn" title="View Details" onclick="openAcknowledgmentModal()">
+              <span class="material-icons">visibility</span>
+            </button>
+            <button class="icon-btn" title="Send Reminder">
+              <span class="material-icons">notification_important</span>
+            </button>
+            <button class="icon-btn" title="Download/Export">
+              <span class="material-icons">file_download</span>
+            </button>
+            <button class="icon-btn" title="Edit" onclick="openEditActionModal(this)">
+              <span class="material-icons">edit</span>
+            </button>
+            <button class="icon-btn" title="Archive" onclick="confirmArchive(this)">
+              <span class="material-icons">archive</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="message-card">
+          <div class="card-priority medium"></div>
+          <div class="card-body">
+            <div class="card-header">
+              <div style="display: flex; align-items: center; gap: 12px; flex: 1; flex-wrap: wrap;">
+                <h3 class="card-title">Weekly Training Session Reminder</h3>
+                <span class="category-badge" style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; background: rgba(0,0,0,0.05); border-radius: 12px; font-size: 12px; font-weight: 500;">
+                  <span class="material-icons" style="font-size: 16px; color: #ffc107;">star</span>
+                  <span>FYI</span>
+                </span>
+              </div>
+              <span class="status-badge status-complete">Fully Acknowledged</span>
+            </div>
+            <div class="card-meta">
+              <span class="meta-item">
+                <span class="material-icons">person</span>
+                Training Dept
+              </span>
+              <span class="meta-item">
+                <span class="material-icons">schedule</span>
+                Jan 5, 2026 2:00 PM
+              </span>
+              <span class="meta-item level-tag">
+                <span class="material-icons">groups</span>
+                L1, L2
+              </span>
+            </div>
+            <p class="card-preview">
+              Reminder: Weekly training session scheduled for Friday at 3:00 PM. All Level 1 and Level 2 operators must attend. The session will cover new monitoring procedures...
+            </p>
+            <div class="ack-progress">
+              <div class="progress-header">
+                <span>15/15 acknowledged</span>
+                <span class="progress-percent">100%</span>
+              </div>
+              <div class="progress-bar-track">
+                <div class="progress-bar-fill" style="width: 100%"></div>
+              </div>
+            </div>
+          </div>
+          <div class="card-actions">
+            <button class="icon-btn" title="View Details" onclick="openAcknowledgmentModal()">
+              <span class="material-icons">visibility</span>
+            </button>
+            <button class="icon-btn" title="Send Reminder">
+              <span class="material-icons">notification_important</span>
+            </button>
+            <button class="icon-btn" title="Download/Export">
+              <span class="material-icons">file_download</span>
+            </button>
+            <button class="icon-btn" title="Edit" onclick="openEditActionModal(this)">
+              <span class="material-icons">edit</span>
+            </button>
+            <button class="icon-btn" title="Archive" onclick="confirmArchive(this)">
+              <span class="material-icons">archive</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="message-card">
+          <div class="card-priority low"></div>
+          <div class="card-body">
+            <div class="card-header">
+              <div style="display: flex; align-items: center; gap: 12px; flex: 1; flex-wrap: wrap;">
+                <h3 class="card-title">Holiday Schedule Update</h3>
+                <span class="category-badge" style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; background: rgba(0,0,0,0.05); border-radius: 12px; font-size: 12px; font-weight: 500;">
+                  <span class="material-icons" style="font-size: 16px; color: #f44336;">notifications</span>
+                  <span>HP / SHP Announcement</span>
+                </span>
+              </div>
+              <span class="status-badge status-scheduled">Scheduled</span>
+            </div>
+            <div class="card-meta">
+              <span class="meta-item">
+                <span class="material-icons">person</span>
+                HR Department
+              </span>
+              <span class="meta-item">
+                <span class="material-icons">schedule</span>
+                Scheduled: Jan 10, 2026 9:00 AM
+              </span>
+              <span class="meta-item level-tag">
+                <span class="material-icons">groups</span>
+                All Levels
+              </span>
+            </div>
+            <p class="card-preview">
+              Updated holiday schedule for Q1 2026. Please review and confirm your availability for the upcoming holiday periods...
+            </p>
+          </div>
+          <div class="card-actions">
+            <button class="icon-btn" title="View Details" onclick="openAcknowledgmentModal()">
+              <span class="material-icons">visibility</span>
+            </button>
+            <button class="icon-btn" title="Send Reminder">
+              <span class="material-icons">notification_important</span>
+            </button>
+            <button class="icon-btn" title="Download/Export">
+              <span class="material-icons">file_download</span>
+            </button>
+            <button class="icon-btn" title="Edit" onclick="openEditActionModal(this)">
+              <span class="material-icons">edit</span>
+            </button>
+            <button class="icon-btn" title="Archive" onclick="confirmArchive(this)">
+              <span class="material-icons">archive</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- History View (Hidden by default) -->
+      <div id="history-view" style="display: none;">
+        <div class="page-header">
+          <div class="header-left">
+            <span class="material-icons">history</span>
+            <h1 class="page-title">Message History</h1>
+          </div>
+          <button class="btn btn-outline">
+            <span class="material-icons">download</span>
+            Export
+          </button>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon total">
+              <span class="material-icons">mail</span>
+            </div>
+            <div class="stat-content">
+              <span class="stat-value">47</span>
+              <span class="stat-label">Total Messages</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon acknowledged">
+              <span class="material-icons">check_circle</span>
+            </div>
+            <div class="stat-content">
+              <span class="stat-value">38</span>
+              <span class="stat-label">Fully Acknowledged</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon pending">
+              <span class="material-icons">hourglass_empty</span>
+            </div>
+            <div class="stat-content">
+              <span class="stat-value">6</span>
+              <span class="stat-label">Pending</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon rate">
+              <span class="material-icons">pie_chart</span>
+            </div>
+            <div class="stat-content">
+              <span class="stat-value">89%</span>
+              <span class="stat-label">Avg. Acknowledgment Rate</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="filter-bar">
+          <div class="search-box">
+            <input type="text" placeholder="Search messages...">
+            <span class="material-icons">search</span>
+          </div>
+          <div class="filter-group">
+            <div class="level-dropdown" data-level-filter>
+              <button class="level-dropdown-toggle" type="button" onclick="toggleLevelDropdown(this)">
+                <span class="level-dropdown-label">All Levels</span>
+                <span class="material-icons">expand_more</span>
+              </button>
+              <div class="level-dropdown-menu">
+                <label><input type="checkbox" value="L1" checked> Level 1</label>
+                <label><input type="checkbox" value="L2" checked> Level 2</label>
+                <label><input type="checkbox" value="L3" checked> Level 3</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Data Table -->
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Priority</th>
+              <th>Title</th>
+              <th>Level</th>
+              <th>Status</th>
+              <th>Created</th>
+              <th>Acknowledgments</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="material-icons" style="color: var(--danger-color)">priority_high</span></td>
+              <td>Critical System Update</td>
+              <td><span class="level-badge level-l1">ALL</span></td>
+              <td><span class="status-badge status-partial">Partial</span></td>
+              <td>Jan 6, 2026</td>
+              <td>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span style="font-weight: 600; color: var(--success-color)">18</span>/25
+                  <div style="width: 60px; height: 6px; background: #e9ecef; border-radius: 3px;">
+                    <div style="width: 72%; height: 100%; background: var(--success-color); border-radius: 3px;"></div>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <button class="icon-btn"><span class="material-icons">visibility</span></button>
+              </td>
+            </tr>
+            <tr>
+              <td><span class="material-icons" style="color: var(--warning-color)">remove</span></td>
+              <td>Weekly Training Reminder</td>
+              <td>
+                <span class="level-badge level-l1">L1</span>
+                <span class="level-badge level-l2">L2</span>
+              </td>
+              <td><span class="status-badge status-complete">Complete</span></td>
+              <td>Jan 5, 2026</td>
+              <td>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span style="font-weight: 600; color: var(--success-color)">15</span>/15
+                  <div style="width: 60px; height: 6px; background: #e9ecef; border-radius: 3px;">
+                    <div style="width: 100%; height: 100%; background: var(--success-color); border-radius: 3px;"></div>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <button class="icon-btn"><span class="material-icons">visibility</span></button>
+              </td>
+            </tr>
+            <tr>
+              <td><span class="material-icons" style="color: #17a2b8">keyboard_arrow_down</span></td>
+              <td>Holiday Schedule Update</td>
+              <td><span class="level-badge level-l1">ALL</span></td>
+              <td><span class="status-badge status-scheduled">Scheduled</span></td>
+              <td>Jan 4, 2026</td>
+              <td>-</td>
+              <td>
+                <button class="icon-btn"><span class="material-icons">visibility</span></button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Compose Modal -->
+  <div class="modal-overlay hidden" id="composeModal" onclick="closeModal()">
+    <div class="modal" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <h3 id="composeModalTitle">
+          <span class="material-icons">edit</span>
+          Compose New Message
+        </h3>
+        <button class="close-btn" onclick="closeModal()">
+          <span class="material-icons">close</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Message Title</label>
+          <input type="text" class="form-control" id="messageTitleInput" placeholder="Enter a clear, descriptive title">
+        </div>
+        <div class="form-group">
+          <label>Message Content</label>
+          <textarea class="form-control" id="messageContentInput" placeholder="Enter your message content..."></textarea>
+        </div>
+        <div class="form-group">
+          <label>Category (Optional)</label>
+          <select class="form-control" id="categorySelect">
+            <option value="">No Category</option>
+            <option value="announcements">📢 Announcements</option>
+            <option value="fyi">⭐ FYI</option>
+            <option value="hp-shp">🔔 HP / SHP Announcement</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Target Level</label>
+            <select class="form-control">
+              <option>All Levels</option>
+              <option>Level 1</option>
+              <option>Level 2</option>
+              <option>Level 3</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Priority</label>
+            <select class="form-control">
+              <option>Medium Priority</option>
+              <option>High Priority</option>
+              <option>Low Priority</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Attachments Section -->
+        <div class="attachments-section">
+          <div class="section-header">
+            <span><span class="material-icons">attach_file</span> Attachments (Optional)</span>
+            <div style="display: flex; gap: 10px;">
+              <button class="btn btn-outline" onclick="toggleUrlInput()">
+                <span class="material-icons">link</span> Add URL
+              </button>
+              <button class="btn btn-outline" onclick="document.getElementById('fileInput').click()">
+                <span class="material-icons">upload</span> Add Files
+              </button>
+              <input type="file" id="fileInput" hidden multiple accept=".jpg,.jpeg,.png,.gif,.pdf,.doc,.docx">
+            </div>
+          </div>
+
+          <!-- URL Input Section -->
+          <div class="url-input-section" id="urlInputSection" style="display: none; margin: 15px 0; padding: 15px; background: rgba(12, 91, 130, 0.05); border-radius: 8px; border: 1px solid rgba(12, 91, 130, 0.2);">
+            <div style="display: flex; gap: 12px; align-items: flex-start; flex-wrap: wrap;">
+              <div class="form-group" style="flex: 2; min-width: 250px;">
+                <label style="font-weight: 600; margin-bottom: 8px; display: block;">URL Link</label>
+                <input type="text" class="form-control" id="urlLinkInput" placeholder="https://example.com/document.pdf" style="width: 100%;">
+                <small style="color: var(--text-secondary); font-size: 12px; display: block; margin-top: 4px;">Enter a valid URL (http:// or https://)</small>
+              </div>
+              <div class="form-group" style="flex: 1; min-width: 200px;">
+                <label style="font-weight: 600; margin-bottom: 8px; display: block;">Link Title (Optional)</label>
+                <input type="text" class="form-control" id="urlTitleInput" placeholder="Document Name" style="width: 100%;">
+              </div>
+              <div style="display: flex; gap: 8px; align-items: flex-start; margin-top: 25px; flex-shrink: 0;">
+                <button class="add-url-btn" onclick="addUrlLink()" style="width: 40px; height: 40px; min-width: 40px; padding: 0; border-radius: 6px; border: none; background: var(--primary-dark); color: white; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s;">
+                  <span class="material-icons" style="font-size: 20px;">add</span>
+                </button>
+                <button class="cancel-url-btn" onclick="toggleUrlInput()" style="width: 40px; height: 40px; min-width: 40px; padding: 0; border-radius: 6px; border: none; background: rgba(12, 91, 130, 0.1); color: var(--primary-dark); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s;">
+                  <span class="material-icons" style="font-size: 20px;">close</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- URL Links List -->
+          <div id="urlList" style="margin: 15px 0;"></div>
+
+          <!-- File List -->
+          <div id="fileList" style="margin: 15px 0;"></div>
+
+          <p style="font-size: 12px; color: var(--text-secondary); margin: 10px 0 0;">Supported: Images, PDF, Word files (Max 10MB each) or URL links</p>
+        </div>
+
+        <!-- Scheduling Section -->
+        <div class="scheduling-section">
+          <div class="scheduling-header">
+            <h4>
+              <span class="material-icons">schedule</span>
+              Broadcast Schedule
+            </h4>
+          </div>
+          
+          <div class="schedule-options">
+            <div class="option-card selected" onclick="selectSendNow()">
+              <span class="material-icons">send</span>
+              <div class="option-content">
+                <strong>Send Immediately</strong>
+                <span>Broadcast message right away to all selected monitoring levels</span>
+              </div>
+              <input type="radio" name="schedule" checked>
+            </div>
+
+            <div class="option-card" onclick="selectSendLater()">
+              <span class="material-icons">schedule</span>
+              <div class="option-content">
+                <strong>Schedule for Later</strong>
+                <span>Choose a specific date and time to broadcast the message</span>
+              </div>
+              <input type="radio" name="schedule">
+            </div>
+          </div>
+
+          <div class="schedule-picker" id="schedulePicker" style="display: none;">
+            <div class="picker-row">
+              <div class="form-group">
+                <label>Select Date</label>
+                <input type="date" class="form-control" id="scheduledDate" min="">
+              </div>
+              <div class="form-group">
+                <label>Select Time</label>
+                <input type="time" class="form-control" id="scheduledTime">
+              </div>
+            </div>
+            <div class="schedule-preview" id="schedulePreview" style="display: none;">
+              <span class="material-icons">info</span>
+              <span><strong>Scheduled for:</strong> <span id="previewText"></span></span>
+            </div>
+          </div>
+        </div>
+        <div class="resend-after-update" id="resendOption" style="display: none;">
+          <input type="checkbox" id="resendCheckbox">
+          <label for="resendCheckbox">Resend message after update</label>
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+          <button class="btn btn-primary" id="composeModalSubmit">Post Message</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Action Modal -->
+  <div class="modal-overlay hidden" id="editActionModal" onclick="closeEditActionModal()">
+    <div class="modal edit-action-modal" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <h3>
+          <span class="material-icons">edit</span>
+          Edit Message Options
+        </h3>
+        <button class="close-btn" onclick="closeEditActionModal()">
+          <span class="material-icons">close</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div>
+          <div style="font-weight: 600; color: var(--primary-dark); margin-bottom: 6px;">Selected Message</div>
+          <div id="editActionMessageTitle" style="font-size: 14px; color: var(--text-secondary);"></div>
+        </div>
+        <div class="edit-action-list">
+          <button class="edit-action-btn" onclick="handleUpdateMessage()">
+            <span class="material-icons">update</span>
+            Update Message
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Acknowledgment Dashboard Modal -->
+  <div class="modal-overlay hidden" id="acknowledgmentModal" onclick="closeAcknowledgmentModal()">
+    <div class="modal acknowledgment-modal" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 15px;">
+          <button class="back-btn" onclick="closeAcknowledgmentModal()" style="background: transparent; border: none; color: var(--primary-dark); cursor: pointer; padding: 5px;">
+            <span class="material-icons">arrow_back</span>
+          </button>
+          <div>
+            <h3 style="margin: 0; font-size: 20px; color: var(--primary-dark);">Acknowledgment Tracking</h3>
+            <p style="margin: 5px 0 0; color: var(--text-secondary); font-size: 14px;">Critical System Update</p>
+          </div>
+        </div>
+        <button class="close-btn" onclick="closeAcknowledgmentModal()">
+          <span class="material-icons">close</span>
+        </button>
+      </div>
+
+      <div class="modal-body" style="padding: 25px;">
+        <!-- Statistics Cards -->
+        <div class="stats-grid" style="margin-bottom: 25px;">
+          <div class="stat-card">
+            <div class="stat-icon total">
+              <span class="material-icons">groups</span>
+            </div>
+            <div class="stat-content">
+              <span class="stat-value">25</span>
+              <span class="stat-label">Total Recipients</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon acknowledged">
+              <span class="material-icons">check_circle</span>
+            </div>
+            <div class="stat-content">
+              <span class="stat-value">18</span>
+              <span class="stat-label">Acknowledged</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon pending">
+              <span class="material-icons">hourglass_empty</span>
+            </div>
+            <div class="stat-content">
+              <span class="stat-value">7</span>
+              <span class="stat-label">Pending</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon rate">
+              <span class="material-icons">pie_chart</span>
+            </div>
+            <div class="stat-content">
+              <span class="stat-value">72%</span>
+              <span class="stat-label">Completion Rate</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs-container" style="margin-bottom: 20px; border-bottom: 2px solid var(--border-color);">
+          <div class="tab active" id="ackTab" onclick="showAckTab('acknowledged')">
+            <span class="material-icons">check_circle</span>
+            <span>Acknowledged (18)</span>
+          </div>
+          <div class="tab" id="pendingTab" onclick="showAckTab('pending')">
+            <span class="material-icons">hourglass_empty</span>
+            <span>Pending (7)</span>
+          </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="filter-bar" style="display: flex; gap: 15px; margin-bottom: 20px; align-items: center;">
+          <select class="form-control" style="width: 200px;">
+            <option>All Levels</option>
+            <option>Level 1</option>
+            <option>Level 2</option>
+            <option>Level 3</option>
+          </select>
+          <div style="position: relative; flex: 1; max-width: 300px;">
+            <input type="text" class="form-control" placeholder="Search by name, PRO ID, or email..." style="padding-left: 40px;">
+            <span class="material-icons" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-secondary);">search</span>
+          </div>
+        </div>
+
+        <!-- Acknowledged Tab Content -->
+        <div id="acknowledgedContent" class="tab-content-active">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>PRO ID</th>
+                <th>Email ID</th>
+                <th>Level</th>
+                <th>Acknowledged At</th>
+                <th>Comment</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <div style="display: flex; align-items: center; gap: 12px;">
+                    <div style="width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, var(--primary-color), var(--primary-dark)); color: white; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 14px;">JD</div>
+                    <span style="font-weight: 500;">John Doe</span>
+                  </div>
+                </td>
+                <td>
+                  <div style="display: flex; align-items: center; gap: 8px; color: var(--primary-color);">
+                    <span class="material-icons" style="font-size: 18px;">badge</span>
+                    <span>PRO-12345</span>
+                  </div>
+                </td>
+                <td>
+                  <div style="display: flex; align-items: center; gap: 8px; color: var(--text-secondary);">
+                    <span class="material-icons" style="font-size: 18px;">email</span>
+                    <span>john.doe@example.com</span>
+                  </div>
+                </td>
+                <td><span class="level-badge level-l1">L1</span></td>
+                <td>Jan 6, 2026 10:30:15 AM</td>
+                <td>Understood and will implement</td>
+              </tr>
+              <tr>
+                <td>
+                  <div style="display: flex; align-items: center; gap: 12px;">
+                    <div style="width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, var(--primary-color), var(--primary-dark)); color: white; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 14px;">JS</div>
+                    <span style="font-weight: 500;">Jane Smith</span>
+                  </div>
+                </td>
+                <td>
+                  <div style="display: flex; align-items: center; gap: 8px; color: var(--primary-color);">
+                    <span class="material-icons" style="font-size: 18px;">badge</span>
+                    <span>PRO-12346</span>
+                  </div>
+                </td>
+                <td>
+                  <div style="display: flex; align-items: center; gap: 8px; color: var(--text-secondary);">
+                    <span class="material-icons" style="font-size: 18px;">email</span>
+                    <span>jane.smith@example.com</span>
+                  </div>
+                </td>
+                <td><span class="level-badge level-l2">L2</span></td>
+                <td>Jan 6, 2026 10:32:42 AM</td>
+                <td>No comment</td>
+              </tr>
+              <tr>
+                <td>
+                  <div style="display: flex; align-items: center; gap: 12px;">
+                    <div style="width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, var(--primary-color), var(--primary-dark)); color: white; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 14px;">RB</div>
+                    <span style="font-weight: 500;">Robert Brown</span>
+                  </div>
+                </td>
+                <td>
+                  <div style="display: flex; align-items: center; gap: 8px; color: var(--primary-color);">
+                    <span class="material-icons" style="font-size: 18px;">badge</span>
+                    <span>PRO-12347</span>
+                  </div>
+                </td>
+                <td>
+                  <div style="display: flex; align-items: center; gap: 8px; color: var(--text-secondary);">
+                    <span class="material-icons" style="font-size: 18px;">email</span>
+                    <span>robert.brown@example.com</span>
+                  </div>
+                </td>
+                <td><span class="level-badge level-l3">L3</span></td>
+                <td>Jan 6, 2026 10:35:20 AM</td>
+                <td>Reviewing the update details</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pending Tab Content -->
+        <div id="pendingContent" class="tab-content" style="display: none;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>PRO ID</th>
+                <th>Email ID</th>
+                <th>Level</th>
+                <th>Last Active</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <div style="display: flex; align-items: center; gap: 12px;">
+                    <div style="width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, var(--warning-color), #d39e00); color: white; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 14px;">MW</div>
+                    <span style="font-weight: 500;">Mike Wilson</span>
+                  </div>
+                </td>
+                <td>
+                  <div style="display: flex; align-items: center; gap: 8px; color: var(--primary-color);">
+                    <span class="material-icons" style="font-size: 18px;">badge</span>
+                    <span>PRO-12348</span>
+                  </div>
+                </td>
+                <td>
+                  <div style="display: flex; align-items: center; gap: 8px; color: var(--text-secondary);">
+                    <span class="material-icons" style="font-size: 18px;">email</span>
+                    <span>mike.wilson@example.com</span>
+                  </div>
+                </td>
+                <td><span class="level-badge level-l1">L1</span></td>
+                <td>Jan 6, 2026 09:15 AM</td>
+                <td>
+                  <span style="display: inline-flex; align-items: center; gap: 5px; padding: 4px 12px; background: rgba(255, 193, 7, 0.15); color: #d39e00; border-radius: 12px; font-size: 12px; font-weight: 500;">
+                    <span class="material-icons" style="font-size: 16px;">hourglass_empty</span>
+                    Pending
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <div style="display: flex; align-items: center; gap: 12px;">
+                    <div style="width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, var(--warning-color), #d39e00); color: white; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 14px;">SD</div>
+                    <span style="font-weight: 500;">Sarah Davis</span>
+                  </div>
+                </td>
+                <td>
+                  <div style="display: flex; align-items: center; gap: 8px; color: var(--primary-color);">
+                    <span class="material-icons" style="font-size: 18px;">badge</span>
+                    <span>PRO-12349</span>
+                  </div>
+                </td>
+                <td>
+                  <div style="display: flex; align-items: center; gap: 8px; color: var(--text-secondary);">
+                    <span class="material-icons" style="font-size: 18px;">email</span>
+                    <span>sarah.davis@example.com</span>
+                  </div>
+                </td>
+                <td><span class="level-badge level-l2">L2</span></td>
+                <td>Jan 6, 2026 08:45 AM</td>
+                <td>
+                  <span style="display: inline-flex; align-items: center; gap: 5px; padding: 4px 12px; background: rgba(255, 193, 7, 0.15); color: #d39e00; border-radius: 12px; font-size: 12px; font-weight: 500;">
+                    <span class="material-icons" style="font-size: 16px;">hourglass_empty</span>
+                    Pending
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // URL Links array
+    let urlLinks = [];
+    let selectedMessage = null;
+
+    // Set minimum date to today
+    document.addEventListener('DOMContentLoaded', function() {
+      const dateInput = document.getElementById('scheduledDate');
+      if (dateInput) {
+        const today = new Date();
+        const minDate = new Date(today.getTime() + 5 * 60000); // 5 minutes from now
+        dateInput.min = minDate.toISOString().split('T')[0];
+      }
+
+      document.querySelectorAll('[data-level-filter]').forEach((dropdown) => {
+        const menu = dropdown.querySelector('.level-dropdown-menu');
+        const checkboxes = dropdown.querySelectorAll('input[type="checkbox"]');
+        checkboxes.forEach((checkbox) => {
+          checkbox.addEventListener('change', () => updateLevelDropdownLabel(dropdown));
+        });
+        updateLevelDropdownLabel(dropdown);
+        if (menu) {
+          menu.addEventListener('click', (event) => event.stopPropagation());
+        }
+      });
+    });
+
+    function toggleLevelDropdown(button) {
+      const dropdown = button.closest('[data-level-filter]');
+      if (!dropdown) return;
+      const menu = dropdown.querySelector('.level-dropdown-menu');
+      if (!menu) return;
+      document.querySelectorAll('.level-dropdown-menu.open').forEach((openMenu) => {
+        if (openMenu !== menu) openMenu.classList.remove('open');
+      });
+      menu.classList.toggle('open');
+    }
+
+    function updateLevelDropdownLabel(dropdown) {
+      const label = dropdown.querySelector('.level-dropdown-label');
+      const checkboxes = dropdown.querySelectorAll('input[type="checkbox"]');
+      const selected = Array.from(checkboxes).filter((c) => c.checked).map((c) => c.value);
+      if (!label) return;
+      if (selected.length === 0) {
+        label.textContent = 'No Levels';
+      } else if (selected.length === checkboxes.length) {
+        label.textContent = 'All Levels';
+      } else {
+        label.textContent = selected.join(', ');
+      }
+    }
+
+    document.addEventListener('click', function(event) {
+      const insideDropdown = event.target.closest('[data-level-filter]');
+      if (!insideDropdown) {
+        document.querySelectorAll('.level-dropdown-menu.open').forEach((menu) => menu.classList.remove('open'));
+      }
+    });
+
+    function showTab(tab) {
+      const tabs = document.querySelectorAll('.tab');
+      tabs.forEach(t => t.classList.remove('active'));
+      
+      if (tab === 'board') {
+        tabs[0].classList.add('active');
+        document.getElementById('board-view').style.display = 'block';
+        document.getElementById('history-view').style.display = 'none';
+      } else {
+        tabs[1].classList.add('active');
+        document.getElementById('board-view').style.display = 'none';
+        document.getElementById('history-view').style.display = 'block';
+      }
+    }
+
+    function openModal() {
+      document.getElementById('composeModal').classList.remove('hidden');
+      resetComposeModal();
+    }
+
+    function closeModal() {
+      document.getElementById('composeModal').classList.add('hidden');
+    }
+
+    function resetComposeModal() {
+      const titleEl = document.getElementById('composeModalTitle');
+      const submitBtn = document.getElementById('composeModalSubmit');
+      const titleInput = document.getElementById('messageTitleInput');
+      const contentInput = document.getElementById('messageContentInput');
+      const resendOption = document.getElementById('resendOption');
+      const resendCheckbox = document.getElementById('resendCheckbox');
+
+      if (titleEl) {
+        titleEl.innerHTML = '<span class="material-icons">edit</span> Compose New Message';
+      }
+      if (submitBtn) {
+        submitBtn.textContent = 'Post Message';
+      }
+      if (titleInput) {
+        titleInput.value = '';
+      }
+      if (contentInput) {
+        contentInput.value = '';
+      }
+      if (resendOption) {
+        resendOption.style.display = 'none';
+      }
+      if (resendCheckbox) {
+        resendCheckbox.checked = false;
+      }
+
+      selectSendNow(); // Reset to default schedule
+    }
+
+    function openEditActionModal(triggerBtn) {
+      const card = triggerBtn.closest('.message-card');
+      const title = card ? card.querySelector('.card-title')?.textContent.trim() : '';
+      const content = card ? card.querySelector('.card-preview')?.textContent.trim() : '';
+
+      selectedMessage = { title, content };
+      const titleLabel = document.getElementById('editActionMessageTitle');
+      if (titleLabel) {
+        titleLabel.textContent = title || 'Selected Message';
+      }
+
+      document.getElementById('editActionModal').classList.remove('hidden');
+    }
+
+    function closeEditActionModal() {
+      document.getElementById('editActionModal').classList.add('hidden');
+    }
+
+    function handleUpdateMessage() {
+      closeEditActionModal();
+      document.getElementById('composeModal').classList.remove('hidden');
+
+      const titleEl = document.getElementById('composeModalTitle');
+      const submitBtn = document.getElementById('composeModalSubmit');
+      const titleInput = document.getElementById('messageTitleInput');
+      const contentInput = document.getElementById('messageContentInput');
+      const resendOption = document.getElementById('resendOption');
+      const resendCheckbox = document.getElementById('resendCheckbox');
+
+      if (titleEl) {
+        titleEl.innerHTML = '<span class="material-icons">edit</span> Update Message';
+      }
+      if (submitBtn) {
+        submitBtn.textContent = 'Update Message';
+      }
+      if (titleInput) {
+        titleInput.value = selectedMessage?.title || '';
+      }
+      if (contentInput) {
+        contentInput.value = selectedMessage?.content || '';
+      }
+      if (resendOption) {
+        resendOption.style.display = 'flex';
+      }
+      if (resendCheckbox) {
+        resendCheckbox.checked = false;
+      }
+
+      selectSendNow();
+    }
+
+    function selectSendNow() {
+      const cards = document.querySelectorAll('.option-card');
+      const schedulePicker = document.getElementById('schedulePicker');
+      const radios = document.querySelectorAll('input[name="schedule"]');
+      
+      cards[0].classList.add('selected');
+      cards[1].classList.remove('selected');
+      radios[0].checked = true;
+      radios[1].checked = false;
+      
+      if (schedulePicker) {
+        schedulePicker.style.display = 'none';
+      }
+    }
+
+    function selectSendLater() {
+      const cards = document.querySelectorAll('.option-card');
+      const schedulePicker = document.getElementById('schedulePicker');
+      const radios = document.querySelectorAll('input[name="schedule"]');
+      
+      cards[0].classList.remove('selected');
+      cards[1].classList.add('selected');
+      radios[0].checked = false;
+      radios[1].checked = true;
+      
+      if (schedulePicker) {
+        schedulePicker.style.display = 'block';
+      }
+      
+      // Set default date/time
+      const dateInput = document.getElementById('scheduledDate');
+      const timeInput = document.getElementById('scheduledTime');
+      if (dateInput && !dateInput.value) {
+        const minDate = new Date(Date.now() + 5 * 60000);
+        dateInput.value = minDate.toISOString().split('T')[0];
+      }
+      if (timeInput && !timeInput.value) {
+        const minTime = new Date(Date.now() + 5 * 60000);
+        const hours = minTime.getHours().toString().padStart(2, '0');
+        const minutes = minTime.getMinutes().toString().padStart(2, '0');
+        timeInput.value = `${hours}:${minutes}`;
+      }
+      
+      updateSchedulePreview();
+      
+      // Add event listeners
+      if (dateInput) {
+        dateInput.addEventListener('change', updateSchedulePreview);
+      }
+      if (timeInput) {
+        timeInput.addEventListener('change', updateSchedulePreview);
+      }
+    }
+
+    function openAcknowledgmentModal() {
+      document.getElementById('acknowledgmentModal').classList.remove('hidden');
+      showAckTab('acknowledged'); // Show acknowledged tab by default
+    }
+
+    function closeAcknowledgmentModal() {
+      document.getElementById('acknowledgmentModal').classList.add('hidden');
+    }
+
+    function showAckTab(tab) {
+      const ackTab = document.getElementById('ackTab');
+      const pendingTab = document.getElementById('pendingTab');
+      const ackContent = document.getElementById('acknowledgedContent');
+      const pendingContent = document.getElementById('pendingContent');
+
+      if (tab === 'acknowledged') {
+        ackTab.classList.add('active');
+        pendingTab.classList.remove('active');
+        ackContent.style.display = 'block';
+        pendingContent.style.display = 'none';
+      } else {
+        ackTab.classList.remove('active');
+        pendingTab.classList.add('active');
+        ackContent.style.display = 'none';
+        pendingContent.style.display = 'block';
+      }
+    }
+
+    function toggleUrlInput() {
+      const urlSection = document.getElementById('urlInputSection');
+      if (urlSection.style.display === 'none') {
+        urlSection.style.display = 'block';
+      } else {
+        urlSection.style.display = 'none';
+        document.getElementById('urlLinkInput').value = '';
+        document.getElementById('urlTitleInput').value = '';
+      }
+    }
+
+    function addUrlLink() {
+      const urlInput = document.getElementById('urlLinkInput');
+      const titleInput = document.getElementById('urlTitleInput');
+      const url = urlInput.value.trim();
+      const title = titleInput.value.trim() || url;
+
+      if (!url) {
+        alert('Please enter a valid URL');
+        return;
+      }
+
+      // Validate URL
+      try {
+        const urlObj = new URL(url);
+        if (!['http:', 'https:'].includes(urlObj.protocol)) {
+          alert('URL must start with http:// or https://');
+          return;
+        }
+      } catch (e) {
+        alert('Please enter a valid URL');
+        return;
+      }
+
+      // Check for duplicates
+      if (urlLinks.some(link => link.url === url)) {
+        alert('This URL has already been added');
+        return;
+      }
+
+      urlLinks.push({ url, title });
+      renderUrlList();
+      urlInput.value = '';
+      titleInput.value = '';
+      toggleUrlInput();
+    }
+
+    function removeUrlLink(index) {
+      urlLinks.splice(index, 1);
+      renderUrlList();
+    }
+
+    function renderUrlList() {
+      const urlList = document.getElementById('urlList');
+      if (urlLinks.length === 0) {
+        urlList.innerHTML = '';
+        return;
+      }
+
+      urlList.innerHTML = urlLinks.map((link, index) => `
+        <div style="display: flex; align-items: center; gap: 12px; padding: 12px; background: white; border-radius: 6px; margin-bottom: 8px; border: 1px solid var(--border-color);">
+          <span class="material-icons" style="color: var(--primary-color);">link</span>
+          <div style="flex: 1; display: flex; flex-direction: column; gap: 4px;">
+            <span style="font-size: 14px; font-weight: 500; color: var(--text-primary);">${link.title}</span>
+            <span style="font-size: 12px; color: var(--text-secondary); word-break: break-all;">${link.url}</span>
+          </div>
+          <button onclick="removeUrlLink(${index})" style="background: transparent; border: none; cursor: pointer; padding: 5px;">
+            <span class="material-icons" style="color: var(--text-secondary);">close</span>
+          </button>
+        </div>
+      `).join('');
+    }
+
+    function updateSchedulePreview() {
+      const dateInput = document.getElementById('scheduledDate');
+      const timeInput = document.getElementById('scheduledTime');
+      const preview = document.getElementById('schedulePreview');
+      const previewText = document.getElementById('previewText');
+      
+      if (dateInput && timeInput && dateInput.value && timeInput.value) {
+        const date = new Date(dateInput.value + 'T' + timeInput.value);
+        if (preview && previewText) {
+          previewText.textContent = date.toLocaleString('en-US', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: 'numeric',
+            minute: '2-digit',
+            hour12: true
+          });
+          preview.style.display = 'flex';
+        }
+      } else if (preview) {
+        preview.style.display = 'none';
+      }
+    }
+
+    function confirmArchive(button) {
+      const card = button.closest('.message-card');
+      const title = card ? card.querySelector('.card-title')?.textContent.trim() : 'this message';
+      if (confirm(`Archive "${title}"?`)) {
+        alert(`"${title}" archived successfully.`);
+      }
+    }
+  </script>
+</body>
+</html>
+

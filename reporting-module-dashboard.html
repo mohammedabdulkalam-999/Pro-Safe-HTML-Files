@@ -1,0 +1,2407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PRO-SAFE ADMIN - Reporting Module Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    :root {
+      --admin-teal: #155b75;
+      --admin-teal-hover: #1a6f8f;
+      --admin-teal-dark: #0d4458;
+      --admin-border: #c5ced4;
+      --admin-text: #2c3e45;
+      --admin-muted: #5c6a72;
+      --admin-page-bg: #f3f5f7;
+      --admin-soft: #eef3f6;
+      --admin-success: #2e7d32;
+      --admin-warning: #b26a00;
+      --admin-danger: #b42318;
+      --admin-info: #1565c0;
+    }
+
+    body {
+      margin: 0;
+      font-family: Roboto, system-ui, -apple-system, sans-serif;
+      font-size: 14px;
+      color: var(--admin-text);
+      background: #fff;
+      min-height: 100vh;
+    }
+
+    .admin-topnav {
+      background: var(--admin-teal);
+      color: #fff;
+      padding: 0 1rem;
+      min-height: 52px;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .admin-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      flex-shrink: 0;
+    }
+    .admin-brand svg { flex-shrink: 0; }
+    .admin-brand-text {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.05;
+    }
+    .admin-brand-text strong {
+      font-size: 0.95rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+    .admin-brand-text span {
+      font-size: 0.68rem;
+      font-weight: 600;
+      opacity: 0.92;
+      letter-spacing: 0.12em;
+    }
+    .admin-divider {
+      width: 1px;
+      height: 28px;
+      background: rgba(255, 255, 255, 0.35);
+      flex-shrink: 0;
+    }
+    .admin-breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.875rem;
+      color: rgba(255, 255, 255, 0.95);
+      flex-shrink: 0;
+    }
+    .admin-breadcrumb a {
+      color: #fff;
+      text-decoration: none;
+    }
+    .admin-breadcrumb a:hover { text-decoration: underline; }
+    .admin-crumb-current { text-decoration: underline; }
+    .admin-more-dots {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.2rem;
+      color: #fff;
+      opacity: 0.95;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      border-radius: 4px;
+    }
+    .admin-more-dots:hover { background: rgba(0, 0, 0, 0.1); }
+    .admin-search-wrap {
+      flex: 1 1 220px;
+      max-width: 520px;
+      margin: 0 auto;
+      min-width: 160px;
+    }
+    .admin-search-pill {
+      display: flex;
+      align-items: center;
+      background: #fff;
+      border-radius: 999px;
+      padding: 0.2rem 0.65rem 0.2rem 1rem;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+    }
+    .admin-search-pill input {
+      border: none;
+      flex: 1;
+      min-width: 0;
+      font-size: 0.8125rem;
+      padding: 0.35rem 0;
+      outline: none;
+      color: var(--admin-text);
+    }
+    .admin-search-pill input::placeholder { color: #8896a0; }
+    .admin-search-pill button {
+      border: none;
+      background: transparent;
+      color: var(--admin-muted);
+      padding: 0.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+    .admin-nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.15rem;
+      flex-wrap: wrap;
+      margin-left: auto;
+    }
+    .admin-nav-dd .btn {
+      color: #fff !important;
+      font-size: 0.8125rem;
+      font-weight: 500;
+      padding: 0.4rem 0.55rem;
+      border: none;
+      background: transparent;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+    .admin-nav-dd .btn:hover,
+    .admin-nav-dd .btn.show {
+      background: rgba(0, 0, 0, 0.12);
+      color: #fff !important;
+    }
+    .admin-nav-dd .dropdown-menu { font-size: 0.8125rem; }
+    .admin-user-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-left: 0.25rem;
+      padding-left: 0.5rem;
+      border-left: 1px solid rgba(255, 255, 255, 0.35);
+    }
+    .admin-user-ico {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+    }
+    .admin-ver {
+      font-size: 0.75rem;
+      opacity: 0.95;
+      white-space: nowrap;
+    }
+
+    .admin-subbar {
+      background: #fff;
+      padding: 0 1rem;
+      display: flex;
+      align-items: flex-end;
+      gap: 0;
+      min-height: 46px;
+    }
+    .admin-tab-active {
+      background: var(--admin-teal);
+      color: #fff;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      padding: 0.5rem 1.15rem 0.55rem;
+      border-radius: 8px 8px 0 0;
+      margin-bottom: -1px;
+      border: 1px solid var(--admin-teal);
+    }
+    .admin-tab-context {
+      font-size: 0.9375rem;
+      font-weight: 500;
+      color: var(--admin-muted);
+      padding: 0.5rem 0.75rem 0.65rem;
+    }
+
+    .admin-page {
+      padding: 1rem 1.25rem 2rem;
+      max-width: 100%;
+      background: var(--admin-page-bg);
+      min-height: calc(100vh - 52px);
+      box-sizing: border-box;
+    }
+    .admin-shell {
+      background: #fff;
+      border-radius: 6px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.07);
+      overflow: hidden;
+    }
+
+    .admin-filter-panel,
+    .admin-content-card,
+    .admin-side-card {
+      background: #fff;
+      border-radius: 6px;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+      border: 1px solid rgba(197, 206, 212, 0.45);
+    }
+    .admin-filter-panel {
+      padding: 1rem 1.25rem 1.15rem;
+      margin: 1rem;
+      margin-bottom: 0.85rem;
+    }
+    .admin-panel-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      align-items: flex-start;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+    .admin-panel-top h1 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin: 0 0 0.2rem;
+      color: var(--admin-text);
+    }
+    .admin-panel-top p {
+      margin: 0;
+      color: var(--admin-muted);
+      max-width: 760px;
+    }
+    .admin-top-actions {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .btn-admin-primary {
+      background: var(--admin-teal);
+      border-color: var(--admin-teal);
+      color: #fff;
+    }
+    .btn-admin-primary:hover,
+    .btn-admin-primary:focus {
+      background: var(--admin-teal-hover);
+      border-color: var(--admin-teal-hover);
+      color: #fff;
+    }
+    .btn-admin-outline {
+      border-color: var(--admin-border);
+      color: var(--admin-text);
+      background: #fff;
+    }
+    .btn-admin-outline:hover {
+      background: #f8fafb;
+      border-color: #aebac1;
+      color: var(--admin-text);
+    }
+    .admin-filter-grid {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 0.9rem;
+    }
+    .admin-filter-grid .form-floating > label {
+      color: var(--admin-muted);
+      font-size: 0.8125rem;
+    }
+    .form-control, .form-select {
+      border-color: var(--admin-border);
+      font-size: 0.875rem;
+    }
+    .form-control:focus, .form-select:focus {
+      border-color: var(--admin-teal);
+      box-shadow: 0 0 0 0.2rem rgba(21, 91, 117, 0.18);
+    }
+
+    .admin-kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 0.85rem;
+      padding: 0 1rem 1rem;
+    }
+    .admin-kpi-card {
+      background: linear-gradient(180deg, #fff 0%, #f8fbfc 100%);
+      border: 1px solid rgba(197, 206, 212, 0.5);
+      border-radius: 6px;
+      padding: 0.95rem 1rem;
+      min-height: 122px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 0.6rem;
+    }
+    .admin-kpi-label {
+      color: var(--admin-muted);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 700;
+    }
+    .admin-kpi-value {
+      font-size: 1.75rem;
+      font-weight: 700;
+      line-height: 1;
+      color: var(--admin-text);
+    }
+    .admin-kpi-sub {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--admin-muted);
+      font-size: 0.8125rem;
+    }
+    .admin-trend-up { color: var(--admin-success); font-weight: 600; }
+    .admin-trend-down { color: var(--admin-danger); font-weight: 600; }
+    .admin-trend-flat { color: var(--admin-info); font-weight: 600; }
+
+    .admin-main-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 3fr) minmax(280px, 1fr);
+      gap: 1rem;
+      padding: 0 1rem 1rem;
+      align-items: start;
+    }
+    .admin-content-card {
+      overflow: hidden;
+    }
+    .admin-content-head,
+    .admin-side-head {
+      background: var(--admin-teal);
+      color: #fff;
+      padding: 0.7rem 1rem;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+    .admin-content-body,
+    .admin-side-body {
+      padding: 1rem;
+    }
+
+    .nav.admin-report-tabs {
+      gap: 0.45rem;
+      padding: 0.85rem 1rem 0;
+      border-bottom: 1px solid rgba(197, 206, 212, 0.6);
+      background: #fff;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+    }
+    .nav.admin-report-tabs .nav-link {
+      border: 1px solid rgba(197, 206, 212, 0.65);
+      background: #f7f9fb;
+      color: var(--admin-muted);
+      border-radius: 999px;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      padding: 0.45rem 0.9rem;
+      white-space: nowrap;
+    }
+    .nav.admin-report-tabs .nav-link.active {
+      background: var(--admin-teal);
+      border-color: var(--admin-teal);
+      color: #fff;
+    }
+    .tab-pane {
+      padding: 1rem;
+    }
+
+    .admin-section {
+      border: 1px solid rgba(197, 206, 212, 0.5);
+      border-radius: 6px;
+      overflow: hidden;
+      margin-bottom: 1rem;
+      background: #fff;
+    }
+    .admin-section:last-child { margin-bottom: 0; }
+    .admin-section-hd {
+      background: var(--admin-soft);
+      padding: 0.65rem 0.9rem;
+      display: flex;
+      justify-content: space-between;
+      gap: 0.75rem;
+      align-items: center;
+      border-bottom: 1px solid rgba(197, 206, 212, 0.55);
+    }
+    .admin-section-hd h2,
+    .admin-section-hd h3 {
+      margin: 0;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--admin-text);
+    }
+    .admin-section-hd span {
+      color: var(--admin-muted);
+      font-size: 0.8rem;
+    }
+    .admin-section-body {
+      padding: 0.9rem;
+    }
+
+    .admin-meta-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 0.75rem;
+    }
+    .admin-meta-item {
+      border: 1px solid rgba(197, 206, 212, 0.5);
+      border-radius: 6px;
+      padding: 0.75rem 0.85rem;
+      background: #fbfcfd;
+    }
+    .admin-meta-item small {
+      display: block;
+      font-size: 0.74rem;
+      color: var(--admin-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.35rem;
+      font-weight: 700;
+    }
+    .admin-meta-item strong {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--admin-text);
+    }
+
+    .admin-mini-kpis {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 0.75rem;
+    }
+    .admin-mini-kpi {
+      background: #f8fafc;
+      border: 1px solid rgba(197, 206, 212, 0.55);
+      border-radius: 6px;
+      padding: 0.75rem;
+    }
+    .admin-mini-kpi small {
+      display: block;
+      font-size: 0.74rem;
+      color: var(--admin-muted);
+      margin-bottom: 0.35rem;
+      font-weight: 600;
+    }
+    .admin-mini-kpi strong {
+      font-size: 1.05rem;
+      font-weight: 700;
+    }
+
+    .admin-table-wrap {
+      border: 1px solid rgba(197, 206, 212, 0.45);
+      border-radius: 6px;
+      overflow: hidden;
+      background: #fff;
+    }
+    .admin-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8125rem;
+    }
+    .admin-table thead th {
+      background: var(--admin-teal);
+      color: #fff;
+      font-weight: 600;
+      text-align: left;
+      padding: 0.65rem 0.75rem;
+      white-space: nowrap;
+      border: none;
+    }
+    .admin-table tbody td {
+      padding: 0.7rem 0.75rem;
+      border: none;
+      vertical-align: middle;
+      line-height: 1.45;
+    }
+    .admin-table tbody tr:nth-child(even) { background: #fafbfc; }
+
+    .admin-pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.2rem 0.55rem;
+      border-radius: 999px;
+      font-size: 0.73rem;
+      font-weight: 700;
+      line-height: 1.2;
+      white-space: nowrap;
+    }
+    .pill-success { background: rgba(46, 125, 50, 0.12); color: var(--admin-success); }
+    .pill-warning { background: rgba(178, 106, 0, 0.12); color: var(--admin-warning); }
+    .pill-danger { background: rgba(180, 35, 24, 0.12); color: var(--admin-danger); }
+    .pill-info { background: rgba(21, 101, 192, 0.12); color: var(--admin-info); }
+    .pill-neutral { background: rgba(92, 106, 114, 0.12); color: var(--admin-muted); }
+
+    .admin-chip-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+    }
+    .admin-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      border-radius: 999px;
+      padding: 0.35rem 0.65rem;
+      background: #edf3f6;
+      color: var(--admin-text);
+      font-size: 0.78rem;
+      font-weight: 500;
+    }
+
+    .admin-dual-grid {
+      display: grid;
+      grid-template-columns: 1.25fr 1fr;
+      gap: 1rem;
+    }
+    .admin-trend-chart {
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+    }
+    .admin-trend-row {
+      display: grid;
+      grid-template-columns: 120px 1fr 44px;
+      gap: 0.6rem;
+      align-items: center;
+      font-size: 0.82rem;
+    }
+    .admin-trend-bar {
+      height: 10px;
+      background: #e5ebef;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    .admin-trend-fill {
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #1f7a95 0%, #155b75 100%);
+    }
+
+    .admin-score-card {
+      border: 1px solid rgba(197, 206, 212, 0.5);
+      border-radius: 6px;
+      padding: 0.85rem;
+      background: #fbfcfd;
+      height: 100%;
+    }
+    .admin-score-card h4 {
+      margin: 0 0 0.8rem;
+      font-size: 0.88rem;
+      font-weight: 700;
+    }
+    .admin-progress-line {
+      margin-bottom: 0.7rem;
+    }
+    .admin-progress-line:last-child { margin-bottom: 0; }
+    .admin-progress-meta {
+      display: flex;
+      justify-content: space-between;
+      gap: 0.75rem;
+      margin-bottom: 0.25rem;
+      font-size: 0.8rem;
+    }
+    .progress.admin-progress {
+      height: 8px;
+      background: #e8edf1;
+    }
+    .progress.admin-progress .progress-bar { background: var(--admin-teal); }
+    .progress-bar.bg-danger { background: var(--admin-danger) !important; }
+    .progress-bar.bg-warning { background: var(--admin-warning) !important; }
+    .progress-bar.bg-success { background: var(--admin-success) !important; }
+
+    .admin-sidebar-stack {
+      display: grid;
+      gap: 1rem;
+    }
+    .admin-side-body p,
+    .admin-side-body li {
+      font-size: 0.82rem;
+      color: var(--admin-muted);
+    }
+    .admin-side-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      gap: 0.65rem;
+    }
+    .admin-side-list li {
+      border-bottom: 1px solid rgba(197, 206, 212, 0.45);
+      padding-bottom: 0.6rem;
+    }
+    .admin-side-list li:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+    .admin-side-label {
+      display: block;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--admin-muted);
+      margin-bottom: 0.2rem;
+      font-weight: 700;
+    }
+    .admin-side-value {
+      color: var(--admin-text);
+      font-weight: 600;
+      font-size: 0.84rem;
+    }
+    .admin-callout {
+      background: #f7fafc;
+      border: 1px dashed rgba(21, 91, 117, 0.35);
+      border-radius: 6px;
+      padding: 0.85rem;
+    }
+    .admin-callout h4 {
+      margin: 0 0 0.45rem;
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--admin-text);
+    }
+    .admin-footer-note {
+      padding: 0 1rem 1rem;
+      color: var(--admin-muted);
+      font-size: 0.78rem;
+    }
+
+    .modal-header.admin-modal-head {
+      background: var(--admin-teal);
+      color: #fff;
+      border-bottom: none;
+    }
+    .modal-header.admin-modal-head .btn-close {
+      filter: invert(1);
+      opacity: 0.85;
+    }
+    .admin-modal-meta {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.85rem;
+      margin-bottom: 1rem;
+    }
+
+    @media (max-width: 1320px) {
+      .admin-filter-grid,
+      .admin-kpi-grid,
+      .admin-mini-kpis,
+      .admin-meta-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 1080px) {
+      .admin-main-grid,
+      .admin-dual-grid {
+        grid-template-columns: 1fr;
+      }
+      .admin-filter-grid,
+      .admin-kpi-grid,
+      .admin-mini-kpis,
+      .admin-meta-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 720px) {
+      .admin-page {
+        padding: 0.75rem;
+      }
+      .admin-filter-panel,
+      .admin-kpi-grid,
+      .admin-main-grid,
+      .admin-footer-note {
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+      }
+      .admin-filter-panel {
+        margin: 0.75rem;
+        margin-bottom: 0.75rem;
+      }
+      .admin-filter-grid,
+      .admin-kpi-grid,
+      .admin-mini-kpis,
+      .admin-meta-grid,
+      .admin-modal-meta {
+        grid-template-columns: 1fr;
+      }
+      .admin-trend-row {
+        grid-template-columns: 90px 1fr 40px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="admin-topnav" aria-label="Primary">
+    <div class="admin-brand">
+      <svg width="30" height="34" viewBox="0 0 30 34" fill="none" aria-hidden="true">
+        <path d="M15 1.5L3.5 7.2v10.1c0 6.8 5 13.2 11.5 14.7 6.5-1.5 11.5-7.9 11.5-14.7V7.2L15 1.5z" fill="#fff" fill-opacity=".96"/>
+        <path d="M15 5.8L7.2 9.8v7.4c0 4.4 3.2 8.5 7.8 9.7 4.6-1.2 7.8-5.3 7.8-9.7V9.8L15 5.8z" fill="var(--admin-teal-dark)"/>
+        <path d="M15 11.5c-1.6 0-2.8 1.2-2.8 2.7 0 1 .5 1.8 1.3 2.2v3.2h3v-3.2c.8-.4 1.3-1.2 1.3-2.2 0-1.5-1.2-2.7-2.8-2.7z" fill="#fff"/>
+      </svg>
+      <div class="admin-brand-text">
+        <strong>PRO-SAFE</strong>
+        <span>ADMIN</span>
+      </div>
+    </div>
+    <div class="admin-divider" aria-hidden="true"></div>
+    <div class="admin-breadcrumb">
+      <button type="button" class="admin-more-dots" aria-label="More options">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
+      </button>
+      <a href="#" aria-label="Home">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8h5z"/></svg>
+      </a>
+      <span aria-hidden="true">&gt;</span>
+      <a href="#">Reports</a>
+      <span aria-hidden="true">&gt;</span>
+      <a href="#" class="admin-crumb-current">Reporting Module</a>
+    </div>
+    <div class="admin-search-wrap">
+      <div class="admin-search-pill">
+        <input type="search" placeholder="Search by site, tag, analyst, or case ID" aria-label="Search reports" />
+        <button type="button" aria-label="Search">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="admin-nav-actions">
+      <div class="dropdown admin-nav-dd">
+        <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">Dashboard</button>
+        <ul class="dropdown-menu dropdown-menu-end">
+          <li><a class="dropdown-item" href="#">Executive KPI</a></li>
+          <li><a class="dropdown-item" href="#">Historical reports</a></li>
+        </ul>
+      </div>
+      <div class="dropdown admin-nav-dd">
+        <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown">Operations</button>
+        <ul class="dropdown-menu dropdown-menu-end">
+          <li><a class="dropdown-item" href="#">L1 productivity</a></li>
+          <li><a class="dropdown-item" href="#">Queue health</a></li>
+        </ul>
+      </div>
+      <div class="dropdown admin-nav-dd">
+        <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown">Safety</button>
+        <ul class="dropdown-menu dropdown-menu-end">
+          <li><a class="dropdown-item" href="#">Site observation</a></li>
+          <li><a class="dropdown-item" href="#">Violation analytics</a></li>
+        </ul>
+      </div>
+      <div class="dropdown admin-nav-dd">
+        <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown">Configure</button>
+        <ul class="dropdown-menu dropdown-menu-end">
+          <li><a class="dropdown-item" href="#">Customer schedules</a></li>
+          <li><a class="dropdown-item" href="#">Export profiles</a></li>
+        </ul>
+      </div>
+      <div class="admin-user-pill">
+        <div class="admin-user-ico" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+        </div>
+        <span class="admin-ver">v7.1.0</span>
+      </div>
+    </div>
+  </nav>
+
+  <main class="admin-page">
+    <div class="admin-shell">
+      <div class="admin-subbar">
+        <div class="admin-tab-active">Reporting Module</div>
+        <div class="admin-tab-context">Construction Safety &amp; Operational Intelligence Platform</div>
+      </div>
+
+      <section class="admin-filter-panel" aria-label="Reporting filters">
+        <div class="admin-panel-top">
+          <div>
+            <h1>Construction Reporting Hub</h1>
+            <p>Unified reporting workspace for day-end summaries, weekly intelligence, L1 analyst productivity, site compliance, safety tags, notifications, and forensic readiness.</p>
+          </div>
+          <div class="admin-top-actions">
+            <button type="button" class="btn btn-sm btn-admin-primary" data-bs-toggle="modal" data-bs-target="#scheduleReportModal">Schedule delivery</button>
+            <button type="button" class="btn btn-sm btn-admin-outline" data-bs-toggle="modal" data-bs-target="#historyModal">History</button>
+            <button type="button" class="btn btn-sm btn-admin-outline js-demo-action" data-demo-message="PDF export queued for generation.">Export PDF</button>
+            <button type="button" class="btn btn-sm btn-admin-outline js-demo-action" data-demo-message="Excel workbook prepared for download.">Export Excel</button>
+            <button type="button" class="btn btn-sm btn-admin-primary js-demo-action" data-demo-message="Report generated with the selected filters.">Generate report</button>
+          </div>
+        </div>
+
+        <div class="admin-filter-grid">
+          <div class="form-floating">
+            <select class="form-select" id="reportType">
+              <option selected>Executive Dashboard</option>
+              <option>L1 Monitoring Activity</option>
+              <option>Site Observation</option>
+              <option>Safety Tag Analytics</option>
+              <option>Day-End Summary</option>
+              <option>Weekly Intelligence</option>
+              <option>Notification Report</option>
+            </select>
+            <label for="reportType">Report Type</label>
+          </div>
+          <div class="form-floating">
+            <input type="text" class="form-control" id="customerName" placeholder=" " value="BuildRight Infrastructure" />
+            <label for="customerName">Customer</label>
+          </div>
+          <div class="form-floating">
+            <input type="text" class="form-control" id="siteName" placeholder=" " value="Austin Tower Crane Redevelopment" />
+            <label for="siteName">Site Name</label>
+          </div>
+          <div class="form-floating">
+            <input type="text" class="form-control" id="reportPeriod" placeholder=" " value="01 Apr 2026 - 07 Apr 2026" />
+            <label for="reportPeriod">Reporting Period</label>
+          </div>
+          <div class="form-floating">
+            <select class="form-select" id="shiftName">
+              <option>All Shifts</option>
+              <option selected>Night Shift</option>
+              <option>Day Shift</option>
+              <option>Swing Shift</option>
+            </select>
+            <label for="shiftName">Shift</label>
+          </div>
+          <div class="form-floating">
+            <select class="form-select" id="timeZone">
+              <option selected>Customer Timezone (CT)</option>
+              <option>ET</option>
+              <option>PT</option>
+              <option>IST</option>
+            </select>
+            <label for="timeZone">Timezone</label>
+          </div>
+        </div>
+      </section>
+
+      <section class="admin-kpi-grid" aria-label="Executive KPIs">
+        <article class="admin-kpi-card">
+          <div class="admin-kpi-label">Total Events</div>
+          <div class="admin-kpi-value">12,864</div>
+          <div class="admin-kpi-sub"><span>Today 1,942</span><span class="admin-trend-up">+8.4% vs prior week</span></div>
+        </article>
+        <article class="admin-kpi-card">
+          <div class="admin-kpi-label">Compliance Rate</div>
+          <div class="admin-kpi-value">91.8%</div>
+          <div class="admin-kpi-sub"><span>Within SLA</span><span class="admin-trend-up">+1.7 pts</span></div>
+        </article>
+        <article class="admin-kpi-card">
+          <div class="admin-kpi-label">Non-Compliance</div>
+          <div class="admin-kpi-value">1,051</div>
+          <div class="admin-kpi-sub"><span>Critical 118</span><span class="admin-trend-down">-4.2%</span></div>
+        </article>
+        <article class="admin-kpi-card">
+          <div class="admin-kpi-label">Escalations</div>
+          <div class="admin-kpi-value">286</div>
+          <div class="admin-kpi-sub"><span>Response 02:14 avg</span><span class="admin-trend-flat">Stable</span></div>
+        </article>
+        <article class="admin-kpi-card">
+          <div class="admin-kpi-label">Notifications Sent</div>
+          <div class="admin-kpi-value">742</div>
+          <div class="admin-kpi-sub"><span>Email 61% | SMS 39%</span><span class="admin-trend-up">+11.3%</span></div>
+        </article>
+        <article class="admin-kpi-card">
+          <div class="admin-kpi-label">L1 Events Per Hour</div>
+          <div class="admin-kpi-value">37.4</div>
+          <div class="admin-kpi-sub"><span>24 active analysts</span><span class="admin-trend-up">+3.1</span></div>
+        </article>
+        <article class="admin-kpi-card">
+          <div class="admin-kpi-label">Repeat Violations</div>
+          <div class="admin-kpi-value">164</div>
+          <div class="admin-kpi-sub"><span>13 watchlist zones</span><span class="admin-trend-down">-9.6%</span></div>
+        </article>
+        <article class="admin-kpi-card">
+          <div class="admin-kpi-label">QA Accuracy</div>
+          <div class="admin-kpi-value">97.2%</div>
+          <div class="admin-kpi-sub"><span>Reopened cases 14</span><span class="admin-trend-up">+0.9 pts</span></div>
+        </article>
+      </section>
+
+      <section class="admin-main-grid">
+        <div class="admin-content-card">
+          <div class="admin-content-head">Embedded Report Templates</div>
+          <ul class="nav admin-report-tabs" id="reportTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+              <button class="nav-link active" id="tab-exec" data-bs-toggle="tab" data-bs-target="#pane-exec" type="button" role="tab">Executive Dashboard</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="tab-l1" data-bs-toggle="tab" data-bs-target="#pane-l1" type="button" role="tab">L1 Activity</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="tab-site" data-bs-toggle="tab" data-bs-target="#pane-site" type="button" role="tab">Site Observation</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="tab-tag" data-bs-toggle="tab" data-bs-target="#pane-tag" type="button" role="tab">Safety Tag Analytics</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="tab-dayend" data-bs-toggle="tab" data-bs-target="#pane-dayend" type="button" role="tab">Day-End Summary</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="tab-weekly" data-bs-toggle="tab" data-bs-target="#pane-weekly" type="button" role="tab">Weekly Intelligence</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="tab-forensic" data-bs-toggle="tab" data-bs-target="#pane-forensic" type="button" role="tab">Forensic</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="tab-notify" data-bs-toggle="tab" data-bs-target="#pane-notify" type="button" role="tab">Notifications</button>
+            </li>
+          </ul>
+
+          <div class="tab-content">
+            <div class="tab-pane fade show active" id="pane-exec" role="tabpanel" aria-labelledby="tab-exec">
+              <div class="admin-section">
+                <div class="admin-section-hd">
+                  <h2>Executive KPI Dashboard</h2>
+                  <span>Real-time dashboard reporting across today, week, and month</span>
+                </div>
+                <div class="admin-section-body">
+                  <div class="admin-table-wrap mb-3">
+                    <div class="table-responsive">
+                      <table class="admin-table">
+                        <thead>
+                          <tr>
+                            <th>KPI</th>
+                            <th>Today</th>
+                            <th>Week</th>
+                            <th>Month</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>Total Events</td>
+                            <td>1,942</td>
+                            <td>12,864</td>
+                            <td>52,478</td>
+                          </tr>
+                          <tr>
+                            <td>Compliance %</td>
+                            <td>92.1%</td>
+                            <td>91.8%</td>
+                            <td>90.9%</td>
+                          </tr>
+                          <tr>
+                            <td>Non-Compliance</td>
+                            <td>153</td>
+                            <td>1,051</td>
+                            <td>4,776</td>
+                          </tr>
+                          <tr>
+                            <td>Escalations</td>
+                            <td>38</td>
+                            <td>286</td>
+                            <td>1,241</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                  <div class="admin-dual-grid">
+                    <div class="admin-section">
+                      <div class="admin-section-hd">
+                        <h3>Top Violations</h3>
+                        <span>Safety tags ranked by frequency</span>
+                      </div>
+                      <div class="admin-section-body">
+                        <div class="admin-table-wrap">
+                          <div class="table-responsive">
+                            <table class="admin-table">
+                              <thead>
+                                <tr>
+                                  <th>Rank</th>
+                                  <th>Violation Type</th>
+                                  <th>Count</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr>
+                                  <td>1</td>
+                                  <td>Missing Hard Hat</td>
+                                  <td>314</td>
+                                </tr>
+                                <tr>
+                                  <td>2</td>
+                                  <td>Missing Safety Vest</td>
+                                  <td>248</td>
+                                </tr>
+                                <tr>
+                                  <td>3</td>
+                                  <td>Restricted Zone Entry</td>
+                                  <td>172</td>
+                                </tr>
+                                <tr>
+                                  <td>4</td>
+                                  <td>Unsafe Ladder Usage</td>
+                                  <td>109</td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="admin-section">
+                      <div class="admin-section-hd">
+                        <h3>High-Risk Sites</h3>
+                        <span>Operational attention required</span>
+                      </div>
+                      <div class="admin-section-body">
+                        <div class="admin-table-wrap">
+                          <div class="table-responsive">
+                            <table class="admin-table">
+                              <thead>
+                                <tr>
+                                  <th>Site</th>
+                                  <th>Risk Score</th>
+                                  <th>Major Concern</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr>
+                                  <td>Austin Tower Crane Redevelopment</td>
+                                  <td><span class="admin-pill pill-danger">89</span></td>
+                                  <td>Workers under suspended load</td>
+                                </tr>
+                                <tr>
+                                  <td>Houston Logistics Yard Expansion</td>
+                                  <td><span class="admin-pill pill-warning">74</span></td>
+                                  <td>Restricted zone intrusion</td>
+                                </tr>
+                                <tr>
+                                  <td>San Antonio Concrete Batch Plant</td>
+                                  <td><span class="admin-pill pill-warning">69</span></td>
+                                  <td>PPE non-compliance</td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="tab-pane fade" id="pane-l1" role="tabpanel" aria-labelledby="tab-l1">
+              <div class="admin-section">
+                <div class="admin-section-hd">
+                  <h2>L1 Monitoring Activity Report</h2>
+                  <span>Track login/logout, active monitoring time, tagging quality, and escalations</span>
+                </div>
+                <div class="admin-section-body">
+                  <div class="admin-meta-grid mb-3">
+                    <div class="admin-meta-item"><small>Report Name</small><strong>L1 Monitoring Activity Report</strong></div>
+                    <div class="admin-meta-item"><small>Report Date</small><strong>07 Apr 2026</strong></div>
+                    <div class="admin-meta-item"><small>Shift</small><strong>Night Shift</strong></div>
+                    <div class="admin-meta-item"><small>Team Lead</small><strong>Riya Thomas</strong></div>
+                    <div class="admin-meta-item"><small>Monitoring Queue</small><strong>ProSafe Queue</strong></div>
+                  </div>
+
+                  <div class="admin-section">
+                    <div class="admin-section-hd">
+                      <h3>Agent Performance Summary</h3>
+                      <span>Shift-wise analyst productivity view</span>
+                    </div>
+                    <div class="admin-section-body">
+                      <div class="admin-table-wrap">
+                        <div class="table-responsive">
+                          <table class="admin-table">
+                            <thead>
+                              <tr>
+                                <th>Agent Name</th>
+                                <th>Login Time</th>
+                                <th>Logout Time</th>
+                                <th>Active Hours</th>
+                                <th>Events Reviewed</th>
+                                <th>Compliance Tagged</th>
+                                <th>Non-Compliance Tagged</th>
+                                <th>Escalations</th>
+                                <th>Avg Review Time</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td>Mia Carter</td>
+                                <td>18:58</td>
+                                <td>03:04</td>
+                                <td>7h 22m</td>
+                                <td>294</td>
+                                <td>242</td>
+                                <td>52</td>
+                                <td>15</td>
+                                <td>00:56</td>
+                              </tr>
+                              <tr>
+                                <td>James Patel</td>
+                                <td>19:03</td>
+                                <td>03:00</td>
+                                <td>7h 05m</td>
+                                <td>271</td>
+                                <td>219</td>
+                                <td>52</td>
+                                <td>11</td>
+                                <td>01:02</td>
+                              </tr>
+                              <tr>
+                                <td>Fatima Noor</td>
+                                <td>18:51</td>
+                                <td>03:06</td>
+                                <td>7h 31m</td>
+                                <td>318</td>
+                                <td>273</td>
+                                <td>45</td>
+                                <td>9</td>
+                                <td>00:49</td>
+                              </tr>
+                              <tr>
+                                <td>Arun Vega</td>
+                                <td>19:00</td>
+                                <td>03:01</td>
+                                <td>7h 12m</td>
+                                <td>286</td>
+                                <td>230</td>
+                                <td>56</td>
+                                <td>13</td>
+                                <td>00:58</td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="admin-section">
+                    <div class="admin-section-hd">
+                      <h3>Productivity KPIs</h3>
+                      <span>Operational intelligence for analyst performance analytics</span>
+                    </div>
+                    <div class="admin-section-body">
+                      <div class="admin-mini-kpis">
+                        <div class="admin-mini-kpi"><small>Total Events Processed</small><strong>3,118</strong></div>
+                        <div class="admin-mini-kpi"><small>Avg Events Per Hour</small><strong>37.4</strong></div>
+                        <div class="admin-mini-kpi"><small>Avg Response Time</small><strong>02:14</strong></div>
+                        <div class="admin-mini-kpi"><small>QA Accuracy %</small><strong>97.2%</strong></div>
+                        <div class="admin-mini-kpi"><small>Reopened Cases</small><strong>14</strong></div>
+                        <div class="admin-mini-kpi"><small>Missed Violations</small><strong>6</strong></div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="admin-section">
+                    <div class="admin-section-hd">
+                      <h3>QA Audit Findings</h3>
+                      <span>Quality review and corrective action checkpoints</span>
+                    </div>
+                    <div class="admin-section-body">
+                      <div class="admin-table-wrap">
+                        <div class="table-responsive">
+                          <table class="admin-table">
+                            <thead>
+                              <tr>
+                                <th>Agent</th>
+                                <th>Audit Score</th>
+                                <th>Incorrect Tags</th>
+                                <th>Missed Events</th>
+                                <th>Remarks</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td>Mia Carter</td>
+                                <td><span class="admin-pill pill-success">98%</span></td>
+                                <td>1</td>
+                                <td>0</td>
+                                <td>Strong tagging discipline, no SLA misses.</td>
+                              </tr>
+                              <tr>
+                                <td>James Patel</td>
+                                <td><span class="admin-pill pill-warning">94%</span></td>
+                                <td>2</td>
+                                <td>1</td>
+                                <td>Needs follow-up on repeated ladder severity classification.</td>
+                              </tr>
+                              <tr>
+                                <td>Fatima Noor</td>
+                                <td><span class="admin-pill pill-success">99%</span></td>
+                                <td>0</td>
+                                <td>0</td>
+                                <td>Best shift response time and highest review volume.</td>
+                              </tr>
+                              <tr>
+                                <td>Arun Vega</td>
+                                <td><span class="admin-pill pill-warning">95%</span></td>
+                                <td>1</td>
+                                <td>1</td>
+                                <td>Escalation timing improved after supervisor coaching.</td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="tab-pane fade" id="pane-site" role="tabpanel" aria-labelledby="tab-site">
+              <div class="admin-section">
+                <div class="admin-section-hd">
+                  <h2>Site Observation Report</h2>
+                  <span>Site-wise compliance, camera analytics, and zone risk intelligence</span>
+                </div>
+                <div class="admin-section-body">
+                  <div class="admin-meta-grid mb-3">
+                    <div class="admin-meta-item"><small>Site Name</small><strong>Austin Tower Crane Redevelopment</strong></div>
+                    <div class="admin-meta-item"><small>Customer</small><strong>BuildRight Infrastructure</strong></div>
+                    <div class="admin-meta-item"><small>Reporting Period</small><strong>01 Apr 2026 - 07 Apr 2026</strong></div>
+                    <div class="admin-meta-item"><small>Cameras Monitored</small><strong>18</strong></div>
+                    <div class="admin-meta-item"><small>Generated By</small><strong>Operations Manager</strong></div>
+                  </div>
+
+                  <div class="admin-mini-kpis mb-3">
+                    <div class="admin-mini-kpi"><small>Total Observations</small><strong>2,428</strong></div>
+                    <div class="admin-mini-kpi"><small>Compliance Observations</small><strong>2,152</strong></div>
+                    <div class="admin-mini-kpi"><small>Non-Compliance</small><strong>276</strong></div>
+                    <div class="admin-mini-kpi"><small>Compliance %</small><strong>88.6%</strong></div>
+                    <div class="admin-mini-kpi"><small>Critical Violations</small><strong>34</strong></div>
+                    <div class="admin-mini-kpi"><small>Repeat Incidents</small><strong>22</strong></div>
+                  </div>
+
+                  <div class="admin-section">
+                    <div class="admin-section-hd">
+                      <h3>Site-Wise Observation Summary</h3>
+                      <span>Compliance and non-compliance across monitored sites</span>
+                    </div>
+                    <div class="admin-section-body">
+                      <div class="admin-table-wrap">
+                        <div class="table-responsive">
+                          <table class="admin-table">
+                            <thead>
+                              <tr>
+                                <th>Site</th>
+                                <th>Total Events</th>
+                                <th>Compliance</th>
+                                <th>Non-Compliance</th>
+                                <th>Compliance %</th>
+                                <th>Critical Violations</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td>Austin Tower Crane Redevelopment</td>
+                                <td>2,428</td>
+                                <td>2,152</td>
+                                <td>276</td>
+                                <td>88.6%</td>
+                                <td>34</td>
+                              </tr>
+                              <tr>
+                                <td>Houston Logistics Yard Expansion</td>
+                                <td>1,904</td>
+                                <td>1,742</td>
+                                <td>162</td>
+                                <td>91.5%</td>
+                                <td>18</td>
+                              </tr>
+                              <tr>
+                                <td>San Antonio Concrete Batch Plant</td>
+                                <td>1,638</td>
+                                <td>1,501</td>
+                                <td>137</td>
+                                <td>91.6%</td>
+                                <td>12</td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="admin-dual-grid">
+                    <div class="admin-section">
+                      <div class="admin-section-hd">
+                        <h3>Camera-Wise Breakdown</h3>
+                        <span>Major violation tracking per camera</span>
+                      </div>
+                      <div class="admin-section-body">
+                        <div class="admin-table-wrap">
+                          <div class="table-responsive">
+                            <table class="admin-table">
+                              <thead>
+                                <tr>
+                                  <th>Camera ID</th>
+                                  <th>Location</th>
+                                  <th>Compliance Events</th>
+                                  <th>Non-Compliance Events</th>
+                                  <th>Major Violation</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr>
+                                  <td>ATR-CAM-03</td>
+                                  <td>Tower crane exclusion zone</td>
+                                  <td>128</td>
+                                  <td>36</td>
+                                  <td>Workers under suspended load</td>
+                                </tr>
+                                <tr>
+                                  <td>ATR-CAM-07</td>
+                                  <td>South access scaffold</td>
+                                  <td>164</td>
+                                  <td>29</td>
+                                  <td>Missing harness</td>
+                                </tr>
+                                <tr>
+                                  <td>ATR-CAM-11</td>
+                                  <td>Material loading lane</td>
+                                  <td>147</td>
+                                  <td>21</td>
+                                  <td>Restricted zone entry</td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="admin-section">
+                      <div class="admin-section-hd">
+                        <h3>Zone Risk Analysis</h3>
+                        <span>Repeat incident and zone risk prioritization</span>
+                      </div>
+                      <div class="admin-section-body">
+                        <div class="admin-table-wrap">
+                          <div class="table-responsive">
+                            <table class="admin-table">
+                              <thead>
+                                <tr>
+                                  <th>Zone</th>
+                                  <th>Violations</th>
+                                  <th>Risk Level</th>
+                                  <th>Repeat Incidents</th>
+                                  <th>Remarks</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr>
+                                  <td>Lift corridor A</td>
+                                  <td>42</td>
+                                  <td><span class="admin-pill pill-danger">Critical</span></td>
+                                  <td>11</td>
+                                  <td>Requires restricted access enforcement.</td>
+                                </tr>
+                                <tr>
+                                  <td>Scaffold deck 4</td>
+                                  <td>28</td>
+                                  <td><span class="admin-pill pill-warning">High</span></td>
+                                  <td>7</td>
+                                  <td>Harness compliance improved but remains unstable.</td>
+                                </tr>
+                                <tr>
+                                  <td>Worker gate east</td>
+                                  <td>16</td>
+                                  <td><span class="admin-pill pill-info">Medium</span></td>
+                                  <td>4</td>
+                                  <td>PPE reminders reduced entry violations.</td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="admin-section">
+                    <div class="admin-section-hd">
+                      <h3>Critical Incident Summary</h3>
+                      <span>Escalated high-risk events with action taken</span>
+                    </div>
+                    <div class="admin-section-body">
+                      <div class="admin-table-wrap">
+                        <div class="table-responsive">
+                          <table class="admin-table">
+                            <thead>
+                              <tr>
+                                <th>Time</th>
+                                <th>Camera</th>
+                                <th>Violation</th>
+                                <th>Severity</th>
+                                <th>Action Taken</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td>02 Apr 2026 21:14</td>
+                                <td>ATR-CAM-03</td>
+                                <td>Workers under suspended load</td>
+                                <td><span class="admin-pill pill-danger">Critical</span></td>
+                                <td>Supervisor notified, SMS evidence sent, zone halted.</td>
+                              </tr>
+                              <tr>
+                                <td>05 Apr 2026 20:32</td>
+                                <td>ATR-CAM-07</td>
+                                <td>Missing harness at height</td>
+                                <td><span class="admin-pill pill-danger">Critical</span></td>
+                                <td>Escalated to site lead and night foreman.</td>
+                              </tr>
+                              <tr>
+                                <td>06 Apr 2026 00:18</td>
+                                <td>ATR-CAM-11</td>
+                                <td>Unauthorized restricted zone entry</td>
+                                <td><span class="admin-pill pill-warning">High</span></td>
+                                <td>Audio intervention followed by customer email.</td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="tab-pane fade" id="pane-tag" role="tabpanel" aria-labelledby="tab-tag">
+              <div class="admin-section">
+                <div class="admin-section-hd">
+                  <h2>Safety Tag Analytics Report</h2>
+                  <span>Violation classification, severity analytics, repeat trends, and root cause analysis</span>
+                </div>
+                <div class="admin-section-body">
+                  <div class="admin-section">
+                    <div class="admin-section-hd">
+                      <h3>Supported Safety Tags</h3>
+                      <span>Configured safety classifications</span>
+                    </div>
+                    <div class="admin-section-body">
+                      <div class="admin-chip-group">
+                        <span class="admin-chip">Missing Hard Hat</span>
+                        <span class="admin-chip">Missing Safety Vest</span>
+                        <span class="admin-chip">Missing Safety Glasses</span>
+                        <span class="admin-chip">Missing Gloves</span>
+                        <span class="admin-chip">Missing Harness</span>
+                        <span class="admin-chip">Unsafe Ladder Usage</span>
+                        <span class="admin-chip">Restricted Zone Entry</span>
+                        <span class="admin-chip">Unauthorized Entry</span>
+                        <span class="admin-chip">Workers Under Suspended Load</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="admin-section">
+                    <div class="admin-section-hd">
+                      <h3>Tag Summary Dashboard</h3>
+                      <span>Tag count, share, severity, and direction</span>
+                    </div>
+                    <div class="admin-section-body">
+                      <div class="admin-table-wrap">
+                        <div class="table-responsive">
+                          <table class="admin-table">
+                            <thead>
+                              <tr>
+                                <th>Safety Tag</th>
+                                <th>Count</th>
+                                <th>Percentage</th>
+                                <th>Severity</th>
+                                <th>Trend</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td>Missing Hard Hat</td>
+                                <td>314</td>
+                                <td>29.9%</td>
+                                <td><span class="admin-pill pill-warning">High</span></td>
+                                <td class="admin-trend-down">-5.1%</td>
+                              </tr>
+                              <tr>
+                                <td>Missing Safety Vest</td>
+                                <td>248</td>
+                                <td>23.6%</td>
+                                <td><span class="admin-pill pill-warning">High</span></td>
+                                <td class="admin-trend-up">+2.8%</td>
+                              </tr>
+                              <tr>
+                                <td>Unsafe Ladder Usage</td>
+                                <td>109</td>
+                                <td>10.4%</td>
+                                <td><span class="admin-pill pill-danger">Critical</span></td>
+                                <td class="admin-trend-up">+8.7%</td>
+                              </tr>
+                              <tr>
+                                <td>Restricted Zone Entry</td>
+                                <td>172</td>
+                                <td>16.4%</td>
+                                <td><span class="admin-pill pill-danger">Critical</span></td>
+                                <td class="admin-trend-up">+4.3%</td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="admin-dual-grid">
+                    <div class="admin-section">
+                      <div class="admin-section-hd">
+                        <h3>Tag-Wise Incident Analysis</h3>
+                        <span>Occurrence, repeat counts, and active time windows</span>
+                      </div>
+                      <div class="admin-section-body">
+                        <div class="admin-table-wrap">
+                          <div class="table-responsive">
+                            <table class="admin-table">
+                              <thead>
+                                <tr>
+                                  <th>Safety Tag</th>
+                                  <th>Site</th>
+                                  <th>Camera</th>
+                                  <th>Occurrences</th>
+                                  <th>Repeat Count</th>
+                                  <th>Most Active Time</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr>
+                                  <td>Restricted Zone Entry</td>
+                                  <td>Austin Tower Crane Redevelopment</td>
+                                  <td>ATR-CAM-11</td>
+                                  <td>58</td>
+                                  <td>9</td>
+                                  <td>19:00 - 22:00</td>
+                                </tr>
+                                <tr>
+                                  <td>Missing Harness</td>
+                                  <td>Houston Logistics Yard Expansion</td>
+                                  <td>HLY-CAM-04</td>
+                                  <td>43</td>
+                                  <td>6</td>
+                                  <td>06:00 - 08:00</td>
+                                </tr>
+                                <tr>
+                                  <td>Unsafe Ladder Usage</td>
+                                  <td>San Antonio Concrete Batch Plant</td>
+                                  <td>SAC-CAM-02</td>
+                                  <td>31</td>
+                                  <td>5</td>
+                                  <td>16:00 - 18:00</td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="admin-score-card">
+                      <h4>Severity Classification</h4>
+                      <div class="admin-progress-line">
+                        <div class="admin-progress-meta"><span>Critical</span><strong>118 | 11.2%</strong></div>
+                        <div class="progress admin-progress"><div class="progress-bar bg-danger" style="width: 11.2%"></div></div>
+                      </div>
+                      <div class="admin-progress-line">
+                        <div class="admin-progress-meta"><span>High</span><strong>436 | 41.5%</strong></div>
+                        <div class="progress admin-progress"><div class="progress-bar bg-warning" style="width: 41.5%"></div></div>
+                      </div>
+                      <div class="admin-progress-line">
+                        <div class="admin-progress-meta"><span>Medium</span><strong>307 | 29.2%</strong></div>
+                        <div class="progress admin-progress"><div class="progress-bar" style="width: 29.2%"></div></div>
+                      </div>
+                      <div class="admin-progress-line">
+                        <div class="admin-progress-meta"><span>Low</span><strong>190 | 18.1%</strong></div>
+                        <div class="progress admin-progress"><div class="progress-bar bg-success" style="width: 18.1%"></div></div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="admin-section">
+                    <div class="admin-section-hd">
+                      <h3>Root Cause Analysis</h3>
+                      <span>Preventive actions for repeat safety risks</span>
+                    </div>
+                    <div class="admin-section-body">
+                      <div class="admin-table-wrap">
+                        <div class="table-responsive">
+                          <table class="admin-table">
+                            <thead>
+                              <tr>
+                                <th>Safety Tag</th>
+                                <th>Root Cause</th>
+                                <th>Preventive Action</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td>Missing Hard Hat</td>
+                                <td>Contract labor entering via uncontrolled side gate.</td>
+                                <td>Move PPE checkpoint to access gate and enable gate-camera alerts.</td>
+                              </tr>
+                              <tr>
+                                <td>Unsafe Ladder Usage</td>
+                                <td>Improper ladder positioning during material retrieval.</td>
+                                <td>Supervisor toolbox talk and ladder-angle visual markers.</td>
+                              </tr>
+                              <tr>
+                                <td>Restricted Zone Entry</td>
+                                <td>Temporary barriers removed during crane activity.</td>
+                                <td>Deploy monitored hard barriers and mandatory audio warning triggers.</td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="tab-pane fade" id="pane-dayend" role="tabpanel" aria-labelledby="tab-dayend">
+              <div class="admin-section">
+                <div class="admin-section-hd">
+                  <h2>Day-End Summary Report</h2>
+                  <span>Daily violation counts, annotation summary, camera references, and operational insights</span>
+                </div>
+                <div class="admin-section-body">
+                  <div class="admin-section">
+                    <div class="admin-section-hd">
+                      <h3>Daily Summary Dashboard</h3>
+                      <span>Top violations and status at day close</span>
+                    </div>
+                    <div class="admin-section-body">
+                      <div class="admin-table-wrap">
+                        <div class="table-responsive">
+                          <table class="admin-table">
+                            <thead>
+                              <tr>
+                                <th>Violation Type</th>
+                                <th>Count</th>
+                                <th>Severity</th>
+                                <th>Status</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td>Missing Hard Hat</td>
+                                <td>48</td>
+                                <td><span class="admin-pill pill-warning">High</span></td>
+                                <td><span class="admin-pill pill-info">Open trend watch</span></td>
+                              </tr>
+                              <tr>
+                                <td>Missing Safety Vest</td>
+                                <td>35</td>
+                                <td><span class="admin-pill pill-warning">High</span></td>
+                                <td><span class="admin-pill pill-success">Improving</span></td>
+                              </tr>
+                              <tr>
+                                <td>Restricted Zone Entry</td>
+                                <td>19</td>
+                                <td><span class="admin-pill pill-danger">Critical</span></td>
+                                <td><span class="admin-pill pill-danger">Immediate action</span></td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="admin-section">
+                    <div class="admin-section-hd">
+                      <h3>Incident Details</h3>
+                      <span>Camera-wise breakdown with snapshot reference placeholders</span>
+                    </div>
+                    <div class="admin-section-body">
+                      <div class="admin-table-wrap">
+                        <div class="table-responsive">
+                          <table class="admin-table">
+                            <thead>
+                              <tr>
+                                <th>Camera</th>
+                                <th>Time Window</th>
+                                <th>Violation Type</th>
+                                <th>Count</th>
+                                <th>Remarks</th>
+                                <th>Snapshot</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td>ATR-CAM-03</td>
+                                <td>20:00 - 22:00</td>
+                                <td>Workers under suspended load</td>
+                                <td>6</td>
+                                <td>Most incidents clustered during concrete lift rotation.</td>
+                                <td><span class="admin-pill pill-neutral">REF-WSL-203</span></td>
+                              </tr>
+                              <tr>
+                                <td>ATR-CAM-07</td>
+                                <td>18:00 - 20:00</td>
+                                <td>Missing Harness</td>
+                                <td>8</td>
+                                <td>Scaffold access team had repeated fall-protection misses.</td>
+                                <td><span class="admin-pill pill-neutral">REF-HAR-144</span></td>
+                              </tr>
+                              <tr>
+                                <td>ATR-CAM-11</td>
+                                <td>23:00 - 00:30</td>
+                                <td>Restricted Zone Entry</td>
+                                <td>5</td>
+                                <td>Forklift diversion caused repeated barrier breaches.</td>
+                                <td><span class="admin-pill pill-neutral">REF-RZE-092</span></td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="admin-dual-grid">
+                    <div class="admin-section">
+                      <div class="admin-section-hd">
+                        <h3>Annotation Summary</h3>
+                        <span>Compliance versus violation volume</span>
+                      </div>
+                      <div class="admin-section-body">
+                        <div class="admin-table-wrap">
+                          <div class="table-responsive">
+                            <table class="admin-table">
+                              <thead>
+                                <tr>
+                                  <th>Category</th>
+                                  <th>Count</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr>
+                                  <td>Compliance</td>
+                                  <td>1,789</td>
+                                </tr>
+                                <tr>
+                                  <td>Non-Compliance</td>
+                                  <td>153</td>
+                                </tr>
+                                <tr>
+                                  <td>Total Violations</td>
+                                  <td>153</td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="admin-section">
+                      <div class="admin-section-hd">
+                        <h3>Operational Intelligence</h3>
+                        <span>Day-end site activity findings</span>
+                      </div>
+                      <div class="admin-section-body">
+                        <div class="admin-table-wrap">
+                          <div class="table-responsive">
+                            <table class="admin-table">
+                              <thead>
+                                <tr>
+                                  <th>Observation</th>
+                                  <th>Impact</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr>
+                                  <td>Early shutdown</td>
+                                  <td>Reduced worker density after 01:00 lowered PPE violation volume.</td>
+                                </tr>
+                                <tr>
+                                  <td>Weather delay</td>
+                                  <td>High winds paused lift operations but increased waiting-area crowding.</td>
+                                </tr>
+                                <tr>
+                                  <td>Equipment idle time</td>
+                                  <td>Loader idle stretch created unsupervised access to material lane.</td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="tab-pane fade" id="pane-weekly" role="tabpanel" aria-labelledby="tab-weekly">
+              <div class="admin-section">
+                <div class="admin-section-hd">
+                  <h2>Weekly Safety Intelligence Report</h2>
+                  <span>Trend analysis, repeat violations, comparative metrics, and corrective actions</span>
+                </div>
+                <div class="admin-section-body">
+                  <div class="admin-section">
+                    <div class="admin-section-hd">
+                      <h3>Weekly KPI Dashboard</h3>
+                      <span>Current week compared with the previous week</span>
+                    </div>
+                    <div class="admin-section-body">
+                      <div class="admin-table-wrap">
+                        <div class="table-responsive">
+                          <table class="admin-table">
+                            <thead>
+                              <tr>
+                                <th>KPI</th>
+                                <th>Current Week</th>
+                                <th>Previous Week</th>
+                                <th>Trend</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td>Total Violations</td>
+                                <td>1,051</td>
+                                <td>1,098</td>
+                                <td class="admin-trend-down">-4.3%</td>
+                              </tr>
+                              <tr>
+                                <td>Compliance %</td>
+                                <td>91.8%</td>
+                                <td>90.1%</td>
+                                <td class="admin-trend-up">+1.7 pts</td>
+                              </tr>
+                              <tr>
+                                <td>Notifications Sent</td>
+                                <td>742</td>
+                                <td>667</td>
+                                <td class="admin-trend-up">+11.3%</td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="admin-dual-grid">
+                    <div class="admin-section">
+                      <div class="admin-section-hd">
+                        <h3>Violation Trend Analysis</h3>
+                        <span>Daily violation volume across the week</span>
+                      </div>
+                      <div class="admin-section-body">
+                        <div class="admin-trend-chart">
+                          <div class="admin-trend-row"><span>Monday</span><div class="admin-trend-bar"><div class="admin-trend-fill" style="width: 72%"></div></div><strong>148</strong></div>
+                          <div class="admin-trend-row"><span>Tuesday</span><div class="admin-trend-bar"><div class="admin-trend-fill" style="width: 84%"></div></div><strong>171</strong></div>
+                          <div class="admin-trend-row"><span>Wednesday</span><div class="admin-trend-bar"><div class="admin-trend-fill" style="width: 68%"></div></div><strong>139</strong></div>
+                          <div class="admin-trend-row"><span>Thursday</span><div class="admin-trend-bar"><div class="admin-trend-fill" style="width: 100%"></div></div><strong>203</strong></div>
+                          <div class="admin-trend-row"><span>Friday</span><div class="admin-trend-bar"><div class="admin-trend-fill" style="width: 90%"></div></div><strong>183</strong></div>
+                          <div class="admin-trend-row"><span>Saturday</span><div class="admin-trend-bar"><div class="admin-trend-fill" style="width: 61%"></div></div><strong>125</strong></div>
+                          <div class="admin-trend-row"><span>Sunday</span><div class="admin-trend-bar"><div class="admin-trend-fill" style="width: 40%"></div></div><strong>82</strong></div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="admin-score-card">
+                      <h4>Corrective Action Readiness</h4>
+                      <div class="admin-progress-line">
+                        <div class="admin-progress-meta"><span>Barrier compliance</span><strong>81%</strong></div>
+                        <div class="progress admin-progress"><div class="progress-bar" style="width: 81%"></div></div>
+                      </div>
+                      <div class="admin-progress-line">
+                        <div class="admin-progress-meta"><span>PPE awareness</span><strong>76%</strong></div>
+                        <div class="progress admin-progress"><div class="progress-bar bg-warning" style="width: 76%"></div></div>
+                      </div>
+                      <div class="admin-progress-line">
+                        <div class="admin-progress-meta"><span>Escalation closure</span><strong>93%</strong></div>
+                        <div class="progress admin-progress"><div class="progress-bar bg-success" style="width: 93%"></div></div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="admin-dual-grid">
+                    <div class="admin-section">
+                      <div class="admin-section-hd">
+                        <h3>Repeat Violation Analysis</h3>
+                        <span>Areas and recommendations for intervention</span>
+                      </div>
+                      <div class="admin-section-body">
+                        <div class="admin-table-wrap">
+                          <div class="table-responsive">
+                            <table class="admin-table">
+                              <thead>
+                                <tr>
+                                  <th>Area</th>
+                                  <th>Violation Type</th>
+                                  <th>Frequency</th>
+                                  <th>Recommendation</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr>
+                                  <td>Lift corridor A</td>
+                                  <td>Restricted Zone Entry</td>
+                                  <td>11</td>
+                                  <td>Add monitored hard barrier with after-hours alerts.</td>
+                                </tr>
+                                <tr>
+                                  <td>Scaffold deck 4</td>
+                                  <td>Missing Harness</td>
+                                  <td>7</td>
+                                  <td>Supervisor sign-off before elevated work starts.</td>
+                                </tr>
+                                <tr>
+                                  <td>Worker gate east</td>
+                                  <td>Missing Hard Hat</td>
+                                  <td>6</td>
+                                  <td>Move PPE issuance point to entry checkpoint.</td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="admin-section">
+                      <div class="admin-section-hd">
+                        <h3>Top Risk Areas</h3>
+                        <span>Highest zone scores this week</span>
+                      </div>
+                      <div class="admin-section-body">
+                        <div class="admin-table-wrap">
+                          <div class="table-responsive">
+                            <table class="admin-table">
+                              <thead>
+                                <tr>
+                                  <th>Area</th>
+                                  <th>Violation Type</th>
+                                  <th>Risk Score</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr>
+                                  <td>Tower crane exclusion zone</td>
+                                  <td>Workers under suspended load</td>
+                                  <td><span class="admin-pill pill-danger">92</span></td>
+                                </tr>
+                                <tr>
+                                  <td>Temporary scaffold deck 4</td>
+                                  <td>Missing Harness</td>
+                                  <td><span class="admin-pill pill-danger">86</span></td>
+                                </tr>
+                                <tr>
+                                  <td>Material loading lane</td>
+                                  <td>Restricted Zone Entry</td>
+                                  <td><span class="admin-pill pill-warning">75</span></td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="tab-pane fade" id="pane-forensic" role="tabpanel" aria-labelledby="tab-forensic">
+              <div class="admin-section">
+                <div class="admin-section-hd">
+                  <h2>Forensic Incident Reporting</h2>
+                  <span>Incident packet readiness for investigation, evidence review, and historical retrieval</span>
+                </div>
+                <div class="admin-section-body">
+                  <div class="admin-mini-kpis mb-3">
+                    <div class="admin-mini-kpi"><small>Open Cases</small><strong>12</strong></div>
+                    <div class="admin-mini-kpi"><small>Evidence Packets</small><strong>29</strong></div>
+                    <div class="admin-mini-kpi"><small>Video References</small><strong>86</strong></div>
+                    <div class="admin-mini-kpi"><small>Snapshot Links</small><strong>214</strong></div>
+                    <div class="admin-mini-kpi"><small>Customer Requests</small><strong>7</strong></div>
+                    <div class="admin-mini-kpi"><small>Avg Retrieval Time</small><strong>03:18</strong></div>
+                  </div>
+
+                  <div class="admin-section">
+                    <div class="admin-section-hd">
+                      <h3>Incident Case Register</h3>
+                      <span>Forensic-ready record of escalated incidents</span>
+                    </div>
+                    <div class="admin-section-body">
+                      <div class="admin-table-wrap">
+                        <div class="table-responsive">
+                          <table class="admin-table">
+                            <thead>
+                              <tr>
+                                <th>Case ID</th>
+                                <th>Site</th>
+                                <th>Incident Type</th>
+                                <th>Event Time</th>
+                                <th>Evidence Set</th>
+                                <th>Status</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td>FR-2061</td>
+                                <td>Austin Tower Crane Redevelopment</td>
+                                <td>Workers under suspended load</td>
+                                <td>02 Apr 2026 21:14</td>
+                                <td>Video, snapshots, notifications, escalation notes</td>
+                                <td><span class="admin-pill pill-danger">Under review</span></td>
+                              </tr>
+                              <tr>
+                                <td>FR-2054</td>
+                                <td>Houston Logistics Yard Expansion</td>
+                                <td>Unauthorized entry after shift</td>
+                                <td>05 Apr 2026 01:42</td>
+                                <td>Video, access log, SMS confirmation</td>
+                                <td><span class="admin-pill pill-warning">Customer shared</span></td>
+                              </tr>
+                              <tr>
+                                <td>FR-2049</td>
+                                <td>San Antonio Concrete Batch Plant</td>
+                                <td>Restricted zone breach</td>
+                                <td>06 Apr 2026 23:05</td>
+                                <td>Snapshots, analyst notes, case timeline</td>
+                                <td><span class="admin-pill pill-success">Closed</span></td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="admin-dual-grid">
+                    <div class="admin-section">
+                      <div class="admin-section-hd">
+                        <h3>Evidence Timeline</h3>
+                        <span>Linked artifacts available in the incident packet</span>
+                      </div>
+                      <div class="admin-section-body">
+                        <div class="admin-table-wrap">
+                          <div class="table-responsive">
+                            <table class="admin-table">
+                              <thead>
+                                <tr>
+                                  <th>Timestamp</th>
+                                  <th>Artifact</th>
+                                  <th>Reference</th>
+                                  <th>Owner</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr>
+                                  <td>21:14:03</td>
+                                  <td>Primary event snapshot</td>
+                                  <td>SNAP-88421</td>
+                                  <td>L1 analyst</td>
+                                </tr>
+                                <tr>
+                                  <td>21:14:26</td>
+                                  <td>Escalation note</td>
+                                  <td>ESC-11892</td>
+                                  <td>Supervisor</td>
+                                </tr>
+                                <tr>
+                                  <td>21:15:01</td>
+                                  <td>SMS delivery receipt</td>
+                                  <td>NTF-53014</td>
+                                  <td>Notification service</td>
+                                </tr>
+                                <tr>
+                                  <td>21:16:40</td>
+                                  <td>Video evidence clip</td>
+                                  <td>VID-73098</td>
+                                  <td>Forensic reviewer</td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="admin-score-card">
+                      <h4>Forensic Packet Contents</h4>
+                      <div class="admin-progress-line">
+                        <div class="admin-progress-meta"><span>Snapshot references attached</span><strong>100%</strong></div>
+                        <div class="progress admin-progress"><div class="progress-bar bg-success" style="width: 100%"></div></div>
+                      </div>
+                      <div class="admin-progress-line">
+                        <div class="admin-progress-meta"><span>Notification trail available</span><strong>92%</strong></div>
+                        <div class="progress admin-progress"><div class="progress-bar" style="width: 92%"></div></div>
+                      </div>
+                      <div class="admin-progress-line">
+                        <div class="admin-progress-meta"><span>Analyst annotation completeness</span><strong>96%</strong></div>
+                        <div class="progress admin-progress"><div class="progress-bar bg-success" style="width: 96%"></div></div>
+                      </div>
+                      <div class="admin-progress-line">
+                        <div class="admin-progress-meta"><span>Customer export readiness</span><strong>88%</strong></div>
+                        <div class="progress admin-progress"><div class="progress-bar bg-warning" style="width: 88%"></div></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="tab-pane fade" id="pane-notify" role="tabpanel" aria-labelledby="tab-notify">
+              <div class="admin-section">
+                <div class="admin-section-hd">
+                  <h2>Real-Time Notification Report</h2>
+                  <span>Track customer communication, evidence references, timestamps, and delivery status</span>
+                </div>
+                <div class="admin-section-body">
+                  <div class="admin-mini-kpis mb-3">
+                    <div class="admin-mini-kpi"><small>Total Notifications</small><strong>742</strong></div>
+                    <div class="admin-mini-kpi"><small>SMS Share</small><strong>39%</strong></div>
+                    <div class="admin-mini-kpi"><small>Email Share</small><strong>61%</strong></div>
+                    <div class="admin-mini-kpi"><small>Delivery Success</small><strong>98.4%</strong></div>
+                    <div class="admin-mini-kpi"><small>Evidence Linked</small><strong>731</strong></div>
+                    <div class="admin-mini-kpi"><small>Pending Retries</small><strong>5</strong></div>
+                  </div>
+
+                  <div class="admin-table-wrap">
+                    <div class="table-responsive">
+                      <table class="admin-table">
+                        <thead>
+                          <tr>
+                            <th>Timestamp</th>
+                            <th>Site</th>
+                            <th>Violation</th>
+                            <th>Notification Type</th>
+                            <th>Recipient</th>
+                            <th>Delivery Status</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>07 Apr 2026 00:18</td>
+                            <td>Austin Tower Crane Redevelopment</td>
+                            <td>Restricted Zone Entry</td>
+                            <td>SMS</td>
+                            <td>Night Supervisor</td>
+                            <td><span class="admin-pill pill-success">Delivered</span></td>
+                          </tr>
+                          <tr>
+                            <td>06 Apr 2026 20:32</td>
+                            <td>Austin Tower Crane Redevelopment</td>
+                            <td>Missing Harness</td>
+                            <td>Email</td>
+                            <td>Site Lead Distribution</td>
+                            <td><span class="admin-pill pill-success">Delivered</span></td>
+                          </tr>
+                          <tr>
+                            <td>05 Apr 2026 18:07</td>
+                            <td>Houston Logistics Yard Expansion</td>
+                            <td>Workers Under Suspended Load</td>
+                            <td>SMS / Email</td>
+                            <td>Operations Duty Manager</td>
+                            <td><span class="admin-pill pill-warning">Retried</span></td>
+                          </tr>
+                          <tr>
+                            <td>05 Apr 2026 17:42</td>
+                            <td>San Antonio Concrete Batch Plant</td>
+                            <td>Missing Hard Hat</td>
+                            <td>Email</td>
+                            <td>Customer Admin</td>
+                            <td><span class="admin-pill pill-success">Delivered</span></td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <aside class="admin-sidebar-stack">
+          <section class="admin-side-card">
+            <div class="admin-side-head">Report Configuration</div>
+            <div class="admin-side-body">
+              <ul class="admin-side-list">
+                <li>
+                  <span class="admin-side-label">Stored records</span>
+                  <span class="admin-side-value">Historical report retrieval enabled</span>
+                </li>
+                <li>
+                  <span class="admin-side-label">Exports</span>
+                  <span class="admin-side-value">PDF, Excel, CSV, and scheduled email delivery</span>
+                </li>
+                <li>
+                  <span class="admin-side-label">Data scope</span>
+                  <span class="admin-side-value">Observation data, agent activity, tag analytics, and notification logs</span>
+                </li>
+                <li>
+                  <span class="admin-side-label">Customer configuration</span>
+                  <span class="admin-side-value">Site-specific report profiles and role-based access</span>
+                </li>
+              </ul>
+            </div>
+          </section>
+
+          <section class="admin-side-card">
+            <div class="admin-side-head">Role Access Matrix</div>
+            <div class="admin-side-body">
+              <ul class="admin-side-list">
+                <li><span class="admin-side-label">L1 Analyst</span><span class="admin-side-value">View assigned reports</span></li>
+                <li><span class="admin-side-label">Team Lead</span><span class="admin-side-value">View team reports</span></li>
+                <li><span class="admin-side-label">Customer Success</span><span class="admin-side-value">View customer reports</span></li>
+                <li><span class="admin-side-label">Operations Manager</span><span class="admin-side-value">View enterprise reports</span></li>
+                <li><span class="admin-side-label">Customer Admin</span><span class="admin-side-value">View site reports</span></li>
+              </ul>
+            </div>
+          </section>
+
+          <section class="admin-side-card">
+            <div class="admin-side-head">Forensic Readiness</div>
+            <div class="admin-side-body">
+              <div class="admin-callout">
+                <h4>Incident evidence packet</h4>
+                <p class="mb-2">Prepared bundle can include escalation notes, snapshot references, notification logs, camera metadata, and timeline exports for investigations.</p>
+                <button type="button" class="btn btn-sm btn-admin-primary w-100 js-demo-action" data-demo-message="Forensic packet prepared with evidence references.">Prepare forensic packet</button>
+              </div>
+            </div>
+          </section>
+
+          <section class="admin-side-card">
+            <div class="admin-side-head">Acceptance Snapshot</div>
+            <div class="admin-side-body">
+              <ul class="admin-side-list">
+                <li><span class="admin-side-label">Generation status</span><span class="admin-side-value">All report templates render successfully</span></li>
+                <li><span class="admin-side-label">KPI calculations</span><span class="admin-side-value">Executive totals aligned with weekly and daily views</span></li>
+                <li><span class="admin-side-label">Filters</span><span class="admin-side-value">Site, shift, report type, and timezone selectors in place</span></li>
+                <li><span class="admin-side-label">Export readiness</span><span class="admin-side-value">PDF, Excel, CSV, and email delivery surfaced in UI</span></li>
+              </ul>
+            </div>
+          </section>
+        </aside>
+      </section>
+
+      <div class="admin-footer-note">
+        Static UI preview for the Reporting Module. Layout is aligned to the reference admin style and embeds the report templates described in the functional specification.
+      </div>
+    </div>
+  </main>
+
+  <div class="modal fade" id="scheduleReportModal" tabindex="-1" aria-labelledby="scheduleReportModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header admin-modal-head">
+          <h2 class="modal-title fs-6" id="scheduleReportModalLabel">Schedule Email Delivery</h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="admin-modal-meta">
+            <div class="form-floating">
+              <select class="form-select" id="scheduleFrequency">
+                <option>Daily</option>
+                <option selected>Weekly</option>
+                <option>Monthly</option>
+              </select>
+              <label for="scheduleFrequency">Frequency</label>
+            </div>
+            <div class="form-floating">
+              <select class="form-select" id="scheduleFormat">
+                <option selected>PDF + Excel</option>
+                <option>PDF</option>
+                <option>Excel</option>
+                <option>CSV</option>
+              </select>
+              <label for="scheduleFormat">Export Format</label>
+            </div>
+            <div class="form-floating">
+              <input type="text" class="form-control" id="scheduleRecipients" placeholder=" " value="ops@buildright.com; safetylead@buildright.com" />
+              <label for="scheduleRecipients">Recipients</label>
+            </div>
+            <div class="form-floating">
+              <input type="text" class="form-control" id="scheduleTime" placeholder=" " value="08:00 CT every Monday" />
+              <label for="scheduleTime">Delivery Window</label>
+            </div>
+          </div>
+          <p class="mb-0 text-muted small">Use scheduled delivery for day-end summaries, weekly safety intelligence, and customer-facing operational intelligence reports.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-admin-outline" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-admin-primary js-demo-action" data-demo-message="Scheduled email delivery saved." data-bs-dismiss="modal">Save schedule</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="historyModal" tabindex="-1" aria-labelledby="historyModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header admin-modal-head">
+          <h2 class="modal-title fs-6" id="historyModalLabel">Historical Report Retrieval</h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="admin-table-wrap">
+            <div class="table-responsive">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Report ID</th>
+                    <th>Report Type</th>
+                    <th>Customer</th>
+                    <th>Period</th>
+                    <th>Generated On</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>RPT-240781</td>
+                    <td>Weekly Safety Intelligence</td>
+                    <td>BuildRight Infrastructure</td>
+                    <td>01 Apr - 07 Apr</td>
+                    <td>07 Apr 2026 08:00</td>
+                    <td><span class="admin-pill pill-success">Available</span></td>
+                  </tr>
+                  <tr>
+                    <td>RPT-240732</td>
+                    <td>Day-End Summary</td>
+                    <td>Houston Logistics Yard</td>
+                    <td>06 Apr 2026</td>
+                    <td>07 Apr 2026 00:10</td>
+                    <td><span class="admin-pill pill-success">Available</span></td>
+                  </tr>
+                  <tr>
+                    <td>RPT-240699</td>
+                    <td>L1 Monitoring Activity</td>
+                    <td>Enterprise Queue</td>
+                    <td>Night Shift</td>
+                    <td>06 Apr 2026 03:20</td>
+                    <td><span class="admin-pill pill-info">Archived</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-admin-outline" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-admin-primary js-demo-action" data-demo-message="Selected historical report opened in preview mode." data-bs-dismiss="modal">Open selected report</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="adminToast" class="position-fixed bottom-0 start-50 translate-middle-x mb-3 px-3 py-2 rounded shadow text-white" style="z-index: 9999; display: none; background: #155b75; font-size: 0.9rem;"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    (function () {
+      var toast = document.getElementById('adminToast');
+
+      function showToast(message) {
+        if (!toast) return;
+        toast.textContent = message;
+        toast.style.display = 'block';
+        clearTimeout(showToast._timer);
+        showToast._timer = setTimeout(function () {
+          toast.style.display = 'none';
+        }, 2600);
+      }
+
+      document.querySelectorAll('.js-demo-action').forEach(function (button) {
+        button.addEventListener('click', function () {
+          showToast(button.getAttribute('data-demo-message') || 'Action completed.');
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

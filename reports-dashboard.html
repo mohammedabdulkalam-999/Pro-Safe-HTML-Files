@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PRO-SAFE ADMIN — Reports Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    :root {
+      --admin-teal: #155b75;
+      --admin-teal-hover: #1a6f8f;
+      --admin-teal-dark: #0d4458;
+      --admin-border: #c5ced4;
+      --admin-text: #2c3e45;
+      --admin-muted: #5c6a72;
+    }
+    body {
+      margin: 0;
+      font-family: Roboto, system-ui, -apple-system, sans-serif;
+      font-size: 14px;
+      color: var(--admin-text);
+      background: #fff;
+      min-height: 100vh;
+    }
+
+    /* —— Top nav —— */
+    .admin-topnav {
+      background: var(--admin-teal);
+      color: #fff;
+      padding: 0 1rem;
+      min-height: 52px;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .admin-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      flex-shrink: 0;
+    }
+    .admin-brand svg { flex-shrink: 0; }
+    .admin-brand-text {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.05;
+    }
+    .admin-brand-text strong {
+      font-size: 0.95rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+    .admin-brand-text span {
+      font-size: 0.68rem;
+      font-weight: 600;
+      opacity: 0.92;
+      letter-spacing: 0.12em;
+    }
+    .admin-divider {
+      width: 1px;
+      height: 28px;
+      background: rgba(255, 255, 255, 0.35);
+      flex-shrink: 0;
+    }
+    .admin-breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.875rem;
+      color: rgba(255, 255, 255, 0.95);
+      flex-shrink: 0;
+    }
+    .admin-breadcrumb a {
+      color: #fff;
+      text-decoration: none;
+    }
+    .admin-breadcrumb a:hover { text-decoration: underline; }
+    .admin-breadcrumb .admin-crumb-current {
+      text-decoration: underline;
+    }
+    .admin-more-dots {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.2rem;
+      color: #fff;
+      opacity: 0.95;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      border-radius: 4px;
+    }
+    .admin-more-dots:hover { background: rgba(0, 0, 0, 0.1); }
+    .admin-search-wrap {
+      flex: 1 1 220px;
+      max-width: 520px;
+      margin: 0 auto;
+      min-width: 160px;
+    }
+    .admin-search-pill {
+      display: flex;
+      align-items: center;
+      background: #fff;
+      border-radius: 999px;
+      padding: 0.2rem 0.65rem 0.2rem 1rem;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+    }
+    .admin-search-pill input {
+      border: none;
+      flex: 1;
+      min-width: 0;
+      font-size: 0.8125rem;
+      padding: 0.35rem 0;
+      outline: none;
+      color: var(--admin-text);
+    }
+    .admin-search-pill input::placeholder { color: #8896a0; }
+    .admin-search-pill button {
+      border: none;
+      background: transparent;
+      color: var(--admin-muted);
+      padding: 0.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+    .admin-nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.15rem;
+      flex-wrap: wrap;
+      margin-left: auto;
+    }
+    .admin-nav-dd .btn {
+      color: #fff !important;
+      font-size: 0.8125rem;
+      font-weight: 500;
+      padding: 0.4rem 0.55rem;
+      border: none;
+      background: transparent;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+    .admin-nav-dd .btn:hover,
+    .admin-nav-dd .btn.show {
+      background: rgba(0, 0, 0, 0.12);
+      color: #fff !important;
+    }
+    .admin-nav-dd .dropdown-menu { font-size: 0.8125rem; }
+    .admin-user-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-left: 0.25rem;
+      padding-left: 0.5rem;
+      border-left: 1px solid rgba(255, 255, 255, 0.35);
+    }
+    .admin-user-ico {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+    }
+    .admin-ver {
+      font-size: 0.75rem;
+      opacity: 0.95;
+      white-space: nowrap;
+    }
+
+    /* —— Sub-header —— */
+    .admin-subbar {
+      background: #fff;
+      border-bottom: none;
+      padding: 0 1rem;
+      display: flex;
+      align-items: flex-end;
+      gap: 0;
+      min-height: 46px;
+    }
+    .admin-tab-active {
+      background: var(--admin-teal);
+      color: #fff;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      padding: 0.5rem 1.15rem 0.55rem;
+      border-radius: 8px 8px 0 0;
+      margin-bottom: -1px;
+      border: 1px solid var(--admin-teal);
+      border-bottom-color: var(--admin-teal);
+    }
+    .admin-tab-context {
+      font-size: 0.9375rem;
+      font-weight: 500;
+      color: var(--admin-muted);
+      padding: 0.5rem 0.75rem 0.65rem;
+    }
+
+    /* —— Content —— */
+    .admin-page {
+      padding: 1rem 1.25rem 2rem;
+      max-width: 100%;
+      background: #f3f5f7;
+      min-height: calc(100vh - 52px);
+      box-sizing: border-box;
+    }
+    .admin-shell {
+      background: #fff;
+      border: none;
+      border-radius: 6px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.07);
+      overflow: hidden;
+    }
+    .admin-filter-panel {
+      border: none;
+      border-radius: 4px;
+      padding: 1rem 1.25rem 1.15rem;
+      margin-bottom: 1rem;
+      background: #fff;
+    }
+    .admin-filter-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      gap: 0.75rem 1rem;
+    }
+    .admin-field-grow {
+      flex: 1 1 280px;
+      min-width: 200px;
+      max-width: 520px;
+    }
+    .admin-field-tz {
+      flex: 0 0 200px;
+      min-width: 160px;
+      margin-left: auto;
+    }
+    .form-floating > label { color: var(--admin-muted); font-size: 0.8125rem; }
+    .form-control, .form-select {
+      border-color: var(--admin-border);
+      font-size: 0.875rem;
+    }
+    .form-control:focus, .form-select:focus {
+      border-color: var(--admin-teal);
+      box-shadow: 0 0 0 0.2rem rgba(21, 91, 117, 0.18);
+    }
+    .admin-search-with-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .admin-search-with-btn .form-floating {
+      margin-bottom: 0;
+    }
+    .admin-btn-search {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: none;
+      background: var(--admin-teal);
+      color: #fff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      cursor: pointer;
+      transition: background 0.15s;
+      align-self: center;
+    }
+    .admin-btn-search:hover {
+      background: var(--admin-teal-hover);
+      color: #fff;
+    }
+
+    /* —— Table —— */
+    .admin-table-wrap {
+      border: none;
+      border-radius: 4px;
+      overflow: hidden;
+      background: #fff;
+    }
+    .admin-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8125rem;
+    }
+    .admin-table thead th {
+      background: var(--admin-teal);
+      color: #fff;
+      font-weight: 600;
+      text-align: left;
+      padding: 0.65rem 0.75rem;
+      white-space: nowrap;
+      border: none;
+    }
+    .admin-table tbody td {
+      padding: 0.75rem 0.75rem;
+      border: none;
+      vertical-align: middle;
+      line-height: 1.4;
+    }
+    .admin-table tbody tr:nth-child(even) { background: #fafbfc; }
+    .admin-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      flex-wrap: nowrap;
+    }
+    .admin-icon-btn {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      border: none;
+      background: var(--admin-teal);
+      color: #fff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      padding: 0;
+      flex-shrink: 0;
+      transition: background 0.15s;
+    }
+    .admin-icon-btn:hover {
+      background: var(--admin-teal-hover);
+      color: #fff;
+    }
+    .admin-icon-btn svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    /* —— Footer —— */
+    .admin-table-foot {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      padding: 0.65rem 1rem;
+      border-top: none;
+      background: #fff;
+      font-size: 0.8125rem;
+      color: var(--admin-muted);
+    }
+    .admin-per-page {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .admin-per-page select {
+      width: auto;
+      min-width: 4.5rem;
+      font-size: 0.8125rem;
+      padding: 0.25rem 2rem 0.25rem 0.5rem;
+    }
+    .admin-pager {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+    }
+    .admin-pager-arrows {
+      display: flex;
+      gap: 0.25rem;
+    }
+    .admin-pager-arrows button {
+      border: 1px solid var(--admin-border);
+      background: #f4f6f8;
+      color: #9aa5ad;
+      width: 28px;
+      height: 28px;
+      border-radius: 4px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: not-allowed;
+      padding: 0;
+    }
+    .admin-pager-arrows button:not(:disabled) {
+      cursor: pointer;
+      color: var(--admin-text);
+      background: #fff;
+    }
+    .admin-pager-arrows button:not(:disabled):hover {
+      background: #eef2f5;
+      border-color: #b8c4cc;
+    }
+
+    /* —— Escalation details modal —— */
+    .escal-modal .modal-dialog {
+      max-width: min(96vw, 1400px);
+      margin: 1rem auto;
+    }
+    .escal-modal-content {
+      border: none;
+      border-radius: 6px;
+      overflow: hidden;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+    }
+    .escal-modal-hd {
+      background: var(--admin-teal);
+      color: #fff;
+      border-bottom: none;
+      padding: 0.65rem 1rem;
+      flex-wrap: nowrap;
+      gap: 0.75rem;
+    }
+    .escal-modal-hd .modal-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      line-height: 1.35;
+      flex: 1;
+      min-width: 0;
+    }
+    .escal-modal-hd .btn-close {
+      flex-shrink: 0;
+      opacity: 1;
+    }
+    .escal-tabs {
+      border-bottom: 1px solid var(--admin-border);
+      padding: 0 0.75rem;
+      gap: 0;
+      flex-wrap: nowrap;
+    }
+    .escal-tabs .nav-link {
+      color: var(--admin-muted);
+      font-size: 0.8125rem;
+      font-weight: 500;
+      border: none;
+      border-radius: 0;
+      padding: 0.65rem 0.9rem;
+      background: transparent;
+    }
+    .escal-tabs .nav-link:hover {
+      color: var(--admin-teal);
+      border-color: transparent;
+    }
+    .escal-tabs .nav-link.active {
+      color: #1565c0;
+      font-weight: 600;
+      border: none;
+      border-bottom: 3px solid #1565c0;
+      margin-bottom: -1px;
+      background: transparent;
+    }
+    .escal-modal-body-inner {
+      padding: 1rem 1rem 1.25rem;
+      background: #fff;
+    }
+    .escal-tz-wrap {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+      margin-bottom: 1rem;
+    }
+    .escal-tz-box {
+      border: 1px solid var(--admin-border);
+      border-radius: 4px;
+      padding: 0.75rem 1.5rem 0.9rem;
+      background: #fff;
+      box-sizing: border-box;
+      width: min(100%, 920px);
+      max-width: 100%;
+      text-align: center;
+    }
+    .escal-tz-box h3 {
+      font-size: 0.8125rem;
+      font-weight: 600;
+      margin: 0 0 0.65rem;
+      padding: 0;
+      color: var(--admin-text);
+      line-height: 1.3;
+      text-align: center;
+    }
+    .escal-tz-options {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem 1.75rem;
+    }
+    .escal-tz-box .form-check {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      min-height: 0;
+      padding-left: 0;
+      margin: 0;
+    }
+    .escal-tz-box .form-check-input {
+      float: none;
+      margin: 0;
+      position: static;
+      flex-shrink: 0;
+      width: 1rem;
+      height: 1rem;
+      vertical-align: middle;
+    }
+    .escal-tz-box .form-check-label {
+      margin: 0;
+      padding: 0;
+      line-height: 1.3;
+      cursor: pointer;
+    }
+    .escal-tz-box .form-check-input:checked {
+      background-color: #c2185b;
+      border-color: #c2185b;
+    }
+    .escal-detail-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.75rem;
+    }
+    .escal-detail-table thead th {
+      background: var(--admin-teal);
+      color: #fff;
+      font-weight: 600;
+      text-align: left;
+      padding: 0.5rem 0.45rem;
+      border: none;
+      white-space: nowrap;
+    }
+    .escal-detail-table tbody td {
+      padding: 0.5rem 0.45rem;
+      border: none;
+      vertical-align: middle;
+      line-height: 1.35;
+      text-align: center;
+    }
+    .escal-detail-table tbody td:first-child,
+    .escal-detail-table tbody td:nth-child(11) {
+      text-align: left;
+    }
+    .escal-detail-table tbody tr {
+      background: #fff;
+    }
+    .escal-detail-table tbody tr:nth-child(even) {
+      background: #fafbfc;
+    }
+    .escal-detail-table tbody tr.escal-row-highlight {
+      background: #e8f5c8;
+    }
+    .escal-detail-table .escal-action-link {
+      color: #1565c0;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .escal-detail-table .escal-action-link:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <nav class="admin-topnav" aria-label="Primary">
+    <div class="admin-brand">
+      <svg width="30" height="34" viewBox="0 0 30 34" fill="none" aria-hidden="true">
+        <path d="M15 1.5L3.5 7.2v10.1c0 6.8 5 13.2 11.5 14.7 6.5-1.5 11.5-7.9 11.5-14.7V7.2L15 1.5z" fill="#fff" fill-opacity=".96"/>
+        <path d="M15 5.8L7.2 9.8v7.4c0 4.4 3.2 8.5 7.8 9.7 4.6-1.2 7.8-5.3 7.8-9.7V9.8L15 5.8z" fill="var(--admin-teal-dark)"/>
+        <path d="M15 11.5c-1.6 0-2.8 1.2-2.8 2.7 0 1 .5 1.8 1.3 2.2v3.2h3v-3.2c.8-.4 1.3-1.2 1.3-2.2 0-1.5-1.2-2.7-2.8-2.7z" fill="#fff"/>
+      </svg>
+      <div class="admin-brand-text">
+        <strong>PRO-SAFE</strong>
+        <span>ADMIN</span>
+      </div>
+    </div>
+    <div class="admin-divider" aria-hidden="true"></div>
+    <div class="admin-breadcrumb">
+      <button type="button" class="admin-more-dots" aria-label="More options">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
+      </button>
+      <a href="#" aria-label="Home">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8h5z"/></svg>
+      </a>
+      <span aria-hidden="true">&gt;</span>
+      <a href="#" class="admin-crumb-current">Reports Dashboard</a>
+    </div>
+    <div class="admin-search-wrap">
+      <div class="admin-search-pill">
+        <input type="search" placeholder="Search By Site Details" aria-label="Search by site details" />
+        <button type="button" aria-label="Search">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="admin-nav-actions">
+      <div class="dropdown admin-nav-dd">
+        <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">View</button>
+        <ul class="dropdown-menu dropdown-menu-end"><li><a class="dropdown-item" href="#">Option</a></li></ul>
+      </div>
+      <div class="dropdown admin-nav-dd">
+        <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown">Forensic</button>
+        <ul class="dropdown-menu dropdown-menu-end"><li><a class="dropdown-item" href="#">Option</a></li></ul>
+      </div>
+      <div class="dropdown admin-nav-dd">
+        <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown">Configure</button>
+        <ul class="dropdown-menu dropdown-menu-end"><li><a class="dropdown-item" href="#">Option</a></li></ul>
+      </div>
+      <div class="dropdown admin-nav-dd">
+        <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown">Admin</button>
+        <ul class="dropdown-menu dropdown-menu-end"><li><a class="dropdown-item" href="#">Option</a></li></ul>
+      </div>
+      <div class="admin-user-pill">
+        <div class="admin-user-ico" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+        </div>
+        <span class="admin-ver">v6.6.0</span>
+      </div>
+    </div>
+  </nav>
+
+  <main class="admin-page">
+    <div class="admin-shell">
+  <div class="admin-subbar">
+    <div class="admin-tab-active">Reports DashBoard</div>
+    <div class="admin-tab-context">EscalationId</div>
+  </div>
+
+    <section class="admin-filter-panel" aria-label="Filters">
+      <div class="admin-filter-row">
+        <div class="admin-field-grow">
+          <div class="admin-search-with-btn">
+            <div class="form-floating flex-grow-1">
+              <input type="text" class="form-control" id="escId" placeholder=" " value="" autocomplete="off" />
+              <label for="escId">Escalation Id*</label>
+            </div>
+            <button type="button" class="admin-btn-search" aria-label="Search">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="admin-field-tz">
+          <div class="form-floating">
+            <select class="form-select" id="tz" aria-label="Timezone">
+              <option value="CT" selected>CT</option>
+              <option value="ET">ET</option>
+              <option value="PT">PT</option>
+            </select>
+            <label for="tz">Select Timezone</label>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="admin-table-wrap">
+      <div class="table-responsive">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Escalation Id</th>
+              <th>Site Name</th>
+              <th>Camera Name</th>
+              <th>Facility</th>
+              <th>Event Time (CT)</th>
+              <th>User Id</th>
+              <th>Notes</th>
+              <th>Follow Up Tags</th>
+              <th>Action</th>
+              <th>More</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><a href="queue-management.html" style="color:#1565c0;text-decoration:underline;font-weight:500;">ESC-2026-08421</a></td>
+              <td>Westland Real Estate Group - Loma Linda Towne Plaza F4349</td>
+              <td>F4349 Cam02</td>
+              <td>SAN ANTONIO</td>
+              <td>2026-03-25 23:34:59</td>
+              <td>aja.greene@pro-vigil.com</td>
+              <td>Person seen sitting down near building, still seen in live cam, will cont to monitor</td>
+              <td>—</td>
+              <td>Continue to Monitor - Alarm Triggered</td>
+              <td>
+                <div class="admin-actions">
+                  <button type="button" class="admin-icon-btn" title="Play" aria-label="Play">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                  </button>
+                  <button type="button" class="admin-icon-btn" title="Info" aria-label="Escalation details" data-bs-toggle="modal" data-bs-target="#escalationDetailModal">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                  </button>
+                  <button type="button" class="admin-icon-btn" title="Copy" aria-label="Copy">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+                  </button>
+                  <button type="button" class="admin-icon-btn" title="Network" aria-label="Network">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V8h2c1.1 0 2-.9 2-2V4.59c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="admin-table-foot">
+        <div class="admin-per-page">
+          <span>Items per page:</span>
+          <select class="form-select form-select-sm" aria-label="Items per page">
+            <option selected>10</option>
+            <option>25</option>
+            <option>50</option>
+          </select>
+        </div>
+        <div class="admin-pager">
+          <span>1 - 1 of 1</span>
+          <div class="admin-pager-arrows">
+            <button type="button" disabled aria-label="Previous page" title="Previous">&lsaquo;</button>
+            <button type="button" disabled aria-label="Next page" title="Next">&rsaquo;</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+  </main>
+
+  <div class="modal fade escal-modal" id="escalationDetailModal" tabindex="-1" aria-labelledby="escalationDetailModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl">
+      <div class="modal-content escal-modal-content">
+        <div class="modal-header escal-modal-hd">
+          <h2 class="modal-title" id="escalationDetailModalLabel">Escalation Details - Westland Real Estate Group - Loma Linda Towne Plaza F4349</h2>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body p-0">
+          <ul class="nav nav-tabs escal-tabs px-2" role="tablist">
+            <li class="nav-item" role="presentation">
+              <button class="nav-link active" id="tab-recent" data-bs-toggle="tab" data-bs-target="#pane-recent" type="button" role="tab" aria-controls="pane-recent" aria-selected="true">Recent Escalations</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="tab-feedback" data-bs-toggle="tab" data-bs-target="#pane-feedback" type="button" role="tab" aria-controls="pane-feedback" aria-selected="false">Feedback Tag Information</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="tab-followup" data-bs-toggle="tab" data-bs-target="#pane-followup" type="button" role="tab" aria-controls="pane-followup" aria-selected="false">FollowUp Data</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="tab-alarms" data-bs-toggle="tab" data-bs-target="#pane-alarms" type="button" role="tab" aria-controls="pane-alarms" aria-selected="false">Site Alarm Activations</button>
+            </li>
+          </ul>
+          <div class="tab-content">
+            <div class="tab-pane fade show active" id="pane-recent" role="tabpanel" aria-labelledby="tab-recent" tabindex="0">
+              <div class="escal-modal-body-inner">
+                <div class="escal-tz-wrap">
+                  <div class="escal-tz-box">
+                    <h3>Escalation Report By Timezone</h3>
+                    <div class="escal-tz-options" role="radiogroup" aria-label="Escalation report timezone">
+                      <div class="form-check">
+                        <input class="form-check-input" type="radio" name="escTz" id="escTzCt" value="CT" checked />
+                        <label class="form-check-label" for="escTzCt">CT</label>
+                      </div>
+                      <div class="form-check">
+                        <input class="form-check-input" type="radio" name="escTz" id="escTzPt" value="PT" />
+                        <label class="form-check-label" for="escTzPt">Customer Timezone (PT)</label>
+                      </div>
+                      <div class="form-check">
+                        <input class="form-check-input" type="radio" name="escTz" id="escTzIst" value="IST" />
+                        <label class="form-check-label" for="escTzIst">IST</label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="table-responsive">
+                  <table class="escal-detail-table">
+                    <thead>
+                      <tr>
+                        <th>User</th>
+                        <th>Level</th>
+                        <th>Queue Duration</th>
+                        <th>Received Time (CT)</th>
+                        <th>User Hold Time</th>
+                        <th>Review Start Time (CT)</th>
+                        <th>Review End Time (CT)</th>
+                        <th>Review Duration</th>
+                        <th>WrapUp Time</th>
+                        <th>Tag</th>
+                        <th>Notes</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>PRO4959</td>
+                        <td>HighPriority</td>
+                        <td>0h 0m 12s</td>
+                        <td>2026-03-25 23:35:01</td>
+                        <td>0h 0m 0s</td>
+                        <td>2026-03-25 23:35:15</td>
+                        <td>2026-03-25 23:36:02</td>
+                        <td>0h 0m 47s</td>
+                        <td>2026-03-25 23:36:10</td>
+                        <td>Orange Flag</td>
+                        <td>Initial triage: person seated near building perimeter; live feed confirms presence.</td>
+                        <td><a href="#" class="escal-action-link">Escalate</a></td>
+                      </tr>
+                      <tr>
+                        <td>aja.greene@pro-vigil.com</td>
+                        <td>SuperHighPriorityDispatch</td>
+                        <td>0h 1m 4s</td>
+                        <td>2026-03-25 23:36:15</td>
+                        <td>0h 0m 8s</td>
+                        <td>2026-03-25 23:36:28</td>
+                        <td>2026-03-25 23:37:05</td>
+                        <td>0h 0m 37s</td>
+                        <td>2026-03-25 23:37:12</td>
+                        <td>Continue to Monitor - Alarm Triggered</td>
+                        <td>Dispatcher reviewed cam F4349; subject still on scene; monitoring continues per runbook.</td>
+                        <td><a href="#" class="escal-action-link">END</a></td>
+                      </tr>
+                      <tr class="escal-row-highlight">
+                        <td>pasagada.sankarrao@pro-vigil.com</td>
+                        <td>CTM</td>
+                        <td>N/A</td>
+                        <td>2026-03-25 21:55:39</td>
+                        <td>0h 0m 0s</td>
+                        <td>2026-03-25 21:55:39</td>
+                        <td>2026-03-25 21:56:09</td>
+                        <td>0h 0m 0s</td>
+                        <td>N/A</td>
+                        <td>CTM Activity Not Allowed</td>
+                        <td>homeless person seen still sleeping in the building // this person already triggered more than 10mins but not leave still on site</td>
+                        <td><a href="#" class="escal-action-link">Escalate</a></td>
+                      </tr>
+                      <tr>
+                        <td>PRO4959</td>
+                        <td>HighPriority</td>
+                        <td>0h 0m 5s</td>
+                        <td>2026-03-25 23:37:20</td>
+                        <td>0h 0m 0s</td>
+                        <td>2026-03-25 23:37:25</td>
+                        <td>2026-03-25 23:38:00</td>
+                        <td>0h 0m 35s</td>
+                        <td>2026-03-25 23:38:08</td>
+                        <td>Orange Flag</td>
+                        <td>Follow-up check: no change in posture; supervisor notified for extended watch.</td>
+                        <td><a href="#" class="escal-action-link">Escalate</a></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <div class="tab-pane fade" id="pane-feedback" role="tabpanel" aria-labelledby="tab-feedback" tabindex="0">
+              <div class="escal-modal-body-inner text-muted small">No feedback tag rows for this escalation (placeholder).</div>
+            </div>
+            <div class="tab-pane fade" id="pane-followup" role="tabpanel" aria-labelledby="tab-followup" tabindex="0">
+              <div class="escal-modal-body-inner text-muted small">No follow-up data (placeholder).</div>
+            </div>
+            <div class="tab-pane fade" id="pane-alarms" role="tabpanel" aria-labelledby="tab-alarms" tabindex="0">
+              <div class="escal-modal-body-inner text-muted small">No site alarm activations (placeholder).</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

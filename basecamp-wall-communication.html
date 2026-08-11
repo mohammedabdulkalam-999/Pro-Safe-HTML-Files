@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>L3 wall - PRO-SAFE</title>
+  <style>
+    body { margin: 0; font-family: 'Inter', Helvetica, Arial, sans-serif; background: #181f26; }
+    .basecamp-header { background: #2c5b89; color: #fff; display: flex; align-items: center; padding: 0 32px; height: 64px; font-size: 1.2rem; font-weight: 600; }
+    .basecamp-header .logo { display: flex; align-items: center; font-size: 2rem; font-weight: bold; margin-right: 16px; }
+    .basecamp-header .logo-img { width: 48px; height: 48px; margin-right: 12px; background: #2c5b89; border-radius: 50%; padding: 4px; }
+    .basecamp-header .user { margin-left: auto; font-size: 1.1rem; font-weight: 500; display: flex; align-items: center; gap: 16px; }
+    .basecamp-wall-container { display: flex; height: calc(100vh - 64px); background: rgb(30, 30, 30); }
+    .basecamp-panels { flex: 1; display: flex; flex-direction: column; border-right: 2px solid #fff; }
+    .basecamp-panel { flex: 1; border: 3px solid #ffffff; margin: 8px; border-radius: 4px; position: relative; min-height: calc(50vh - 40px); }
+    .basecamp-panel.border-redflag { border: 6px solid #f81919 !important; }
+    .basecamp-panel.border-orangeflag { border: 6px solid transparent; animation: blinkBorder 1s infinite; }
+    @keyframes blinkBorder { 0% { border: 6px solid #fba706; } 50% { border: 6px solid transparent; } 100% { border: 6px solid #fba706; } }
+    .basecamp-panel-content { padding: 20px; color: #fff; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+    .basecamp-panel-error { text-align: center; color: #ffffff; font-size: 16px; font-weight: 500; }
+    .basecamp-table-panel { flex: 1; background: #e8f0f5; overflow: auto; padding: 20px; }
+    .basecamp-empty { color: #fff; text-align: center; margin: 80px auto; font-size: 1.3rem; }
+    .basecamp-loading { display: flex; justify-content: center; align-items: center; height: 100%; color: #fff; font-size: 1.2rem; }
+    .basecamp-single-slot-msg { text-align: center; color: white; margin: 15%; font-size: 18px; font-weight: 900; }
+    .accordion-card { background: #2c5b89; border-radius: 8px; margin-bottom: 16px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .accordion-header { background: #2c5b89; color: #fff; padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; font-size: 1.1rem; font-weight: 600; }
+    .accordion-header:hover { background: #1e4062; }
+    .accordion-header .header-left { display: flex; align-items: center; gap: 12px; flex: 1; }
+    .accordion-header .header-right { display: flex; align-items: center; gap: 12px; }
+    .accordion-icon { width: 20px; height: 20px; cursor: pointer; transition: transform 0.3s; }
+    .accordion-icon.rotated { transform: rotate(180deg); }
+    .accordion-content { background: #fff; color: #222; padding: 0; max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
+    .accordion-content.expanded { max-height: 2000px; padding: 20px; }
+    .monitoring-hours { padding: 12px 0; }
+    .monitoring-hours-item { padding: 6px 0; font-size: 1rem; color: #333; }
+    .escalation-table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+    .escalation-table thead { background: #e8f0f5; }
+    .escalation-table th { padding: 12px; text-align: left; font-weight: 600; color: #2c5b89; font-size: 0.95rem; border-bottom: 2px solid #b2bec6; }
+    .escalation-table td { padding: 12px; border-bottom: 1px solid #e0e0e0; color: #333; font-size: 0.95rem; }
+    .escalation-empty { text-align: center; padding: 20px; color: #666; font-size: 1rem; }
+    .communication-modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); z-index: 10000; display: none; align-items: center; justify-content: center; }
+    .communication-modal-overlay.show { display: flex; }
+    .communication-modal { background: #fff; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.3); max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto; position: relative; }
+    .communication-modal-header { background: #2c5b89; color: #fff; padding: 20px 24px; border-radius: 12px 12px 0 0; display: flex; align-items: center; justify-content: space-between; }
+    .communication-modal-header h3 { margin: 0; font-size: 1.4rem; font-weight: 600; }
+    .communication-modal-close { background: none; border: none; color: #fff; font-size: 1.8rem; cursor: pointer; padding: 0; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 50%; transition: background 0.2s; }
+    .communication-modal-close:hover { background: rgba(255,255,255,0.2); }
+    .communication-modal-body { padding: 24px; }
+    .communication-message-title { font-size: 1.2rem; font-weight: 600; color: #2c5b89; margin-bottom: 12px; }
+    .communication-message-content { font-size: 1rem; color: #333; line-height: 1.6; margin-bottom: 20px; white-space: pre-wrap; }
+    .communication-message-meta { font-size: 0.9rem; color: #666; margin-bottom: 20px; padding-top: 12px; border-top: 1px solid #e0e0e0; }
+    .communication-modal-footer { padding: 20px 24px; border-top: 1px solid #e0e0e0; display: flex; gap: 12px; justify-content: flex-end; }
+    .communication-btn { padding: 12px 32px; border: none; border-radius: 6px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+    .communication-btn-acknowledge { background: #2c5b89; color: #fff; }
+    .communication-btn-acknowledge:hover { background: #1e4062; }
+    .communication-btn-later { background: #e0e0e0; color: #333; }
+    .communication-btn-later:hover { background: #d0d0d0; }
+    .communication-priority-badge { display: inline-block; padding: 4px 12px; border-radius: 12px; font-size: 0.85rem; font-weight: 600; margin-left: 12px; }
+    .communication-priority-high { background: #ffebee; color: #c62828; }
+    .communication-priority-medium { background: #fff3e0; color: #e65100; }
+    .communication-priority-low { background: #e8f5e9; color: #2e7d32; }
+    .communication-attachments { margin-top: 20px; padding-top: 20px; border-top: 1px solid #e0e0e0; }
+    .communication-attachments-title { font-size: 0.95rem; font-weight: 600; color: #2c5b89; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .communication-attachment-item { display: flex; align-items: center; gap: 12px; padding: 12px; background: #f5f5f5; border-radius: 8px; margin-bottom: 8px; cursor: pointer; transition: all 0.2s; }
+    .communication-attachment-item:hover { background: #e8f0f5; transform: translateX(4px); }
+    .communication-attachment-icon { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: #2c5b89; color: #fff; border-radius: 6px; font-size: 20px; flex-shrink: 0; }
+    .communication-attachment-info { flex: 1; min-width: 0; }
+    .communication-attachment-name { font-size: 0.95rem; font-weight: 500; color: #333; margin-bottom: 4px; }
+    .communication-attachment-size { font-size: 0.85rem; color: #666; }
+    .communication-attachment-download { color: #2c5b89; font-size: 1.2rem; cursor: pointer; padding: 4px; }
+    .communication-attachment-download:hover { color: #1e4062; }
+    @media (max-width: 1100px) { .basecamp-wall-container { flex-direction: column; } .basecamp-panels { border-right: none; border-bottom: 2px solid #fff; } }
+  </style>
+</head>
+<body>
+  <div class="basecamp-header">
+    <span class="logo"><img src="https://via.placeholder.com/48x48?text=PS" class="logo-img" alt="Logo" />PRO-SAFE</span>
+    <span class="user">L3 wall <span style="margin-left: 18px;">Abdul Kalam</span></span>
+  </div>
+  <div id="basecampWallContent" class="basecamp-wall-container">
+    <div class="basecamp-panels">
+      <div class="basecamp-panel" id="panel1_slot">
+        <div class="basecamp-panel-content" id="panel1Container">
+          <div class="basecamp-panel-error" id="panel1Error">Loading...</div>
+        </div>
+      </div>
+      <div class="basecamp-panel" id="panel2_slot">
+        <div class="basecamp-panel-content" id="panel2Container">
+          <div class="basecamp-panel-error" id="panel2Error">Loading...</div>
+        </div>
+      </div>
+    </div>
+    <div class="basecamp-table-panel" id="tablePanel">
+      <!-- Site Information Accordion 1 -->
+      <div class="accordion-card">
+        <div class="accordion-header" onclick="toggleAccordion('site1')">
+          <div class="header-left">
+            <span>Site Name: Newco Metals F3097AO - ET</span>
+          </div>
+          <div class="header-right">
+            <span class="accordion-icon" id="icon-site1">▼</span>
+          </div>
+        </div>
+        <div class="accordion-content" id="content-site1">
+          <div class="monitoring-hours">
+            <div style="font-weight: 600; color: #2c5b89; margin-bottom: 12px; font-size: 1.05rem;">Monitoring Hours:</div>
+            <div class="monitoring-hours-item">Mon-Fri: 6:00 AM - 6:00 PM</div>
+            <div class="monitoring-hours-item">Sat: 8:00 AM - 4:00 PM</div>
+            <div class="monitoring-hours-item">Sun: Closed</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Site Information Accordion 2 -->
+      <div class="accordion-card">
+        <div class="accordion-header" onclick="toggleAccordion('site2')">
+          <div class="header-left">
+            <span>Site Name: Martin Marietta - Tanner 2012 F7-3</span>
+          </div>
+          <div class="header-right">
+            <span class="accordion-icon" id="icon-site2">▼</span>
+          </div>
+        </div>
+        <div class="accordion-content" id="content-site2">
+          <div class="monitoring-hours">
+            <div style="font-weight: 600; color: #2c5b89; margin-bottom: 12px; font-size: 1.05rem;">Monitoring Hours:</div>
+            <div class="monitoring-hours-item">Mon-Fri: 7:00 AM - 7:00 PM</div>
+            <div class="monitoring-hours-item">Sat: 9:00 AM - 5:00 PM</div>
+            <div class="monitoring-hours-item">Sun: Closed</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent History accordion -->
+      <div class="accordion-card">
+        <div class="accordion-header" onclick="toggleAccordion('escalations')">
+          <div class="header-left">
+            <span>Recent History</span>
+          </div>
+          <div class="header-right">
+            <span class="accordion-icon" id="icon-escalations">▼</span>
+          </div>
+        </div>
+        <div class="accordion-content expanded" id="content-escalations">
+          <table class="escalation-table">
+            <thead>
+              <tr>
+                <th>Escalation ID</th>
+                <th>Camera Name</th>
+                <th>Event Time</th>
+                <th>User</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="escalation-tbody">
+              <tr>
+                <td colspan="5" class="escalation-empty">No escalations in the last 4 hours.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Communication Message Modal -->
+  <div class="communication-modal-overlay" id="communicationModal">
+    <div class="communication-modal">
+      <div class="communication-modal-header">
+        <h3>Communication Message</h3>
+        <button class="communication-modal-close" onclick="closeCommunicationModal()">&times;</button>
+      </div>
+      <div class="communication-modal-body">
+        <div class="communication-message-title" id="commMessageTitle">
+          Critical System Update - Action Required
+          <span class="communication-priority-badge communication-priority-high" id="commPriorityBadge">HIGH</span>
+        </div>
+        <div class="communication-message-content" id="commMessageContent">
+          Important: All monitoring personnel are required to acknowledge the new escalation protocols effective immediately. Please review the attached documentation and confirm your understanding of the updated procedures. This update affects all monitoring levels and must be acknowledged by end of business today.
+        </div>
+        <div class="communication-message-meta" id="commMessageMeta">
+          <div>From: <strong id="commMessageFrom">Admin User</strong></div>
+          <div>Date: <strong id="commMessageDate">Jan 6, 2026 10:30 AM</strong></div>
+        </div>
+        <div class="communication-attachments" id="commAttachments" style="display: none;">
+          <div class="communication-attachments-title">
+            <span style="font-size: 1.2rem;">📎</span>
+            <span>Attachments</span>
+          </div>
+          <div id="commAttachmentsList"></div>
+        </div>
+      </div>
+      <div class="communication-modal-footer">
+        <button class="communication-btn communication-btn-later" onclick="handleLater()">Later</button>
+        <button class="communication-btn communication-btn-acknowledge" onclick="handleAcknowledge()">Acknowledge</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function renderBasecampWall() {
+      const container = document.getElementById('basecampWallContent');
+      let slotNumber = 2;
+      try { slotNumber = parseInt(localStorage.getItem('Slots')) || 2; } catch (e) { slotNumber = 2; }
+      
+      const urlParams = new URLSearchParams(window.location.search);
+      const isMirror = urlParams.get('mirror') === 'true';
+      
+      // Update panel visibility based on slot number
+      const panel2 = document.getElementById('panel2_slot');
+      if (slotNumber === 1 && panel2) {
+        panel2.innerHTML = '<div class="basecamp-single-slot-msg">User Setup with single slot.</div>';
+      }
+      
+      // Update borders based on flags
+      function updatePanelBorders(panelId, redFlag, orangeFlag) {
+        const panel = document.getElementById(panelId);
+        if (!panel) return;
+        panel.className = 'basecamp-panel';
+        if (redFlag) panel.classList.add('border-redflag');
+        else if (orangeFlag) panel.classList.add('border-orangeflag');
+      }
+      
+      // Load panel data
+      function loadPanelData() {
+        // Get data from localStorage or use mock data
+        let panel1Data = {}, panel2Data = {};
+        try {
+          panel1Data = JSON.parse(localStorage.getItem('panel1Data')) || {};
+          panel2Data = JSON.parse(localStorage.getItem('panel2Data')) || {};
+        } catch (e) {
+          panel1Data = {};
+          panel2Data = {};
+        }
+        
+        // Update Panel 1
+        const panel1Container = document.getElementById('panel1Container');
+        const panel1Error = document.getElementById('panel1Error');
+        if (Object.keys(panel1Data).length > 0) {
+          panel1Container.innerHTML = `
+            <div style="width: 100%;">
+              <h4 style="color: #fff; margin-bottom: 16px;">Panel 1 - L3 wall</h4>
+              <p style="color: #fff;">Event ID: ${panel1Data.eventId || 'N/A'}</p>
+              <p style="color: #fff;">Status: ${panel1Data.status || 'N/A'}</p>
+            </div>
+          `;
+          updatePanelBorders('panel1_slot', panel1Data.redFlag || false, panel1Data.orangeFlag || false);
+        } else {
+          panel1Error.textContent = panel1Data.error || 'No events available';
+        }
+        
+        // Update Panel 2
+        if (slotNumber !== 1) {
+          const panel2Container = document.getElementById('panel2Container');
+          const panel2Error = document.getElementById('panel2Error');
+          if (Object.keys(panel2Data).length > 0) {
+            panel2Container.innerHTML = `
+              <div style="width: 100%;">
+                <h4 style="color: #fff; margin-bottom: 16px;">Panel 2 - L3 wall</h4>
+                <p style="color: #fff;">Event ID: ${panel2Data.eventId || 'N/A'}</p>
+                <p style="color: #fff;">Status: ${panel2Data.status || 'N/A'}</p>
+              </div>
+            `;
+            updatePanelBorders('panel2_slot', panel2Data.redFlag || false, panel2Data.orangeFlag || false);
+          } else {
+            panel2Error.textContent = panel2Data.error || 'No events available';
+          }
+        }
+        
+      }
+      
+      // Initialize
+      loadPanelData();
+      
+      // Expose for external updates
+      window.BasecampWallCommunication = {
+        loadPanelData: loadPanelData,
+        updatePanelBorders: updatePanelBorders
+      };
+    }
+    
+    // Accordion toggle function
+    function toggleAccordion(id) {
+      const content = document.getElementById('content-' + id);
+      const icon = document.getElementById('icon-' + id);
+      
+      if (content.classList.contains('expanded')) {
+        content.classList.remove('expanded');
+        icon.classList.remove('rotated');
+      } else {
+        content.classList.add('expanded');
+        icon.classList.add('rotated');
+      }
+    }
+    
+    // Initialize escalations table (can be updated with real data)
+    function loadEscalations() {
+      const tbody = document.getElementById('escalation-tbody');
+      if (!tbody) return;
+      
+      // Get escalations from localStorage or use empty state
+      let escalations = [];
+      try {
+        escalations = JSON.parse(localStorage.getItem('escalations')) || [];
+      } catch (e) {
+        escalations = [];
+      }
+      
+      if (escalations.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" class="escalation-empty">No escalations in the last 4 hours.</td></tr>';
+      } else {
+        tbody.innerHTML = escalations.map(esc => `
+          <tr>
+            <td>${esc.id || 'N/A'}</td>
+            <td>${esc.cameraName || 'N/A'}</td>
+            <td>${esc.eventTime || 'N/A'}</td>
+            <td>${esc.user || 'N/A'}</td>
+            <td>${esc.action || 'N/A'}</td>
+          </tr>
+        `).join('');
+      }
+    }
+    
+    renderBasecampWall();
+    loadEscalations();
+    
+    // Communication Message Modal Functions
+    function showCommunicationModal(messageData) {
+      const modal = document.getElementById('communicationModal');
+      const titleEl = document.getElementById('commMessageTitle');
+      const contentEl = document.getElementById('commMessageContent');
+      const fromEl = document.getElementById('commMessageFrom');
+      const dateEl = document.getElementById('commMessageDate');
+      const priorityBadge = document.getElementById('commPriorityBadge');
+      
+      if (!modal) return;
+      
+      // Set message data
+      if (messageData) {
+        if (messageData.title) {
+          // Clear and rebuild title with badge
+          titleEl.innerHTML = messageData.title;
+          if (messageData.priority) {
+            priorityBadge.textContent = messageData.priority.toUpperCase();
+            priorityBadge.className = 'communication-priority-badge communication-priority-' + messageData.priority.toLowerCase();
+            titleEl.appendChild(priorityBadge);
+          }
+        }
+        if (messageData.content) contentEl.textContent = messageData.content;
+        if (messageData.from) fromEl.textContent = messageData.from;
+        if (messageData.date) dateEl.textContent = messageData.date;
+        if (messageData.id) modal.setAttribute('data-message-id', messageData.id);
+        
+        // Handle attachments
+        const attachmentsSection = document.getElementById('commAttachments');
+        const attachmentsList = document.getElementById('commAttachmentsList');
+        if (messageData.attachments && messageData.attachments.length > 0) {
+          attachmentsSection.style.display = 'block';
+          attachmentsList.innerHTML = messageData.attachments.map(att => {
+            const icon = att.type === 'pdf' ? '📄' : att.type === 'image' ? '🖼️' : '📎';
+            return `
+              <div class="communication-attachment-item" onclick="openAttachment('${att.url}', '${att.name}')">
+                <div class="communication-attachment-icon">${icon}</div>
+                <div class="communication-attachment-info">
+                  <div class="communication-attachment-name">${att.name}</div>
+                  <div class="communication-attachment-size">${att.size || 'Unknown size'}</div>
+                </div>
+                <div class="communication-attachment-download" onclick="event.stopPropagation(); downloadAttachment('${att.url}', '${att.name}')" title="Download">
+                  ⬇️
+                </div>
+              </div>
+            `;
+          }).join('');
+        } else {
+          attachmentsSection.style.display = 'none';
+        }
+      }
+      
+      modal.classList.add('show');
+    }
+    
+    function openAttachment(url, name) {
+      window.open(url, '_blank');
+    }
+    
+    function downloadAttachment(url, name) {
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = name;
+      link.target = '_blank';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+    
+    function closeCommunicationModal() {
+      const modal = document.getElementById('communicationModal');
+      if (modal) {
+        modal.classList.remove('show');
+      }
+    }
+    
+    function handleAcknowledge() {
+      const modal = document.getElementById('communicationModal');
+      const messageId = modal.getAttribute('data-message-id');
+      
+      // Handle acknowledge action
+      console.log('Acknowledged message:', messageId);
+      
+      // Mark as acknowledged in localStorage
+      if (messageId) {
+        let acknowledgedMessages = [];
+        try {
+          acknowledgedMessages = JSON.parse(localStorage.getItem('acknowledgedMessages')) || [];
+        } catch (e) {
+          acknowledgedMessages = [];
+        }
+        if (!acknowledgedMessages.includes(messageId)) {
+          acknowledgedMessages.push(messageId);
+          localStorage.setItem('acknowledgedMessages', JSON.stringify(acknowledgedMessages));
+        }
+      }
+      
+      // Close modal
+      closeCommunicationModal();
+      
+      // Check for next message
+      checkForCommunicationMessages();
+    }
+    
+    function handleLater() {
+      // Close modal but don't mark as acknowledged
+      closeCommunicationModal();
+      
+      // Show again after delay (e.g., 5 minutes)
+      setTimeout(() => {
+        checkForCommunicationMessages();
+      }, 300000); // 5 minutes
+    }
+    
+    function checkForCommunicationMessages() {
+      // Get pending messages from localStorage or API
+      let messages = [];
+      try {
+        messages = JSON.parse(localStorage.getItem('communicationMessages')) || [];
+      } catch (e) {
+        messages = [];
+      }
+      
+        // If no messages in localStorage, use default message from communication module
+        if (messages.length === 0) {
+          messages = [{
+            id: 'msg-critical-update-001',
+            title: 'Critical System Update - Action Required',
+            content: 'Important: All monitoring personnel are required to acknowledge the new escalation protocols effective immediately. Please review the attached documentation and confirm your understanding of the updated procedures. This update affects all monitoring levels and must be acknowledged by end of business today.',
+            from: 'Admin User',
+            date: 'Jan 6, 2026 10:30 AM',
+            priority: 'high',
+            attachments: [
+              {
+                id: 'att-001',
+                name: 'New Escalation Protocols.pdf',
+                size: '2.4 MB',
+                type: 'pdf',
+                url: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf'
+              }
+            ]
+          }];
+        }
+      
+      // Get acknowledged messages
+      let acknowledgedMessages = [];
+      try {
+        acknowledgedMessages = JSON.parse(localStorage.getItem('acknowledgedMessages')) || [];
+      } catch (e) {
+        acknowledgedMessages = [];
+      }
+      
+      // Find first unacknowledged message
+      const pendingMessage = messages.find(msg => !acknowledgedMessages.includes(msg.id));
+      
+      if (pendingMessage) {
+        showCommunicationModal(pendingMessage);
+      }
+    }
+    
+    // Check for messages on page load
+    setTimeout(() => {
+      checkForCommunicationMessages();
+    }, 2000);
+    
+    // Expose functions globally
+    window.showCommunicationModal = showCommunicationModal;
+    window.closeCommunicationModal = closeCommunicationModal;
+    window.handleAcknowledge = handleAcknowledge;
+    window.handleLater = handleLater;
+    window.checkForCommunicationMessages = checkForCommunicationMessages;
+    window.openAttachment = openAttachment;
+    window.downloadAttachment = downloadAttachment;
+  </script>
+</body>
+</html>

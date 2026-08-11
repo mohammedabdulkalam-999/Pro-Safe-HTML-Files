@@ -1,0 +1,1435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <title>PRO-SAFE — Safety services wall</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    :root {
+      --ps-header-bg: linear-gradient(180deg, #1a4a6e 0%, #143d5c 100%);
+      --ps-sidebar-bg: #3a3d42;
+      --slot-tool: #00b8d4;
+      --slot-tool-hover: #00d4f5;
+      --slot-monitor: #00bfff;
+      --slot-monitor-hover: #33d4ff;
+      --slot-info: #005682;
+      --slot-info-hover: #007399;
+      --badge-purple: #5e35b1;
+    }
+    html, body { height: 100%; margin: 0; background: #0d1117; overflow: hidden; }
+    .ps-app {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      max-height: 100vh;
+      overflow: hidden;
+    }
+
+    /* —— Header (PRO-SAFE bar) —— */
+    .ps-header {
+      flex: 0 0 auto;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.45rem 1rem;
+      background: var(--ps-header-bg);
+      color: #fff;
+      border-bottom: 1px solid rgba(255,255,255,.12);
+      font-size: 0.875rem;
+    }
+    .ps-logo {
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      font-size: 1.1rem;
+    }
+    .ps-header-right {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-left: auto;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+    .ps-header-tools {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .ps-icon-btn {
+      width: 32px; height: 32px;
+      display: inline-flex; align-items: center; justify-content: center;
+      background: rgba(255,255,255,.08);
+      border: none; border-radius: 6px;
+      color: #fff; cursor: pointer;
+    }
+    .ps-icon-btn:hover { background: rgba(255,255,255,.15); }
+    .ps-status {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+      background: rgba(255,255,255,.06);
+    }
+    .ps-dot { width: 8px; height: 8px; border-radius: 50%; background: #4caf50; }
+    .ps-user { opacity: .95; }
+    .ps-ver { opacity: .75; font-size: 0.8rem; }
+
+    /* —— 2×2 grid —— fills viewport below header (single screen, no page scroll) —— */
+    .ps-main {
+      flex: 1 1 0;
+      min-height: 0;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      background: #1e1e1e;
+    }
+    .col-container {
+      display: flex;
+      flex: 1 1 0;
+      min-height: 0;
+      padding: 4px;
+      gap: 4px;
+    }
+    .col {
+      flex: 1 1 0;
+      min-width: 0;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      border: 1px solid rgba(255,255,255,.35);
+      background: #0a0a0a;
+      overflow: hidden;
+    }
+    .min-width-50 { min-width: 0; }
+    .col > .col {
+      flex: 1 1 0;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* —— Wall slot row: media + sidebar —— */
+    .wall-slot-static {
+      width: 100%;
+      flex: 1 1 0;
+      min-height: 0;
+      display: flex;
+      flex-direction: row;
+      align-items: stretch;
+      position: relative;
+    }
+    .panel-image-view {
+      flex: 1;
+      min-width: 0;
+      min-height: 0;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      background: #000;
+    }
+    .panel-image-scroll {
+      flex: 1 1 0;
+      min-height: 0;
+      overflow: hidden;
+    }
+    .panel-image-zoom-target {
+      width: 100%;
+      height: 100%;
+      min-height: 0;
+      object-fit: cover;
+      object-position: center;
+      display: block;
+      transform-origin: center center;
+      transition: transform 0.2s ease-out;
+    }
+
+    /* Past / Future image strips — bottom of media card (native details accordion) */
+    .panel-pf-wrap {
+      flex: 0 0 auto;
+      width: 100%;
+      z-index: 2;
+      border-top: 1px solid rgba(255,255,255,.18);
+      background: rgba(12, 14, 18, 0.94);
+      max-height: 42%;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .pf-details > summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 0.32rem 0.45rem;
+      background: linear-gradient(180deg, #2a2f38 0%, #22272f 100%);
+      color: #e6edf3;
+      font-size: 0.65rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      user-select: none;
+    }
+    .pf-details > summary::-webkit-details-marker { display: none; }
+    .pf-details > summary::after {
+      content: '\25BC';
+      font-size: 0.55rem;
+      opacity: 0.75;
+      transition: transform 0.15s ease;
+    }
+    .pf-details[open] > summary::after { transform: rotate(-180deg); }
+    .pf-details > summary:focus { outline: 2px solid rgba(0, 191, 255, 0.45); outline-offset: -2px; }
+    .pf-body {
+      padding: 0.3rem 0.35rem;
+      background: #14161c;
+    }
+    .pf-body--stacked {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      max-height: 152px;
+      overflow-x: hidden;
+      overflow-y: auto;
+    }
+    .pf-row-label {
+      display: block;
+      font-size: 0.55rem;
+      font-weight: 600;
+      color: rgba(230, 237, 243, 0.55);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 0.2rem;
+    }
+    .pf-strip {
+      display: flex;
+      gap: 5px;
+      flex-wrap: nowrap;
+      align-items: center;
+      overflow-x: auto;
+    }
+    .pf-thumb {
+      width: 52px;
+      height: 40px;
+      object-fit: cover;
+      border-radius: 4px;
+      flex-shrink: 0;
+      border: 1px solid rgba(255,255,255,.22);
+      background: #222;
+    }
+
+    /* Purple event badge (top-left) */
+    .slot-badge {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 4;
+      min-width: 2rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 6px;
+      background: var(--badge-purple);
+      color: #fff;
+      font-size: 0.95rem;
+      font-weight: 700;
+      line-height: 1.2;
+      box-shadow: 0 1px 4px rgba(0,0,0,.4);
+    }
+
+    /* Right toolbar — square cyan buttons, icons centered */
+    .p_lr_10 {
+      width: 50px;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      padding: 6px 4px;
+      background: var(--ps-sidebar-bg);
+      border-left: 1px solid rgba(255,255,255,.2);
+      z-index: 3;
+    }
+    .btn_background {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .slot-tool-btn {
+      width: 44px;
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--slot-tool);
+      border: 1px solid rgba(0,0,0,.15);
+      border-radius: 6px;
+      cursor: pointer;
+      padding: 4px;
+      box-sizing: border-box;
+      transition: background .15s, transform .1s, border-color .15s;
+    }
+    .slot-tool-btn:hover:not(.slot-tool-btn--monitor):not(.slot-tool-btn--info) {
+      background: var(--slot-tool-hover);
+    }
+    .slot-tool-btn:active { transform: scale(0.98); }
+    /* Observations / wall — bright cyan + white ring (reference UI) */
+    .slot-tool-btn--monitor {
+      background: var(--slot-monitor);
+      border: 2px solid #fff;
+    }
+    .slot-tool-btn--monitor:hover { background: var(--slot-monitor-hover); border-color: #fff; }
+    /* Site info — navy tile */
+    .slot-tool-btn--info {
+      background: var(--slot-info);
+      border: 1px solid rgba(0,0,0,.4);
+    }
+    .slot-tool-btn--info:hover { background: var(--slot-info-hover); }
+
+    /* Zoom + 100% row */
+    .panel-image-zoom-bar {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      width: 100%;
+    }
+    .zoom-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+    }
+    .zoom-row .btn {
+      padding: 0 0.25rem;
+      line-height: 1.1;
+      min-width: 1.5rem;
+    }
+    .panel-image-zoom-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: #fff;
+      text-align: center;
+      letter-spacing: 0.02em;
+      line-height: 1.2;
+    }
+    .zoom-aspect-icon {
+      opacity: .9;
+      margin-top: 2px;
+    }
+
+    .slot-tool-btn svg { display: block; }
+    /* Monitor: bezel + 2×2 dashboard grid; Info: circled “i” — glyphs ~black on colored tiles */
+    .icon-toolbar-monitor,
+    .icon-toolbar-info {
+      width: 22px;
+      height: 22px;
+      flex-shrink: 0;
+    }
+
+    /* Observations modal (PRO-SAFE style — backdrop dims separately; opacity/zoom from panel toolbar) */
+    .obs-modal-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,.4);
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6px;
+      box-sizing: border-box;
+    }
+    .obs-modal {
+      width: 100%;
+      max-width: 440px;
+      max-height: min(92%, calc(100% - 12px));
+      background: #1a3a52;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 8px 32px rgba(0,0,0,.55);
+      font-size: 0.875rem;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+    .obs-modal-main {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      opacity: 1;
+      transition: opacity 0.12s ease, transform 0.18s ease;
+      transform-origin: center center;
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+    }
+    /* Panel toolbar: Observations dialog zoom + opacity (under image zoom row) */
+    .slot-tool-btn--obs-chrome {
+      flex-direction: column;
+      justify-content: flex-start;
+      gap: 6px;
+      min-height: 88px;
+      padding: 4px 3px 6px;
+    }
+    .slot-obs-zoom-btn {
+      width: 100%;
+      max-width: 36px;
+      height: 32px;
+      border: none;
+      border-radius: 5px;
+      background: rgba(0, 0, 0, 0.12);
+      color: #0d47a1;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      flex-shrink: 0;
+      transition: background 0.12s ease;
+    }
+    .slot-obs-zoom-btn:hover {
+      background: rgba(0, 0, 0, 0.18);
+    }
+    .slot-obs-zoom-btn:focus {
+      outline: none;
+    }
+    .slot-obs-zoom-btn:focus-visible {
+      outline: 2px solid rgba(0, 77, 128, 0.55);
+      outline-offset: 1px;
+    }
+    .slot-obs-opacity-wrap {
+      flex: 1 1 auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 48px;
+      width: 100%;
+    }
+    .slot-obs-opacity-range {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 72px;
+      height: 24px;
+      margin: 0;
+      transform: rotate(-90deg);
+      transform-origin: center center;
+      background: transparent;
+      cursor: pointer;
+    }
+    .slot-obs-opacity-range:focus {
+      outline: none;
+    }
+    .slot-obs-opacity-range:focus-visible {
+      outline: 2px solid rgba(13, 71, 161, 0.45);
+      outline-offset: 2px;
+      border-radius: 4px;
+    }
+    .slot-obs-opacity-range::-webkit-slider-runnable-track {
+      height: 4px;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 2px;
+    }
+    .slot-obs-opacity-range::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 14px;
+      height: 14px;
+      margin-top: -5px;
+      border-radius: 50%;
+      background: #f0f4f8;
+      border: 1px solid rgba(0, 0, 0, 0.2);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+    }
+    .slot-obs-opacity-range::-moz-range-track {
+      height: 4px;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 2px;
+    }
+    .slot-obs-opacity-range::-moz-range-thumb {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #f0f4f8;
+      border: 1px solid rgba(0, 0, 0, 0.2);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+    }
+    .obs-modal-hd {
+      background: #143d5c;
+      color: #fff;
+      padding: 0.55rem 0.85rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+    .obs-modal-hd h2 { margin: 0; font-size: 1.05rem; font-weight: 600; }
+    .obs-modal-sub {
+      background: #1e4d72;
+      color: #fff;
+      padding: 0.45rem 0.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.88rem;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+    .obs-chev-circle {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: #fff;
+      color: #1a4a6e;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+    .obs-modal-body {
+      padding: 0.75rem 0.65rem 0.85rem;
+      background: linear-gradient(180deg, #4a5d6a 0%, #2a2e33 100%);
+      border-top: 1px solid rgba(0,0,0,.25);
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
+    }
+    .obs-counter-pill {
+      display: inline-block;
+      margin: 0 auto 0.75rem;
+      padding: 0.2rem 0.85rem;
+      border-radius: 999px;
+      background: #0c3a55;
+      color: #fff;
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+    .obs-counter-wrap { text-align: center; }
+    .obs-ppe-hint { font-size: 0.72rem; color: #dbe8f0; text-align: center; margin: 0 0 0.5rem; line-height: 1.3; }
+    .obs-carousel {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .obs-carousel-slides { position: relative; width: 100%; flex: 1; min-width: 0; }
+    .obs-slide { display: none; width: 100%; }
+    .obs-slide.is-active { display: block; }
+    .obs-nav {
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      border: none;
+      background: #2d2d2d;
+      color: #fff;
+      font-size: 1.25rem;
+      line-height: 1;
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+    .obs-nav:hover { filter: brightness(1.15); }
+    .obs-options {
+      flex: 1;
+      display: flex;
+      gap: 0.65rem;
+      justify-content: center;
+      align-items: flex-start;
+    }
+    .obs-pair {
+      flex: 1;
+      max-width: 130px;
+      text-align: center;
+    }
+    .obs-tile--compliant { padding-top: 0.5rem; }
+    .obs-ppe-chk {
+      position: absolute;
+      top: 4px;
+      left: 4px;
+      right: 4px;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      z-index: 1;
+      font-size: 0.68rem;
+      color: #1a1a1a;
+      font-weight: 600;
+    }
+    .obs-ppe-chk input[type="checkbox"] {
+      width: 15px; height: 15px; min-width: 15px; min-height: 15px;
+      margin: 0; flex-shrink: 0;
+      accent-color: #0c5b82;
+      -webkit-appearance: auto;
+      appearance: auto;
+      border-radius: 2px;
+      cursor: pointer;
+    }
+    .obs-tile {
+      position: relative;
+      border: 2px solid rgba(255,255,255,.35);
+      border-radius: 8px;
+      padding: 0.35rem;
+      padding-top: 1.55rem;
+      background: #fff;
+      text-align: center;
+    }
+    .obs-tile--nc {
+      border-color: #c62828;
+      box-shadow: 0 0 0 1px rgba(198,40,40,.35) inset;
+    }
+    .obs-tile img { width: 100%; height: 76px; object-fit: contain; }
+    .obs-ppe-imgwrap { min-height: 76px; display: flex; align-items: center; justify-content: center; }
+    /* Avoid mirrored / “double” PPE art when the dialog has transform: scale (GPU compositing) */
+    .obs-modal .obs-tile img.js-ppe-asset {
+      max-width: 100%;
+      height: auto;
+      max-height: 76px;
+      object-fit: contain;
+      transform: none !important;
+      -webkit-box-reflect: none !important;
+      /* Respect embedded orientation (some exports look flipped in the browser) */
+      image-orientation: from-image;
+      backface-visibility: hidden;
+    }
+    .obs-cap {
+      font-size: 0.72rem;
+      display: block;
+      margin-top: 8px;
+      color: #fff;
+      font-weight: 600;
+      text-shadow: 0 1px 3px rgba(0,0,0,.6);
+    }
+    .obs-tile label {
+      font-size: 0.72rem;
+      display: block;
+      margin-top: 6px;
+      color: #333;
+      font-weight: 600;
+    }
+    .obs-dots { text-align: center; margin: 0.65rem 0 0.5rem; font-size: 0.65rem; line-height: 1.6; }
+    .obs-dots span { margin: 0 4px; cursor: default; user-select: none; }
+    .obs-dots .is-current { color: #29b6f6; font-size: 0.85em; }
+    .obs-dots .is-flagged { color: #66bb6a; }
+    .obs-ppe-sub { font-size: 0.68rem; color: #a8c4d6; text-align: center; margin: -0.25rem 0 0.5rem; }
+    .obs-btn-back {
+      background: #fff !important;
+      border: 1px solid #9e9e9e !important;
+      color: #1565c0 !important;
+      padding: 0.35rem 1.1rem !important;
+      font-weight: 600;
+      border-radius: 6px;
+    }
+    .obs-btn-back:hover { filter: brightness(0.97); }
+    .obs-notes {
+      width: 100%;
+      min-height: 48px;
+      border: 1px solid rgba(255,255,255,.25);
+      border-radius: 4px;
+      padding: 0.4rem;
+      font-size: 0.8rem;
+      background: rgba(255,255,255,.92);
+    }
+    .obs-modal-ft {
+      padding: 0.65rem 0.85rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.5rem;
+      background: #fff;
+      border-top: 3px solid #1a1a1a;
+      flex-shrink: 0;
+    }
+    .obs-btn-submit {
+      background: #5a9aa0 !important;
+      border: none !important;
+      color: #fff !important;
+      padding: 0.35rem 1.25rem !important;
+      font-weight: 600;
+      border-radius: 6px;
+    }
+    .obs-btn-submit:hover { filter: brightness(1.08); }
+    .obs-modal-backdrop.is-hidden {
+      display: none !important;
+    }
+    .slot-badge.js-toggle-obs { cursor: pointer; }
+
+    .main_child,
+    .container-fluid.ps-wall-grid {
+      flex: 1 1 0;
+      min-height: 0;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+    .container-fluid { --bs-gutter-x: 0; }
+    .ps-page-foot {
+      flex: 0 0 auto;
+      flex-shrink: 0;
+      padding: 0.2rem 0.5rem;
+      font-size: 0.65rem;
+      line-height: 1.3;
+      color: #8b949e;
+      background: #0d1117;
+      border-top: 1px solid rgba(255,255,255,.06);
+    }
+  </style>
+</head>
+<body>
+  <div class="ps-app">
+    <!-- Header -->
+    <header class="ps-header">
+      <div class="ps-logo">PRO-SAFE</div>
+      <div class="ps-header-right">
+        <div class="ps-header-tools" aria-label="Wall controls">
+        <button type="button" class="ps-icon-btn" title="Layout" aria-label="Layout">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M3 3h8v8H3V3zm10 0h8v8h-8V3zM3 13h8v8H3v-8zm10 0h8v8h-8v-8z"/></svg>
+        </button>
+        <button type="button" class="ps-icon-btn" title="Pause" aria-label="Pause">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M6 5h4v14H6V5zm8 0h4v14h-4V5z"/></svg>
+        </button>
+        <span class="ps-status"><span class="ps-dot" aria-hidden="true"></span> Safety services wall</span>
+        </div>
+        <span class="ps-user">1t1 Dev</span>
+        <button type="button" class="ps-icon-btn" title="Power" aria-label="Power">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M13 3h-2v10h2V3zm4.83 2.17l-1.42 1.42C17.99 7.86 19 9.81 19 12c0 3.87-3.13 7-7 7s-7-3.13-7-7c0-2.19 1.01-4.14 2.59-5.41L6.17 5.17C4.23 6.89 3 9.29 3 12c0 4.97 4.03 9 9 9s9-4.03 9-9c0-2.71-1.2-5.15-3.17-6.83z"/></svg>
+        </button>
+        <span class="ps-ver">v1.0.0</span>
+      </div>
+    </header>
+
+    <div class="main fluid-container mainBody ps-main">
+      <div class="main_child">
+        <div class="container-fluid d-flex flex-column ps-wall-grid">
+          <div class="col-container">
+            <div class="col min-width-50">
+              <div class="col" style="flex:1;width:100%;">
+                <div class="wall-slot-static" id="videowrapper_panel1">
+                  <div class="panel-image-view">
+                    <span class="slot-badge js-toggle-obs" role="button" tabindex="0" title="Toggle Observations">74</span>
+                    <div class="panel-image-scroll">
+                      <img class="panel-image-zoom-target" id="video_panel1" alt=""
+                        src="https://images.unsplash.com/photo-1541888946425-d81bb19240f5?auto=format&fit=crop&w=900&q=80" />
+                    </div>
+                    <!-- Observations modal (panel 1) -->
+                    <div class="obs-modal-backdrop" id="obsBackdrop_panel1">
+                      <div class="obs-modal" id="obsModal_panel1" role="dialog" aria-labelledby="obs-title" aria-modal="true">
+                        <div class="obs-modal-main" id="obsModalMain_panel1">
+                        <div class="obs-modal-hd">
+                          <h2 id="obs-title">Observations</h2>
+                          <button type="button" id="obsCloseBtn" class="btn btn-sm btn-link text-white p-0" style="text-decoration:none;font-size:1.25rem;line-height:1;" aria-label="Close">&times;</button>
+                        </div>
+                        <button type="button" class="obs-modal-sub w-100 border-0 text-white js-obs-accordion" style="cursor:pointer;">
+                          <span>PPE Compliance</span>
+                          <span class="obs-chev-circle" aria-hidden="true"><span class="js-obs-chev">&#9650;</span></span>
+                        </button>
+                        <div class="obs-modal-body js-obs-accordion-panel">
+                          <div class="obs-counter-wrap">
+                            <div class="obs-counter-pill"><span id="obsSlideCurrent">1</span> | <span id="obsSlideTotal">8</span></div>
+                            <p class="obs-ppe-hint" id="obsPpeHint">Check <strong>Non-compliant / Missing</strong> on any slide; you can flag <strong>multiple</strong> PPE items. Use the <strong>Next</strong> button to review all eight.</p>
+                            <p class="obs-ppe-sub" id="obsPpeSub">Items flagged: <span id="obsPpeNcCount">0</span> · build <span id="obsPpeBuildId">9</span></p>
+                          </div>
+                          <div class="obs-carousel" id="obsPpeGrid" data-ppe-build="9" role="region" aria-label="PPE compliance">
+                            <button type="button" class="obs-nav js-obs-prev" aria-label="Previous slide">&#8249;</button>
+                            <div class="obs-carousel-slides" style="flex:1;min-width:0;">
+                              <div class="obs-slide is-active" data-obs-slide="0" data-ppe-id="hard-hat">
+                                <div class="obs-options">
+                                  <div class="obs-pair">
+                                    <div class="obs-tile obs-tile--compliant">
+                                      <div class="obs-ppe-imgwrap"><img class="js-ppe-asset" width="90" height="90" src="assets/ppe/hard-hat-ok-asset9.png" alt="Hard hat compliant" fetchpriority="high" decoding="sync" /></div>
+                                      <span class="obs-cap">Hard Hat</span>
+                                    </div>
+                                  </div>
+                                  <div class="obs-pair">
+                                    <div class="obs-tile obs-tile--missing">
+                                      <label class="obs-ppe-chk"><input type="checkbox" name="ppe_noncompliant" value="hard-hat" class="js-ppe-nc" aria-label="Mark hard hat as missing" /><span>Non-compliant</span></label>
+                                      <div class="obs-ppe-imgwrap"><img class="js-ppe-asset" width="90" height="90" src="assets/ppe/hard-hat-miss.png" alt="Hard hat missing" /></div>
+                                      <span class="obs-cap">Hard Hat Missing</span>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="obs-slide" data-obs-slide="1" data-ppe-id="ear">
+                                <div class="obs-options">
+                                  <div class="obs-pair">
+                                    <div class="obs-tile obs-tile--compliant">
+                                      <div class="obs-ppe-imgwrap"><img class="js-ppe-asset" width="90" height="90" src="assets/ppe/ear-ok.png" alt="" /></div>
+                                      <span class="obs-cap">Hearing Protection</span>
+                                    </div>
+                                  </div>
+                                  <div class="obs-pair">
+                                    <div class="obs-tile obs-tile--missing">
+                                      <label class="obs-ppe-chk"><input type="checkbox" name="ppe_noncompliant" value="ear" class="js-ppe-nc" aria-label="Hearing protection missing" /><span>Non-compliant</span></label>
+                                      <div class="obs-ppe-imgwrap"><img class="js-ppe-asset" width="90" height="90" src="assets/ppe/ear-miss.png" alt="" /></div>
+                                      <span class="obs-cap">Hearing Protection Missing</span>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="obs-slide" data-obs-slide="2" data-ppe-id="hivis">
+                                <div class="obs-options">
+                                  <div class="obs-pair">
+                                    <div class="obs-tile obs-tile--compliant">
+                                      <div class="obs-ppe-imgwrap"><img class="js-ppe-asset" width="90" height="90" src="assets/ppe/hivis-ok.png" alt="" /></div>
+                                      <span class="obs-cap">Hi‑vis Jacket</span>
+                                    </div>
+                                  </div>
+                                  <div class="obs-pair">
+                                    <div class="obs-tile obs-tile--missing">
+                                      <label class="obs-ppe-chk"><input type="checkbox" name="ppe_noncompliant" value="hivis" class="js-ppe-nc" aria-label="Hi-vis missing" /><span>Non-compliant</span></label>
+                                      <div class="obs-ppe-imgwrap"><img class="js-ppe-asset" width="90" height="90" src="assets/ppe/hivis-miss.png" alt="" /></div>
+                                      <span class="obs-cap">Hi‑vis Missing</span>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="obs-slide" data-obs-slide="3" data-ppe-id="boots">
+                                <div class="obs-options">
+                                  <div class="obs-pair">
+                                    <div class="obs-tile obs-tile--compliant">
+                                      <div class="obs-ppe-imgwrap"><img class="js-ppe-asset" width="90" height="90" src="assets/ppe/boots-ok.png" alt="" /></div>
+                                      <span class="obs-cap">Safety Boots</span>
+                                    </div>
+                                  </div>
+                                  <div class="obs-pair">
+                                    <div class="obs-tile obs-tile--missing">
+                                      <label class="obs-ppe-chk"><input type="checkbox" name="ppe_noncompliant" value="boots" class="js-ppe-nc" aria-label="Boots missing" /><span>Non-compliant</span></label>
+                                      <div class="obs-ppe-imgwrap"><img class="js-ppe-asset" width="90" height="90" src="assets/ppe/boots-miss.png" alt="" /></div>
+                                      <span class="obs-cap">Safety Boots Missing</span>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="obs-slide" data-obs-slide="4" data-ppe-id="gloves">
+                                <div class="obs-options">
+                                  <div class="obs-pair">
+                                    <div class="obs-tile obs-tile--compliant">
+                                      <div class="obs-ppe-imgwrap"><img class="js-ppe-asset" width="90" height="90" src="assets/ppe/gloves-ok.png" alt="" /></div>
+                                      <span class="obs-cap">Gloves</span>
+                                    </div>
+                                  </div>
+                                  <div class="obs-pair">
+                                    <div class="obs-tile obs-tile--missing">
+                                      <label class="obs-ppe-chk"><input type="checkbox" name="ppe_noncompliant" value="gloves" class="js-ppe-nc" aria-label="Gloves missing" /><span>Non-compliant</span></label>
+                                      <div class="obs-ppe-imgwrap"><img class="js-ppe-asset" width="90" height="90" src="assets/ppe/gloves-miss.png" alt="" /></div>
+                                      <span class="obs-cap">Gloves Missing</span>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="obs-slide" data-obs-slide="5" data-ppe-id="glasses">
+                                <div class="obs-options">
+                                  <div class="obs-pair">
+                                    <div class="obs-tile obs-tile--compliant">
+                                      <div class="obs-ppe-imgwrap"><img class="js-ppe-asset" width="90" height="90" src="assets/ppe/glasses-ok.png" alt="" /></div>
+                                      <span class="obs-cap">Safety Glasses</span>
+                                    </div>
+                                  </div>
+                                  <div class="obs-pair">
+                                    <div class="obs-tile obs-tile--missing">
+                                      <label class="obs-ppe-chk"><input type="checkbox" name="ppe_noncompliant" value="glasses" class="js-ppe-nc" aria-label="Glasses missing" /><span>Non-compliant</span></label>
+                                      <div class="obs-ppe-imgwrap"><img class="js-ppe-asset" width="90" height="90" src="assets/ppe/glasses-miss.png" alt="" /></div>
+                                      <span class="obs-cap">Safety Glasses Missing</span>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="obs-slide" data-obs-slide="6" data-ppe-id="harness">
+                                <div class="obs-options">
+                                  <div class="obs-pair">
+                                    <div class="obs-tile obs-tile--compliant">
+                                      <div class="obs-ppe-imgwrap"><img class="js-ppe-asset" width="90" height="90" src="assets/ppe/harness-ok.png" alt="" /></div>
+                                      <span class="obs-cap">Harness</span>
+                                    </div>
+                                  </div>
+                                  <div class="obs-pair">
+                                    <div class="obs-tile obs-tile--missing">
+                                      <label class="obs-ppe-chk"><input type="checkbox" name="ppe_noncompliant" value="harness" class="js-ppe-nc" aria-label="Harness missing" /><span>Non-compliant</span></label>
+                                      <div class="obs-ppe-imgwrap"><img class="js-ppe-asset" width="90" height="90" src="assets/ppe/harness-miss.png" alt="" /></div>
+                                      <span class="obs-cap">Harness Missing</span>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="obs-slide" data-obs-slide="7" data-ppe-id="mask">
+                                <div class="obs-options">
+                                  <div class="obs-pair">
+                                    <div class="obs-tile obs-tile--compliant">
+                                      <div class="obs-ppe-imgwrap"><img class="js-ppe-asset" width="90" height="90" src="assets/ppe/mask-ok.png" alt="" /></div>
+                                      <span class="obs-cap">Respirator</span>
+                                    </div>
+                                  </div>
+                                  <div class="obs-pair">
+                                    <div class="obs-tile obs-tile--missing">
+                                      <label class="obs-ppe-chk"><input type="checkbox" name="ppe_noncompliant" value="mask" class="js-ppe-nc" aria-label="Respirator missing" /><span>Non-compliant</span></label>
+                                      <div class="obs-ppe-imgwrap"><img class="js-ppe-asset" width="90" height="90" src="assets/ppe/mask-miss.png" alt="" /></div>
+                                      <span class="obs-cap">Respirator Missing</span>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            <button type="button" class="obs-nav js-obs-next" aria-label="Next slide">&#8250;</button>
+                          </div>
+                          <div class="obs-dots js-obs-dots" aria-hidden="true"></div>
+                          <textarea class="obs-notes" id="obsNotes" placeholder="Add your notes for this Compliance"></textarea>
+                        </div>
+                        <div class="obs-modal-ft">
+                          <button type="button" class="btn btn-sm obs-btn-back" id="obsBackBtn">Back</button>
+                          <button type="button" class="btn btn-sm obs-btn-submit" id="obsSubmitBtn">Submit</button>
+                        </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="panel-pf-wrap" aria-label="Past and future reference images">
+                      <details class="pf-details">
+                        <summary>Past &amp; future images</summary>
+                        <div class="pf-body pf-body--stacked">
+                          <div>
+                            <span class="pf-row-label">Past images</span>
+                            <div class="pf-strip">
+                              <img class="pf-thumb" alt="" src="https://picsum.photos/seed/ps1pa1/104/80" width="52" height="40" loading="lazy" />
+                              <img class="pf-thumb" alt="" src="https://picsum.photos/seed/ps1pa2/104/80" width="52" height="40" loading="lazy" />
+                              <img class="pf-thumb" alt="" src="https://picsum.photos/seed/ps1pa3/104/80" width="52" height="40" loading="lazy" />
+                            </div>
+                          </div>
+                          <div>
+                            <span class="pf-row-label">Future images</span>
+                            <div class="pf-strip">
+                              <img class="pf-thumb" alt="" src="https://picsum.photos/seed/ps1fu1/104/80" width="52" height="40" loading="lazy" />
+                              <img class="pf-thumb" alt="" src="https://picsum.photos/seed/ps1fu2/104/80" width="52" height="40" loading="lazy" />
+                              <img class="pf-thumb" alt="" src="https://picsum.photos/seed/ps1fu3/104/80" width="52" height="40" loading="lazy" />
+                            </div>
+                          </div>
+                        </div>
+                      </details>
+                    </div>
+                  </div>
+                  <aside class="p_lr_10" aria-label="Panel tools">
+                    <div class="btn_background">
+                      <div class="slot-tool-btn panel-image-zoom-bar">
+                        <div class="zoom-row" data-zoom-for="video_panel1">
+                          <button type="button" class="btn btn-sm btn-light py-0 js-zoom-out" title="Zoom out">−</button>
+                          <span class="panel-image-zoom-label js-zoom-pct">100%</span>
+                          <button type="button" class="btn btn-sm btn-light py-0 js-zoom-in" title="Zoom in">+</button>
+                        </div>
+                        <svg class="zoom-aspect-icon" width="14" height="14" viewBox="0 0 24 24" fill="#0d47a1"><path d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg>
+                      </div>
+                    </div>
+                    <div class="btn_background">
+                      <div class="slot-tool-btn slot-tool-btn--obs-chrome" aria-label="Observations dialog size and opacity">
+                        <button type="button" class="slot-obs-zoom-btn js-obs-modal-zoom" title="Zoom Observations dialog" aria-label="Zoom Observations dialog">
+                          <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false"><path fill="currentColor" d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14zm2.5-6H11v3H8v1h3v3h1v-3h3V8z"/></svg>
+                        </button>
+                        <div class="slot-obs-opacity-wrap">
+                          <label for="obsOpacityTbar_panel1" class="visually-hidden">Observations dialog opacity</label>
+                          <input type="range" id="obsOpacityTbar_panel1" class="slot-obs-opacity-range js-obs-opacity" min="30" max="100" value="100" step="1" aria-orientation="vertical" title="Observations opacity" />
+                        </div>
+                      </div>
+                    </div>
+                    <div class="btn_background">
+                      <button type="button" class="slot-tool-btn slot-tool-btn--monitor js-open-obs" title="Observations" aria-label="Open Observations">
+                        <svg class="icon-toolbar-monitor" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="#141414" d="M4.5 4.75h15a1 1 0 0 1 1 1v9.25a1 1 0 0 1-1 1h-15a1 1 0 0 1-1-1V5.75a1 1 0 0 1 1-1z"/><rect x="5.25" y="6" width="13.5" height="8.75" fill="#dedede"/><path fill="#141414" d="M5.75 6.5h5.9v3.9h-5.9zm6.6 0h5.9v3.9h-5.9zm-6.6 4.6h5.9v3.15h-5.9zm6.6 0h5.9v3.15h-5.9z"/><path fill="#141414" d="M9.5 17.25h5v1.1H9.5zm-3 1.85h11v1.1h-11z"/></svg>
+                      </button>
+                    </div>
+                    <div class="btn_background">
+                      <button type="button" class="slot-tool-btn slot-tool-btn--info js-panel-info" title="Site info" aria-label="Information">
+                        <svg class="icon-toolbar-info" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="7.5" fill="none" stroke="#121212" stroke-width="1.35"/><circle cx="12" cy="8.6" r="1.05" fill="#121212"/><path stroke="#121212" stroke-width="1.35" stroke-linecap="round" d="M12 11.2v5.7"/></svg>
+                      </button>
+                    </div>
+                  </aside>
+                </div>
+              </div>
+            </div>
+            <div class="col min-width-50">
+              <div class="col" style="flex:1;width:100%;">
+                <div class="wall-slot-static" id="videowrapper_panel2">
+                  <div class="panel-image-view">
+                    <span class="slot-badge js-toggle-obs" role="button" tabindex="0" title="Toggle Observations">74</span>
+                    <div class="panel-image-scroll">
+                      <img class="panel-image-zoom-target" id="video_panel2" alt=""
+                        src="https://images.unsplash.com/photo-1541888946425-d81bb19240f5?auto=format&fit=crop&w=900&q=80" />
+                    </div>
+                    <div class="panel-pf-wrap" aria-label="Past and future reference images">
+                      <details class="pf-details">
+                        <summary>Past &amp; future images</summary>
+                        <div class="pf-body pf-body--stacked">
+                          <div>
+                            <span class="pf-row-label">Past images</span>
+                            <div class="pf-strip">
+                              <img class="pf-thumb" alt="" src="https://picsum.photos/seed/ps2pa1/104/80" width="52" height="40" loading="lazy" />
+                              <img class="pf-thumb" alt="" src="https://picsum.photos/seed/ps2pa2/104/80" width="52" height="40" loading="lazy" />
+                              <img class="pf-thumb" alt="" src="https://picsum.photos/seed/ps2pa3/104/80" width="52" height="40" loading="lazy" />
+                            </div>
+                          </div>
+                          <div>
+                            <span class="pf-row-label">Future images</span>
+                            <div class="pf-strip">
+                              <img class="pf-thumb" alt="" src="https://picsum.photos/seed/ps2fu1/104/80" width="52" height="40" loading="lazy" />
+                              <img class="pf-thumb" alt="" src="https://picsum.photos/seed/ps2fu2/104/80" width="52" height="40" loading="lazy" />
+                              <img class="pf-thumb" alt="" src="https://picsum.photos/seed/ps2fu3/104/80" width="52" height="40" loading="lazy" />
+                            </div>
+                          </div>
+                        </div>
+                      </details>
+                    </div>
+                  </div>
+                  <aside class="p_lr_10" aria-label="Panel tools">
+                    <div class="btn_background"><div class="slot-tool-btn panel-image-zoom-bar">
+                      <div class="zoom-row" data-zoom-for="video_panel2">
+                        <button type="button" class="btn btn-sm btn-light py-0 js-zoom-out">−</button>
+                        <span class="panel-image-zoom-label js-zoom-pct">100%</span>
+                        <button type="button" class="btn btn-sm btn-light py-0 js-zoom-in">+</button>
+                      </div>
+                      <svg class="zoom-aspect-icon" width="14" height="14" viewBox="0 0 24 24" fill="#0d47a1"><path d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg>
+                    </div></div>
+                    <div class="btn_background">
+                      <div class="slot-tool-btn slot-tool-btn--obs-chrome" aria-label="Observations dialog size and opacity">
+                        <button type="button" class="slot-obs-zoom-btn js-obs-modal-zoom" title="Zoom Observations dialog" aria-label="Zoom Observations dialog">
+                          <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false"><path fill="currentColor" d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14zm2.5-6H11v3H8v1h3v3h1v-3h3V8z"/></svg>
+                        </button>
+                        <div class="slot-obs-opacity-wrap">
+                          <label for="obsOpacityTbar_panel2" class="visually-hidden">Observations dialog opacity</label>
+                          <input type="range" id="obsOpacityTbar_panel2" class="slot-obs-opacity-range js-obs-opacity" min="30" max="100" value="100" step="1" aria-orientation="vertical" title="Observations opacity" />
+                        </div>
+                      </div>
+                    </div>
+                    <div class="btn_background"><button type="button" class="slot-tool-btn slot-tool-btn--monitor js-open-obs" title="Observations" aria-label="Observations"><svg class="icon-toolbar-monitor" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="#141414" d="M4.5 4.75h15a1 1 0 0 1 1 1v9.25a1 1 0 0 1-1 1h-15a1 1 0 0 1-1-1V5.75a1 1 0 0 1 1-1z"/><rect x="5.25" y="6" width="13.5" height="8.75" fill="#dedede"/><path fill="#141414" d="M5.75 6.5h5.9v3.9h-5.9zm6.6 0h5.9v3.9h-5.9zm-6.6 4.6h5.9v3.15h-5.9zm6.6 0h5.9v3.15h-5.9z"/><path fill="#141414" d="M9.5 17.25h5v1.1H9.5zm-3 1.85h11v1.1h-11z"/></svg></button></div>
+                    <div class="btn_background"><button type="button" class="slot-tool-btn slot-tool-btn--info js-panel-info" title="Info" aria-label="Information"><svg class="icon-toolbar-info" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="7.5" fill="none" stroke="#121212" stroke-width="1.35"/><circle cx="12" cy="8.6" r="1.05" fill="#121212"/><path stroke="#121212" stroke-width="1.35" stroke-linecap="round" d="M12 11.2v5.7"/></svg></button></div>
+                  </aside>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-container">
+            <div class="col min-width-50">
+              <div class="col" style="flex:1;width:100%;">
+                <div class="wall-slot-static" id="videowrapper_panel3">
+                  <div class="panel-image-view">
+                    <span class="slot-badge js-toggle-obs" role="button" tabindex="0" title="Toggle Observations">74</span>
+                    <div class="panel-image-scroll">
+                      <img class="panel-image-zoom-target" id="video_panel3" alt=""
+                        src="https://images.unsplash.com/photo-1541888946425-d81bb19240f5?auto=format&fit=crop&w=900&q=80" />
+                    </div>
+                    <div class="panel-pf-wrap" aria-label="Past and future reference images">
+                      <details class="pf-details">
+                        <summary>Past &amp; future images</summary>
+                        <div class="pf-body pf-body--stacked">
+                          <div>
+                            <span class="pf-row-label">Past images</span>
+                            <div class="pf-strip">
+                              <img class="pf-thumb" alt="" src="https://picsum.photos/seed/ps3pa1/104/80" width="52" height="40" loading="lazy" />
+                              <img class="pf-thumb" alt="" src="https://picsum.photos/seed/ps3pa2/104/80" width="52" height="40" loading="lazy" />
+                              <img class="pf-thumb" alt="" src="https://picsum.photos/seed/ps3pa3/104/80" width="52" height="40" loading="lazy" />
+                            </div>
+                          </div>
+                          <div>
+                            <span class="pf-row-label">Future images</span>
+                            <div class="pf-strip">
+                              <img class="pf-thumb" alt="" src="https://picsum.photos/seed/ps3fu1/104/80" width="52" height="40" loading="lazy" />
+                              <img class="pf-thumb" alt="" src="https://picsum.photos/seed/ps3fu2/104/80" width="52" height="40" loading="lazy" />
+                              <img class="pf-thumb" alt="" src="https://picsum.photos/seed/ps3fu3/104/80" width="52" height="40" loading="lazy" />
+                            </div>
+                          </div>
+                        </div>
+                      </details>
+                    </div>
+                  </div>
+                  <aside class="p_lr_10" aria-label="Panel tools">
+                    <div class="btn_background"><div class="slot-tool-btn panel-image-zoom-bar">
+                      <div class="zoom-row" data-zoom-for="video_panel3">
+                        <button type="button" class="btn btn-sm btn-light py-0 js-zoom-out">−</button>
+                        <span class="panel-image-zoom-label js-zoom-pct">100%</span>
+                        <button type="button" class="btn btn-sm btn-light py-0 js-zoom-in">+</button>
+                      </div>
+                      <svg class="zoom-aspect-icon" width="14" height="14" viewBox="0 0 24 24" fill="#0d47a1"><path d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg>
+                    </div></div>
+                    <div class="btn_background">
+                      <div class="slot-tool-btn slot-tool-btn--obs-chrome" aria-label="Observations dialog size and opacity">
+                        <button type="button" class="slot-obs-zoom-btn js-obs-modal-zoom" title="Zoom Observations dialog" aria-label="Zoom Observations dialog">
+                          <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false"><path fill="currentColor" d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14zm2.5-6H11v3H8v1h3v3h1v-3h3V8z"/></svg>
+                        </button>
+                        <div class="slot-obs-opacity-wrap">
+                          <label for="obsOpacityTbar_panel3" class="visually-hidden">Observations dialog opacity</label>
+                          <input type="range" id="obsOpacityTbar_panel3" class="slot-obs-opacity-range js-obs-opacity" min="30" max="100" value="100" step="1" aria-orientation="vertical" title="Observations opacity" />
+                        </div>
+                      </div>
+                    </div>
+                    <div class="btn_background"><button type="button" class="slot-tool-btn slot-tool-btn--monitor js-open-obs" aria-label="Observations"><svg class="icon-toolbar-monitor" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="#141414" d="M4.5 4.75h15a1 1 0 0 1 1 1v9.25a1 1 0 0 1-1 1h-15a1 1 0 0 1-1-1V5.75a1 1 0 0 1 1-1z"/><rect x="5.25" y="6" width="13.5" height="8.75" fill="#dedede"/><path fill="#141414" d="M5.75 6.5h5.9v3.9h-5.9zm6.6 0h5.9v3.9h-5.9zm-6.6 4.6h5.9v3.15h-5.9zm6.6 0h5.9v3.15h-5.9z"/><path fill="#141414" d="M9.5 17.25h5v1.1H9.5zm-3 1.85h11v1.1h-11z"/></svg></button></div>
+                    <div class="btn_background"><button type="button" class="slot-tool-btn slot-tool-btn--info js-panel-info" aria-label="Information"><svg class="icon-toolbar-info" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="7.5" fill="none" stroke="#121212" stroke-width="1.35"/><circle cx="12" cy="8.6" r="1.05" fill="#121212"/><path stroke="#121212" stroke-width="1.35" stroke-linecap="round" d="M12 11.2v5.7"/></svg></button></div>
+                  </aside>
+                </div>
+              </div>
+            </div>
+            <div class="col min-width-50">
+              <div class="col" style="flex:1;width:100%;">
+                <div class="wall-slot-static" id="videowrapper_panel4">
+                  <div class="panel-image-view">
+                    <span class="slot-badge js-toggle-obs" role="button" tabindex="0" title="Toggle Observations">74</span>
+                    <div class="panel-image-scroll">
+                      <img class="panel-image-zoom-target" id="video_panel4" alt=""
+                        src="https://images.unsplash.com/photo-1541888946425-d81bb19240f5?auto=format&fit=crop&w=900&q=80" />
+                    </div>
+                    <div class="panel-pf-wrap" aria-label="Past and future reference images">
+                      <details class="pf-details">
+                        <summary>Past &amp; future images</summary>
+                        <div class="pf-body pf-body--stacked">
+                          <div>
+                            <span class="pf-row-label">Past images</span>
+                            <div class="pf-strip">
+                              <img class="pf-thumb" alt="" src="https://picsum.photos/seed/ps4pa1/104/80" width="52" height="40" loading="lazy" />
+                              <img class="pf-thumb" alt="" src="https://picsum.photos/seed/ps4pa2/104/80" width="52" height="40" loading="lazy" />
+                              <img class="pf-thumb" alt="" src="https://picsum.photos/seed/ps4pa3/104/80" width="52" height="40" loading="lazy" />
+                            </div>
+                          </div>
+                          <div>
+                            <span class="pf-row-label">Future images</span>
+                            <div class="pf-strip">
+                              <img class="pf-thumb" alt="" src="https://picsum.photos/seed/ps4fu1/104/80" width="52" height="40" loading="lazy" />
+                              <img class="pf-thumb" alt="" src="https://picsum.photos/seed/ps4fu2/104/80" width="52" height="40" loading="lazy" />
+                              <img class="pf-thumb" alt="" src="https://picsum.photos/seed/ps4fu3/104/80" width="52" height="40" loading="lazy" />
+                            </div>
+                          </div>
+                        </div>
+                      </details>
+                    </div>
+                  </div>
+                  <aside class="p_lr_10" aria-label="Panel tools">
+                    <div class="btn_background"><div class="slot-tool-btn panel-image-zoom-bar">
+                      <div class="zoom-row" data-zoom-for="video_panel4">
+                        <button type="button" class="btn btn-sm btn-light py-0 js-zoom-out">−</button>
+                        <span class="panel-image-zoom-label js-zoom-pct">100%</span>
+                        <button type="button" class="btn btn-sm btn-light py-0 js-zoom-in">+</button>
+                      </div>
+                      <svg class="zoom-aspect-icon" width="14" height="14" viewBox="0 0 24 24" fill="#0d47a1"><path d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg>
+                    </div></div>
+                    <div class="btn_background">
+                      <div class="slot-tool-btn slot-tool-btn--obs-chrome" aria-label="Observations dialog size and opacity">
+                        <button type="button" class="slot-obs-zoom-btn js-obs-modal-zoom" title="Zoom Observations dialog" aria-label="Zoom Observations dialog">
+                          <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false"><path fill="currentColor" d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14zm2.5-6H11v3H8v1h3v3h1v-3h3V8z"/></svg>
+                        </button>
+                        <div class="slot-obs-opacity-wrap">
+                          <label for="obsOpacityTbar_panel4" class="visually-hidden">Observations dialog opacity</label>
+                          <input type="range" id="obsOpacityTbar_panel4" class="slot-obs-opacity-range js-obs-opacity" min="30" max="100" value="100" step="1" aria-orientation="vertical" title="Observations opacity" />
+                        </div>
+                      </div>
+                    </div>
+                    <div class="btn_background"><button type="button" class="slot-tool-btn slot-tool-btn--monitor js-open-obs" aria-label="Observations"><svg class="icon-toolbar-monitor" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="#141414" d="M4.5 4.75h15a1 1 0 0 1 1 1v9.25a1 1 0 0 1-1 1h-15a1 1 0 0 1-1-1V5.75a1 1 0 0 1 1-1z"/><rect x="5.25" y="6" width="13.5" height="8.75" fill="#dedede"/><path fill="#141414" d="M5.75 6.5h5.9v3.9h-5.9zm6.6 0h5.9v3.9h-5.9zm-6.6 4.6h5.9v3.15h-5.9zm6.6 0h5.9v3.15h-5.9z"/><path fill="#141414" d="M9.5 17.25h5v1.1H9.5zm-3 1.85h11v1.1h-11z"/></svg></button></div>
+                    <div class="btn_background"><button type="button" class="slot-tool-btn slot-tool-btn--info js-panel-info" aria-label="Information"><svg class="icon-toolbar-info" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="7.5" fill="none" stroke="#121212" stroke-width="1.35"/><circle cx="12" cy="8.6" r="1.05" fill="#121212"/><path stroke="#121212" stroke-width="1.35" stroke-linecap="round" d="M12 11.2v5.7"/></svg></button></div>
+                  </aside>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <footer class="ps-page-foot">Static preview — 2×2 wall fits one screen. Each panel: zoom ± row, Observations dialog zoom/opacity (toolbar), Observations (monitor), site info, Past &amp; future images (one accordion per card). Purple badge toggles Observations.</footer>
+  </div>
+  <div id="psToast" class="position-fixed bottom-0 start-50 translate-middle-x mb-3 px-3 py-2 rounded shadow text-white" style="z-index: 9999; display: none; background: #1565a8; font-size: 0.9rem;"></div>
+  <script>
+    (function () {
+      var ZOOM_MIN = 0.5;
+      var ZOOM_MAX = 2.5;
+      var ZOOM_STEP = 0.1;
+      var zoomState = {};
+
+      function getZoom(imgId) {
+        return zoomState[imgId] != null ? zoomState[imgId] : 1;
+      }
+      function setZoom(imgId, z) {
+        z = Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, z));
+        zoomState[imgId] = z;
+        var img = document.getElementById(imgId);
+        if (img) img.style.transform = 'scale(' + z + ')';
+        var row = document.querySelector('.zoom-row[data-zoom-for="' + imgId + '"]');
+        if (row) {
+          var pct = row.querySelector('.js-zoom-pct');
+          if (pct) pct.textContent = Math.round(z * 100) + '%';
+        }
+      }
+
+      function bindZoomStepButtons(container) {
+        var id = container.getAttribute('data-zoom-for');
+        if (!id) return;
+        container.addEventListener('click', function (e) {
+          var t = e.target;
+          if (t.closest && t.closest('.js-zoom-in')) setZoom(id, getZoom(id) + ZOOM_STEP);
+          else if (t.closest && t.closest('.js-zoom-out')) setZoom(id, getZoom(id) - ZOOM_STEP);
+        });
+      }
+
+      document.querySelectorAll('.zoom-row[data-zoom-for]').forEach(bindZoomStepButtons);
+
+      var backdrop = document.getElementById('obsBackdrop_panel1');
+      var modal = document.getElementById('obsModal_panel1');
+      var modalMain = document.getElementById('obsModalMain_panel1');
+      var OBS_MODAL_ZOOM_LEVELS = [1, 1.07, 1.14];
+      var obsModalZoomIdx = 0;
+
+      function syncObsOpacityFromInput(source) {
+        if (!source || !modalMain) return;
+        var v = parseInt(source.value, 10);
+        if (isNaN(v)) return;
+        document.querySelectorAll('.js-obs-opacity').forEach(function (el) {
+          el.value = String(v);
+          el.setAttribute('aria-valuetext', v + '%');
+        });
+        modalMain.style.opacity = String(v / 100);
+      }
+
+      function resetObsModalChrome() {
+        if (modalMain) {
+          modalMain.style.opacity = '';
+          modalMain.style.transform = '';
+          obsModalZoomIdx = 0;
+        }
+        document.querySelectorAll('.js-obs-opacity').forEach(function (el) {
+          el.value = '100';
+          el.setAttribute('aria-valuetext', '100%');
+        });
+        if (modalMain) modalMain.style.opacity = '';
+      }
+
+      document.querySelectorAll('.js-obs-opacity').forEach(function (el) {
+        el.addEventListener('input', function () {
+          syncObsOpacityFromInput(el);
+        });
+        el.addEventListener('change', function () {
+          syncObsOpacityFromInput(el);
+        });
+      });
+      var firstObsOp = document.querySelector('.js-obs-opacity');
+      if (firstObsOp && modalMain) syncObsOpacityFromInput(firstObsOp);
+
+      document.querySelectorAll('.js-obs-modal-zoom').forEach(function (btn) {
+        btn.addEventListener('click', function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          if (!modalMain) return;
+          obsModalZoomIdx = (obsModalZoomIdx + 1) % OBS_MODAL_ZOOM_LEVELS.length;
+          modalMain.style.transform = 'scale(' + OBS_MODAL_ZOOM_LEVELS[obsModalZoomIdx] + ')';
+        });
+      });
+
+      function showToast(msg) {
+        var el = document.getElementById('psToast');
+        if (!el) return;
+        el.textContent = msg;
+        el.style.display = 'block';
+        clearTimeout(showToast._t);
+        showToast._t = setTimeout(function () { el.style.display = 'none'; }, 2800);
+      }
+
+      function openObs() {
+        if (backdrop) backdrop.classList.remove('is-hidden');
+        resetObsModalChrome();
+      }
+      function closeObs() {
+        if (backdrop) backdrop.classList.add('is-hidden');
+      }
+      function toggleObs() {
+        if (!backdrop) return;
+        var wasHidden = backdrop.classList.contains('is-hidden');
+        backdrop.classList.toggle('is-hidden');
+        if (wasHidden && !backdrop.classList.contains('is-hidden')) resetObsModalChrome();
+      }
+
+      document.querySelectorAll('.js-open-obs').forEach(function (btn) {
+        btn.addEventListener('click', function (e) {
+          e.preventDefault();
+          openObs();
+        });
+      });
+      document.querySelectorAll('.js-toggle-obs').forEach(function (el) {
+        el.addEventListener('click', function (e) {
+          e.preventDefault();
+          toggleObs();
+        });
+        el.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            toggleObs();
+          }
+        });
+      });
+
+      var closeBtn = document.getElementById('obsCloseBtn');
+      if (closeBtn) closeBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        closeObs();
+      });
+      if (backdrop) {
+        backdrop.addEventListener('click', function (e) {
+          if (e.target === backdrop) closeObs();
+        });
+      }
+      if (modal) {
+        modal.addEventListener('click', function (e) {
+          e.stopPropagation();
+        });
+      }
+
+      var elPpeCount = document.getElementById('obsPpeNcCount');
+      var elCur = document.getElementById('obsSlideCurrent');
+      var elTot = document.getElementById('obsSlideTotal');
+      var slides = document.querySelectorAll('.obs-slide');
+      var totalSlides = slides.length;
+      var slideIdx = 0;
+      var dotsEl = document.querySelector('.js-obs-dots');
+
+      /** Resolves `assets/ppe/...` against this document. On http(s), adds ppev= to bypass stale image cache. */
+      var PPE_URL_VER = '9';
+      function absolutizePpeImageUrls() {
+        var proto = document.location.protocol;
+        var isHttp = proto === 'http:' || proto === 'https:';
+        document.querySelectorAll('img.js-ppe-asset').forEach(function (img) {
+          var u = img.getAttribute('src');
+          if (!u) return;
+          if (u.indexOf('data:') === 0) return;
+          if (u.indexOf('//') === 0) return;
+          if (/^https?:\/\//i.test(u) && u.indexOf(document.location.origin) !== 0) {
+            if (u.indexOf('ppev=') < 0 && isHttp) {
+              var sepQ = u.indexOf('?') < 0 ? '?' : '&';
+              img.setAttribute('src', u + sepQ + 'ppev=' + PPE_URL_VER);
+            }
+            return;
+          }
+          var q = u.indexOf('?');
+          var path = q < 0 ? u : u.slice(0, q);
+          var tail = q < 0 ? '' : u.slice(q);
+          try {
+            var abs = new URL(path, document.baseURI).href;
+            var out = isHttp
+              ? (abs.indexOf('?') < 0 ? abs + '?' : abs + '&') + 'ppev=' + PPE_URL_VER
+              : abs + tail;
+            img.setAttribute('src', out);
+          } catch (e) { /* */ }
+        });
+      }
+      absolutizePpeImageUrls();
+
+      function isSlideFlagged(i) {
+        var s = slides[i];
+        return !!(s && s.querySelector('.js-ppe-nc:checked'));
+      }
+
+      function renderPpeSlideDots() {
+        if (!dotsEl) return;
+        dotsEl.innerHTML = '';
+        for (var d = 0; d < totalSlides; d++) {
+          var span = document.createElement('span');
+          span.textContent = '\u25CF';
+          if (d === slideIdx) {
+            span.className = 'is-current';
+            span.style.color = '#29b6f6';
+            span.style.fontSize = '1.1em';
+          } else if (isSlideFlagged(d)) {
+            span.className = 'is-flagged';
+            span.style.color = '#66bb6a';
+          } else {
+            span.style.color = 'rgba(255,255,255,.35)';
+          }
+          span.style.margin = '0 4px';
+          dotsEl.appendChild(span);
+        }
+      }
+
+      function renderPpeCarousel() {
+        slides.forEach(function (s, i) {
+          s.classList.toggle('is-active', i === slideIdx);
+        });
+        if (elCur) elCur.textContent = String(slideIdx + 1);
+        if (elTot) elTot.textContent = String(totalSlides);
+        renderPpeSlideDots();
+      }
+
+      var prevBtn = document.querySelector('.js-obs-prev');
+      var nextBtn = document.querySelector('.js-obs-next');
+      if (prevBtn) prevBtn.addEventListener('click', function () {
+        slideIdx = (slideIdx - 1 + totalSlides) % totalSlides;
+        renderPpeCarousel();
+      });
+      if (nextBtn) nextBtn.addEventListener('click', function () {
+        slideIdx = (slideIdx + 1) % totalSlides;
+        renderPpeCarousel();
+      });
+
+      var backBtn = document.getElementById('obsBackBtn');
+      if (backBtn) backBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        slideIdx = (slideIdx - 1 + totalSlides) % totalSlides;
+        renderPpeCarousel();
+      });
+
+      function updatePpeNcCount() {
+        if (!elPpeCount) return;
+        elPpeCount.textContent = String(document.querySelectorAll('.js-ppe-nc:checked').length);
+      }
+
+      function applyPpeTileState(chk) {
+        var tile = chk.closest('.obs-tile--missing') || chk.closest('.obs-tile');
+        if (!tile) return;
+        tile.classList.toggle('obs-tile--nc', !!chk.checked);
+        renderPpeSlideDots();
+      }
+
+      document.querySelectorAll('.js-ppe-nc').forEach(function (chk) {
+        chk.addEventListener('change', function () {
+          applyPpeTileState(chk);
+          updatePpeNcCount();
+        });
+      });
+      document.querySelectorAll('.js-ppe-nc').forEach(function (chk) {
+        applyPpeTileState(chk);
+      });
+      updatePpeNcCount();
+      renderPpeCarousel();
+
+      var submitBtn = document.getElementById('obsSubmitBtn');
+      if (submitBtn) submitBtn.addEventListener('click', function () {
+        var flags = [];
+        document.querySelectorAll('.js-ppe-nc:checked').forEach(function (c) {
+          flags.push(c.value);
+        });
+        var extra = flags.length
+          ? ' — non-compliant: ' + flags.join(', ')
+          : ' — all PPE marked compliant (or none flagged).';
+        showToast('Submitted (static demo — not sent to a server).' + extra);
+      });
+
+      var accBtn = document.querySelector('.js-obs-accordion');
+      var accPanel = document.querySelector('.js-obs-accordion-panel');
+      var accChev = document.querySelector('.js-obs-chev');
+      if (accBtn && accPanel) {
+        accBtn.addEventListener('click', function () {
+          var open = accPanel.style.display !== 'none';
+          accPanel.style.display = open ? 'none' : '';
+          if (accChev) accChev.innerHTML = open ? '&#9660;' : '&#9650;';
+        });
+      }
+
+      document.querySelectorAll('.js-panel-info').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          showToast('Site info (static demo).');
+        });
+      });
+
+      var headerPause = document.querySelector('.ps-header-tools .ps-icon-btn[title="Pause"]');
+      var headerLayout = document.querySelector('.ps-header-tools .ps-icon-btn[title="Layout"]');
+      var headerPower = document.querySelector('.ps-header-right .ps-icon-btn[title="Power"]');
+      if (headerLayout) headerLayout.addEventListener('click', function () { showToast('Layout (demo)'); });
+      if (headerPause) headerPause.addEventListener('click', function () { showToast('Pause / resume (demo)'); });
+      if (headerPower) headerPower.addEventListener('click', function () { showToast('Power (demo — page still active).'); });
+
+      if (modal) modal.style.opacity = '1';
+      ['video_panel1', 'video_panel2', 'video_panel3', 'video_panel4'].forEach(function (vid) {
+        syncZoomSlider(vid, getZoom(vid));
+      });
+
+    })();
+  </script>
+</body>
+</html>

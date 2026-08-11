@@ -1,0 +1,132 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Pro-Safe admin palette — reporting-module-dashboard.html */
+    --brand-teal: 194 70% 27%;
+    --brand-teal-hover: 194 69% 33%;
+    --brand-teal-dark: 194 75% 20%;
+    --brand-page-bg: 210 16% 96%;
+    --brand-soft: 204 33% 95%;
+    --brand-text: 200 21% 22%;
+    --brand-muted: 204 9% 40%;
+    --brand-border: 204 14% 80%;
+    --brand-success: 123 46% 34%;
+    --brand-warning: 36 100% 35%;
+    --brand-danger: 4 78% 40%;
+    --brand-info: 210 80% 42%;
+
+    --background: 210 16% 96%;
+    --foreground: 200 21% 22%;
+    --card: 0 0% 100%;
+    --card-foreground: 200 21% 22%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 200 21% 22%;
+    --primary: 194 70% 27%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 204 33% 95%;
+    --secondary-foreground: 200 21% 22%;
+    --muted: 204 33% 95%;
+    --muted-foreground: 204 9% 40%;
+    --accent: 204 33% 95%;
+    --accent-foreground: 200 21% 22%;
+    --destructive: 4 78% 40%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 204 14% 80%;
+    --input: 204 14% 80%;
+    --ring: 194 70% 27%;
+    --radius: 0.75rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-size: 14px;
+  }
+}
+
+@layer components {
+  .admin-page {
+    @apply min-h-[calc(100vh-52px)] bg-[hsl(var(--brand-page-bg))] px-4 py-4 pb-8 md:px-5;
+  }
+
+  .admin-shell {
+    @apply overflow-hidden rounded-md bg-white shadow-[0_2px_10px_rgba(0,0,0,0.07)];
+  }
+
+  .admin-content-card {
+    @apply rounded-md border border-[hsl(var(--brand-border)/0.45)] bg-white shadow-[0_1px_4px_rgba(0,0,0,0.05)];
+  }
+
+  .admin-kpi-card {
+    background: linear-gradient(180deg, #ffffff 0%, #f8fbfc 100%);
+    @apply flex min-h-[122px] flex-col justify-between gap-2.5 rounded-md border border-[hsl(var(--brand-border)/0.5)] p-4;
+  }
+
+  .admin-kpi-label {
+    @apply text-[0.78rem] font-bold uppercase tracking-wider text-muted-foreground;
+  }
+
+  .admin-kpi-value {
+    @apply text-[1.75rem] font-bold leading-none text-foreground;
+  }
+
+  .admin-table-row-even {
+    @apply even:bg-[#fafbfc];
+  }
+
+  .focus-ring-teal {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2;
+  }
+}
+
+@layer utilities {
+  .animate-fade-in {
+    animation: fade-in 0.3s ease-out;
+  }
+
+  .animate-slide-up {
+    animation: slide-up 0.35s ease-out;
+  }
+
+  .animate-pulse-status {
+    animation: pulse-status 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse-status {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.65;
+  }
+}
