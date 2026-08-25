@@ -1046,11 +1046,12 @@
         <div class="floating-select">
           <label for="queueSelect">Select Queue</label>
           <select id="queueSelect" aria-label="Select Queue">
-            <option value="L1 - HighPriority" selected>L1 - HighPriority</option>
-            <option value="L1 - Standard">L1 - Standard</option>
-            <option value="L2 - Review">L2 - Review</option>
-            <option value="L3 - Escalation">L3 - Escalation</option>
-            <option value="AI - PreFilter">AI - PreFilter</option>
+            <option value="L2 - AutoDealerPD" selected>L2 - AutoDealerPD</option>
+            <option value="L2 - DefaultPD">L2 - DefaultPD</option>
+            <option value="L2 - PriorityPD">L2 - PriorityPD</option>
+            <option value="L2 - SuperHighPriorityPD">L2 - SuperHighPriorityPD</option>
+            <option value="L3 - PriorityDispatch">L3 - PriorityDispatch</option>
+            <option value="L3 - SuperHighPriorityDispatch">L3 - SuperHighPriorityDispatch</option>
           </select>
           <span class="material-icons caret">arrow_drop_down</span>
         </div>
@@ -1167,15 +1168,16 @@
   <script>
     (function () {
       const QUEUES = {
-        "L1 - HighPriority": seedEvents("L1 - HighPriority", 72),
-        "L1 - Standard": seedEvents("L1 - Standard", 48),
-        "L2 - Review": seedEvents("L2 - Review", 35),
-        "L3 - Escalation": seedEvents("L3 - Escalation", 18),
-        "AI - PreFilter": seedEvents("AI - PreFilter", 90)
+        "L2 - AutoDealerPD": seedEvents("L2 - AutoDealerPD", 42),
+        "L2 - DefaultPD": seedEvents("L2 - DefaultPD", 58),
+        "L2 - PriorityPD": seedEvents("L2 - PriorityPD", 35),
+        "L2 - SuperHighPriorityPD": seedEvents("L2 - SuperHighPriorityPD", 24),
+        "L3 - PriorityDispatch": seedEvents("L3 - PriorityDispatch", 18),
+        "L3 - SuperHighPriorityDispatch": seedEvents("L3 - SuperHighPriorityDispatch", 12)
       };
 
       const state = {
-        queue: "L1 - HighPriority",
+        queue: "L2 - AutoDealerPD",
         siteFilter: "",
         page: 1,
         pageSize: 200,
