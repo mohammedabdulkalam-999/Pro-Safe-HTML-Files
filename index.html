@@ -87,6 +87,19 @@
         .accordion-content.active { display: block; }
         .site-config-btn { background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.2); color: #fff; font-size: 1rem; cursor: pointer; padding: 8px 12px; border-radius: var(--border-radius); transition: var(--transition); }
         .site-config-btn:hover { background: rgba(255,255,255,0.2); border-color: var(--secondary-color); }
+        .admin-nav-links { display: flex; align-items: center; gap: 10px; margin-left: 24px; flex-wrap: wrap; }
+        .admin-nav-links a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 600;
+            padding: 8px 12px;
+            border-radius: var(--border-radius);
+            border: 1px solid rgba(255,255,255,0.25);
+            background: rgba(255,255,255,0.08);
+            transition: var(--transition);
+        }
+        .admin-nav-links a:hover { background: rgba(255,255,255,0.18); border-color: var(--secondary-color); }
         @media (max-width: 1400px) { .main-content { flex-direction: column; align-items: center; } .left-column { max-width: 100%; } .right-column { width: 100%; min-width: auto; max-width: 975px; } }
     </style>
 </head>
@@ -94,6 +107,10 @@
 <div class="dashboard-container">
     <div class="header">
         <span class="logo"><img src="https://via.placeholder.com/52x52?text=PS" class="logo-img" alt="Logo" />PRO-SAFE</span>
+        <nav class="admin-nav-links" aria-label="Admin screens">
+            <a href="queue-management.html">Queue Management</a>
+            <a href="reports-dashboard.html">Reports Dashboard</a>
+        </nav>
         <div class="header-controls">
             <button class="icon-btn" title="Pause">&#10073;&#10073;</button>
             <button class="icon-btn" title="Play">&#9654;</button>
